@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://wl1p2nxunlg8"]
+
+[ext_resource type="Script" path="res://Scripts/Character.cs" id="1_pnjhf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4f3j7"]
+
+[node name="Character" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_pnjhf")
+metadata/_edit_group_ = true
+
+[node name="CharColShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_4f3j7")
+
+[node name="CharSprite" type="Sprite2D" parent="."]
+
+[node name="RefireTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="RefireTimer" to="." method="RefireTimerTimeout"]

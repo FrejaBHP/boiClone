@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxg237t0621so"]
+
+[ext_resource type="PackedScene" uid="uid://dteioxjep7i5i" path="res://Scenes/enemy.tscn" id="1_ysfnt"]
+[ext_resource type="Script" path="res://Scripts/Enemies/BasicEnemy.cs" id="2_1dgds"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_blj7o"]
+radius = 11.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_31fmm"]
+load_path = "res://.godot/imported/plhEnemy.png-3823bf25fd3f1a07e65814fd1b5246d5.ctex"
+
+[node name="BasicEnemy" instance=ExtResource("1_ysfnt")]
+script = ExtResource("2_1dgds")
+
+[node name="CharColShape" parent="." index="0"]
+shape = SubResource("CircleShape2D_blj7o")
+
+[node name="CharSprite" parent="." index="1"]
+texture = SubResource("CompressedTexture2D_31fmm")

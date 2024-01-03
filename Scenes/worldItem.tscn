@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://dry7pqt3fqvrx"]
+
+[ext_resource type="Script" path="res://Scripts/WorldItem.cs" id="1_argy2"]
+[ext_resource type="Texture2D" uid="uid://blunpprhunht0" path="res://Images/testPedestal.png" id="2_e8pm1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nbwh4"]
+radius = 7.0
+
+[node name="Item" type="StaticBody2D"]
+scale = Vector2(2, 2)
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("1_argy2")
+metadata/_edit_group_ = true
+metadata/itemID = 0
+
+[node name="ItemCol" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_nbwh4")
+
+[node name="ItemSpritePedestal" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("2_e8pm1")
+
+[node name="ItemSpriteItem" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(1.2, 1.2)
+offset = Vector2(0, -6)

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bd6qo74gjd3y2"]
+
+[ext_resource type="Script" path="res://Scripts/Projectile.cs" id="1_pfmey"]
+[ext_resource type="Texture2D" uid="uid://dkcs1oyqevi4t" path="res://Images/boolet.png" id="2_q11rv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yppxt"]
+radius = 8.0
+
+[node name="Projectile" type="Area2D"]
+collision_layer = 256
+collision_mask = 61
+script = ExtResource("1_pfmey")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("2_q11rv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_yppxt")
+
+[connection signal="area_entered" from="." to="." method="OnAreaEntered"]
+[connection signal="body_entered" from="." to="." method="OnBodyEntered"]
