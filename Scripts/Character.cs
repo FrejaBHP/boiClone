@@ -19,16 +19,16 @@ public partial class Character : CharacterBody2D {
 	public virtual bool ShotsAreSpectral { get; set; }
 	public virtual bool Invulnerable { get; set; }
 
-	protected float moveSpeed = 160f;
+	protected float moveSpeed = 208f;
 
 	public virtual Projectile SetProjectileProperties(Projectile proj) {
-		proj.Speed = 400 * ShotSpeed;
+		proj.Speed = 256 * ShotSpeed;
 		proj.Range = Range;
 		proj.Damage = Damage;
 		proj.Piercing = ShotsArePiercing;
 		proj.Spectral = ShotsAreSpectral;
 
-		proj.Lifetime = (proj.Range * 64) / proj.Speed;
+		proj.Lifetime = (proj.Range * 32) / proj.Speed;
 
 		proj.Radius = 8;
 		proj.Knockback = 5;
@@ -98,7 +98,7 @@ public partial class Character : CharacterBody2D {
 	}
 
 	protected virtual void Die() {
-		GetNode<World>("/root/Main/World").DecreaseEnemyCount();
+		World.DecreaseEnemyCount();
 		QueueFree();
 	}
 

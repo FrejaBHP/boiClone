@@ -4,9 +4,6 @@ using Godot;
 public static class ItemCollection {
     public static List<System.Type> ItemTypes { get; set; }
     public static List<string> ItemSpritePaths { get; set; }
-    static ItemCollection() {
-        //CompileItemList();
-    }
 
     public static void CompileItemList() {
         ItemTypes = new() {

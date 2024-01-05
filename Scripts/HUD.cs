@@ -27,7 +27,7 @@ public partial class HUD : CanvasLayer {
 		int leftMargin = 10;
 		int statLabelYOffset = 300;
 		int statLabelYGap = 20;
-		var pos = LifeDisplay.Position;
+		Vector2 pos;
 		
 		pos.X = leftMargin;
 		pos.Y = leftMargin;

@@ -11,19 +11,17 @@ public partial class World : Node {
 	
 	private static int enemiesLeft = 0;
 	private static readonly int gridSize = 50;
-	private static readonly int gridGapX = 608;
-	private static readonly int gridGapY = 416;
-	private static readonly int skip = 216;
+	private static readonly int gridGapExtra = 128; // Until better solution is implemented, this is used to keep other rooms out of sight
+	private static readonly int gridGapX = 480 + gridGapExtra; // Each room is 32x15=480 units long
+	private static readonly int gridGapY = 288 + gridGapExtra; // Each room is 32x9=288 units tall
+	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
 
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
 	protected PackedScene ItemPedestal = GD.Load<PackedScene>("Scenes/worldItem.tscn");
 
 	public World() {
 		RoomsA = new RoomData[gridSize, gridSize];
-		var c = CurrentCoords;
-		c.X = gridSize / 2;
-		c.Y = gridSize / 2;
-		CurrentCoords = c;
+		CurrentCoords = CurrentCoords with { X = gridSize / 2, Y = gridSize / 2 };
 	}
 
     public override void _Ready() {
@@ -36,12 +34,13 @@ public partial class World : Node {
 		//Coordinates here are however still written as starting at [0, 0] for ease of use
 
 		List<RoomData> tempList = new() {
-			new((int)RoomNames.UDLR_BaseRoom, 0, 0),
+			new((int)RoomNames.StartingRoom, 0, 0),
 			new((int)RoomNames.UDLR_BaseRoom, 1, 0),
 			new((int)RoomNames.R_Room, -1, 0),
 			new((int)RoomNames.UD_LongRoom, 0, 1),
 			new((int)RoomNames.U_TestItemRoom, 0, 2),
-			new((int)RoomNames.UDLR_BaseRoom, 0, -1)
+			new((int)RoomNames.S_Room, 0, -1)
+			//new((int)RoomNames.UDLR_BaseRoom, 0, -1)
 		};
 		
 		PlaceRooms(tempList);
@@ -59,15 +58,26 @@ public partial class World : Node {
 				GD.PushError($"Room with ID {data.RoomID} not found.");
 			}
 
-			Vector2 grid = data.RoomMap.GlobalPosition;
-			grid.X = data.RoomCoords.X * gridGapX;
-			grid.Y = data.RoomCoords.Y * gridGapY;
-			data.RoomMap.GlobalPosition = grid;
+			data.RoomMap.GlobalPosition = data.RoomMap.GlobalPosition with { X = data.RoomCoords.X * gridGapX, Y = data.RoomCoords.Y * gridGapY };
 		}
+
 		CurrentTileMap = RoomsA[gridSize / 2, gridSize / 2].RoomMap;
 		//ProcessRoomMarkers(CurrentTileMap);
+		CheckDirections();
 		AddPlayer();
 		CheckIsRoomClear();
+	}
+
+	private static void CheckDirections() {
+		//Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
+		if (RoomsA[CurrentCoords.X, CurrentCoords.Y - 1] == null)
+			(CurrentTileMap as Room).RemoveDoor(0);
+		if (RoomsA[CurrentCoords.X + 1, CurrentCoords.Y] == null)
+			(CurrentTileMap as Room).RemoveDoor(1);
+		if (RoomsA[CurrentCoords.X, CurrentCoords.Y + 1] == null)
+			(CurrentTileMap as Room).RemoveDoor(2);
+		if (RoomsA[CurrentCoords.X - 1, CurrentCoords.Y] == null)
+			(CurrentTileMap as Room).RemoveDoor(3);
 	}
 
 	private void AddPlayer() {
@@ -85,10 +95,7 @@ public partial class World : Node {
 		player.AttackDelay = 0f;
 		player.Team = 0;
 
-		var pos = player.GlobalPosition;
-        pos.X = 240;
-		pos.Y = 144;
-		player.GlobalPosition = pos; //Middle of the starting room
+		player.GlobalPosition = player.GlobalPosition with { X = 240, Y = 144 }; //Middle of the starting room
 	}
 
 	private void ProcessRoomMarkers(TileMap room) {
@@ -96,6 +103,8 @@ public partial class World : Node {
 		foreach (Marker2D marker in markersNode.GetChildren().Cast<Marker2D>()) {
 			switch ((int)marker.GetMeta("nodeType")) {
 				case 0:
+					CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
+					enemiesLeft++;
 					break;
 				
 				case 1:
@@ -103,8 +112,6 @@ public partial class World : Node {
 					break;
 
 				case 2:
-					CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
-					enemiesLeft++;
 					break;
 				
 				default:
@@ -158,22 +165,22 @@ public partial class World : Node {
 		}
 	}
 
-	public void DecreaseEnemyCount() {
+	public static void DecreaseEnemyCount() {
 		enemiesLeft--;
 		CheckIsRoomClear();
 	}
 
-	private void CheckIsRoomClear() {
+	private static void CheckIsRoomClear() {
 		if (enemiesLeft == 0) {
-			(CurrentTileMap as Room).OpenDoors();
+			(CurrentTileMap as Room).CheckAndStartOpeningDoors();
 		}
 	}
 
-	public void MoveRooms(int dir) {
+	public void MoveRooms(uint dir) {
 		if (GetNode<Timer>("RoomInitDelay").TimeLeft == 0) {
 			Vector2 pos = Main.Player.GlobalPosition;
 			Vector2 cpos = Main.Camera.GlobalPosition;
-			var c = CurrentCoords;
+            Vector2I c = CurrentCoords;
 			
 			switch (dir) {
 				case 0:
@@ -198,9 +205,6 @@ public partial class World : Node {
 					pos.X -= skip;
 					cpos.X -= gridGapX;
 					c.X--;
-					break;
-
-				default:
 					break;
 			}
 

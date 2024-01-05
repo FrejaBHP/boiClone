@@ -3,9 +3,6 @@ using Godot;
 
 public static class EnemyCollection {
     public static List<PackedScene> EnemyScenes { get; set; }
-    static EnemyCollection() {
-        //CompileEnemyList();
-    }
 
     public static void CompileEnemyList() {
         EnemyScenes = new() {

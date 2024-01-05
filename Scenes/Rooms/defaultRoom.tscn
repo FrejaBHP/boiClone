@@ -7816,16 +7816,16 @@ sources/2 = SubResource("TileSetAtlasSource_p4dto")
 sources/3 = SubResource("TileSetAtlasSource_2uh5f")
 sources/4 = SubResource("TileSetAtlasSource_2ke17")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_yht22"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q06ea"]
 size = Vector2(16, 8)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_75on0"]
-size = Vector2(16, 8)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_eeulv"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ihn1p"]
 size = Vector2(8, 16)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3sp6u"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stk65"]
+size = Vector2(16, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nk3lp"]
 size = Vector2(8, 16)
 
 [node name="Room" type="TileMap"]
@@ -7854,31 +7854,10 @@ collision_layer = 32
 collision_mask = 8
 metadata/_edit_group_ = true
 metadata/door = true
+metadata/direction = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorNorth"]
-shape = SubResource("RectangleShape2D_yht22")
-
-[node name="DoorSouth" type="Area2D" parent="Doors"]
-position = Vector2(240, 274)
-scale = Vector2(2, 2)
-collision_layer = 32
-collision_mask = 8
-metadata/_edit_group_ = true
-metadata/door = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorSouth"]
-shape = SubResource("RectangleShape2D_75on0")
-
-[node name="DoorWest" type="Area2D" parent="Doors"]
-position = Vector2(17, 145)
-scale = Vector2(2, 2)
-collision_layer = 32
-collision_mask = 8
-metadata/_edit_group_ = true
-metadata/door = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorWest"]
-shape = SubResource("RectangleShape2D_eeulv")
+shape = SubResource("RectangleShape2D_q06ea")
 
 [node name="DoorEast" type="Area2D" parent="Doors"]
 position = Vector2(465, 145)
@@ -7887,19 +7866,44 @@ collision_layer = 32
 collision_mask = 8
 metadata/_edit_group_ = true
 metadata/door = true
+metadata/direction = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorEast"]
-shape = SubResource("RectangleShape2D_3sp6u")
+shape = SubResource("RectangleShape2D_ihn1p")
+
+[node name="DoorSouth" type="Area2D" parent="Doors"]
+position = Vector2(240, 274)
+scale = Vector2(2, 2)
+collision_layer = 32
+collision_mask = 8
+metadata/_edit_group_ = true
+metadata/door = true
+metadata/direction = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorSouth"]
+shape = SubResource("RectangleShape2D_stk65")
+
+[node name="DoorWest" type="Area2D" parent="Doors"]
+position = Vector2(17, 145)
+scale = Vector2(2, 2)
+collision_layer = 32
+collision_mask = 8
+metadata/_edit_group_ = true
+metadata/door = true
+metadata/direction = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorWest"]
+shape = SubResource("RectangleShape2D_nk3lp")
 
 [node name="Markers" type="Node2D" parent="."]
 scale = Vector2(0.5, 0.5)
 
 [node name="Marker2D" type="Marker2D" parent="Markers"]
 position = Vector2(48, 48)
-metadata/nodeType = 2
+metadata/nodeType = 0
 metadata/entityID = 0
 
 [node name="Marker2D2" type="Marker2D" parent="Markers"]
 position = Vector2(428, 48)
-metadata/nodeType = 2
+metadata/nodeType = 0
 metadata/entityID = 0

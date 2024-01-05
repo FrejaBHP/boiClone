@@ -6,10 +6,7 @@ public partial class RoomData {
     public TileMap RoomMap { get; set; }
 
     public RoomData(int id, int x, int y) {
-        var coords = RoomCoords;
         RoomID = id;
-        coords.X = x;
-        coords.Y = y;
-        RoomCoords = coords;
+        RoomCoords = RoomCoords with { X = x, Y = y };
     }
 }

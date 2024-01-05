@@ -7816,7 +7816,7 @@ sources/2 = SubResource("TileSetAtlasSource_p4dto")
 sources/3 = SubResource("TileSetAtlasSource_2uh5f")
 sources/4 = SubResource("TileSetAtlasSource_2ke17")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3sp6u"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_usrwq"]
 size = Vector2(8, 16)
 
 [node name="Room" type="TileMap"]
@@ -7845,24 +7845,25 @@ collision_layer = 32
 collision_mask = 8
 metadata/_edit_group_ = true
 metadata/door = true
+metadata/direction = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorEast"]
-shape = SubResource("RectangleShape2D_3sp6u")
+shape = SubResource("RectangleShape2D_usrwq")
 
 [node name="Markers" type="Node2D" parent="."]
 scale = Vector2(0.5, 0.5)
 
 [node name="Marker2D" type="Marker2D" parent="Markers"]
 position = Vector2(48, 48)
-metadata/nodeType = 2
+metadata/nodeType = 0
 metadata/entityID = 0
 
 [node name="Marker2D2" type="Marker2D" parent="Markers"]
 position = Vector2(48, 240)
-metadata/nodeType = 2
+metadata/nodeType = 0
 metadata/entityID = 0
 
 [node name="Marker2D3" type="Marker2D" parent="Markers"]
 position = Vector2(180, 144)
-metadata/nodeType = 2
+metadata/nodeType = 0
 metadata/entityID = 0

@@ -16,7 +16,7 @@ public partial class Projectile : Area2D {
 
 	public override void _PhysicsProcess(double delta) {
 		if (Lifetime > 0) {
-			GlobalPosition += Transform.X * (float)(Speed * delta);
+			GlobalPosition -= Transform.Y * (float)(Speed * delta);
 			Lifetime -= (float)delta;
 		}
 		else {

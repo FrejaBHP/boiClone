@@ -63,15 +63,16 @@ public partial class Player : Character {
 		float effectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
 		proj.Damage = effectiveDamage;
 
-		proj.Speed = 400 * ShotSpeed + ShotSpeedBonus;
+		proj.Speed = 256 * ShotSpeed + ShotSpeedBonus;
 		proj.Range = Range + RangeBonus;
-		proj.Piercing = ShotsArePiercing;
-		proj.Spectral = ShotsAreSpectral;
 
-		proj.Lifetime = (proj.Range * 64) / proj.Speed;
+		proj.Lifetime = (proj.Range * 32) / proj.Speed;
 
 		proj.Radius = 8; //Currently Unused
 		proj.Knockback = 5; //Currently Unused
+
+		proj.Piercing = ShotsArePiercing;
+		proj.Spectral = ShotsAreSpectral;
 
 		if (proj.Spectral) {
 			proj.SetCollisionMaskValue(3, false); //disables collision with rocks
@@ -121,19 +122,19 @@ public partial class Player : Character {
 
 	public override void _Input(InputEvent @event) {
 		int shootingDir;
-		if (@event.IsActionPressed("shootright")) {
+		if (@event.IsActionPressed("shootup")) {
 			shootingDir = 0;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootdown")) {
+		if (@event.IsActionPressed("shootright")) {
 			shootingDir = 1;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootleft")) {
+		if (@event.IsActionPressed("shootdown")) {
 			shootingDir = 2;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootup")) {
+		if (@event.IsActionPressed("shootleft")) {
 			shootingDir = 3;
 			ShootProjectile(shootingDir);
 		}
@@ -153,25 +154,26 @@ public partial class Player : Character {
 		CanShoot = true;
 		
 		int shootingDir;
-		if (Input.IsActionPressed("shootright")) {
+		if (Input.IsActionPressed("shootup")) {
 			shootingDir = 0;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootdown")) {
+		if (Input.IsActionPressed("shootright")) {
 			shootingDir = 1;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootleft")) {
+		if (Input.IsActionPressed("shootdown")) {
 			shootingDir = 2;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootup")) {
+		if (Input.IsActionPressed("shootleft")) {
 			shootingDir = 3;
 			ShootProjectile(shootingDir);
 		}
 	}
 
 	public float CalculateAttackRate() {
+		//This is inefficient to calculate on every attack
 		float effectiveAttackDelay = 16 - 6 * (float)Math.Sqrt(((AttackDelay + AttackDelayBonus) * 1.3) + 1);
 		float effectiveAttackRate;
 
