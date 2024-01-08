@@ -29,9 +29,9 @@ public partial class World : Node {
 	}
 
 	private void BuildLevel() {
-		//Until coming across a better format, maps are kept track of in a 2D array for navigation
-		//And since arrays don't like negative indeces, it's offset by 25 later (for a 50x50 total map size atm)
-		//Coordinates here are however still written as starting at [0, 0] for ease of use
+		// Until coming across a better format, maps are kept track of in a 2D array for navigation
+		// And since arrays don't like negative indeces, it's offset by 25 later (for a 50x50 total map size atm)
+		// Coordinates here are however still written as starting at [0, 0] for ease of use
 
 		List<RoomData> tempList = new() {
 			new((int)RoomNames.StartingRoom, 0, 0),
@@ -69,7 +69,7 @@ public partial class World : Node {
 	}
 
 	private static void CheckDirections() {
-		//Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
+		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
 		if (RoomsA[CurrentCoords.X, CurrentCoords.Y - 1] == null)
 			(CurrentTileMap as Room).RemoveDoor(0);
 		if (RoomsA[CurrentCoords.X + 1, CurrentCoords.Y] == null)
@@ -82,10 +82,9 @@ public partial class World : Node {
 
 	private void AddPlayer() {
 		Player player = Player.Instantiate() as Player;
-		AddChild(player);
 
-		//Stats separated to allow for different kinds of characters later
-		//Should probably be moved somewhere else, however
+		// Stats separated to allow for different kinds of characters later
+		// Should probably be moved somewhere else, however
 		player.MaxHealth = 3f;
 		player.Health = player.MaxHealth;
 		player.Speed = 1f;
@@ -93,7 +92,12 @@ public partial class World : Node {
 		player.Range = 6.5f;
 		player.Damage = 3.5f;
 		player.AttackDelay = 0f;
-		player.Team = 0;
+
+		player.Coins = 0;
+		player.Bombs = 0;
+		player.Keys = 0;
+
+		AddChild(player);
 
 		player.GlobalPosition = player.GlobalPosition with { X = 240, Y = 144 }; //Middle of the starting room
 	}

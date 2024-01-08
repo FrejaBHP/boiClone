@@ -12,40 +12,12 @@ public partial class Character : CharacterBody2D {
 	public virtual float ShotSpeed { get; set; }
 	public virtual float AttackDelay { get; set; }
 
-	public virtual int Team { get; set; }
-
 	public virtual bool CanShoot { get; set; }
 	public virtual bool ShotsArePiercing { get; set; }
 	public virtual bool ShotsAreSpectral { get; set; }
 	public virtual bool Invulnerable { get; set; }
 
 	protected float moveSpeed = 208f;
-
-	public virtual Projectile SetProjectileProperties(Projectile proj) {
-		proj.Speed = 256 * ShotSpeed;
-		proj.Range = Range;
-		proj.Damage = Damage;
-		proj.Piercing = ShotsArePiercing;
-		proj.Spectral = ShotsAreSpectral;
-
-		proj.Lifetime = (proj.Range * 32) / proj.Speed;
-
-		proj.Radius = 8;
-		proj.Knockback = 5;
-
-		if (proj.Spectral) {
-			proj.SetCollisionMaskValue(3, false); //disables collision with rocks
-		}
-
-		if (Team == 0) {
-			proj.SetCollisionMaskValue(4, false); //disables collision with player
-		}
-		if (Team == 1) {
-			proj.SetCollisionMaskValue(5, false); //disables collision with enemies
-		}
-
-		return proj;
-	}
 
 	protected virtual void CheckBodyCollision() {
 		
@@ -98,8 +70,7 @@ public partial class Character : CharacterBody2D {
 	}
 
 	protected virtual void Die() {
-		World.DecreaseEnemyCount();
-		QueueFree();
+		
 	}
 
 	protected virtual void OnTakeDamage() {

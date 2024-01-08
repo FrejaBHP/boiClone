@@ -24,6 +24,24 @@ public partial class Projectile : Area2D {
 		}
 	}
 
+	public void SetProjectileProperties(float speed, float damage, float range, int alignment) {
+		Speed = 256 * speed;
+		Damage = damage;
+		Range = range;
+		Lifetime = (range * 32) / speed;
+
+		if (Spectral) {
+			SetCollisionMaskValue(3, false); // disables collision with rocks
+		}
+
+		if (alignment == 0) {
+			SetCollisionMaskValue(5, true); // enables collision with enemies
+		}
+		if (alignment == 1) {
+			SetCollisionMaskValue(4, true); // enables collision with player
+		}
+	}
+
 	public void OnBodyEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
 			Main.ProcessDamage((Character)body, Main.Player, Main.BasePlayerDamageTaken);

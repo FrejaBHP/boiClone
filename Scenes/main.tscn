@@ -26,7 +26,25 @@ offset_right = 40.0
 offset_bottom = 40.0
 theme_override_fonts/font = SubResource("FontVariation_g2ckl")
 
-[node name="DamageText" type="Label" parent="HUD"]
+[node name="CoinText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
+
+[node name="BombText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
+
+[node name="KeyText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
+
+[node name="SpeedText" type="Label" parent="HUD"]
 offset_right = 40.0
 offset_bottom = 40.0
 size_flags_horizontal = 0
@@ -37,6 +55,24 @@ offset_right = 40.0
 offset_bottom = 40.0
 size_flags_horizontal = 0
 theme_override_fonts/font = SubResource("FontVariation_w4y4x")
+
+[node name="DamageText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
+
+[node name="RangeText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
+
+[node name="ShotSpeedText" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_6wy08")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(240, 144)

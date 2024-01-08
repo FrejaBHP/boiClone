@@ -15,8 +15,8 @@ public partial class Main : Node {
 	}
 
     public override void _Ready() {
-        HUD.HUDUpdateDamage((float)(Player.Damage * Math.Sqrt(Player.DamageBonus * 1.2 + 1) + Player.FlatDamageBonus));
-		HUD.HUDUpdateRate(Player.CalculateAttackRate());
+        //HUD.HUDUpdateDamage((float)(Player.Damage * Math.Sqrt(Player.DamageBonus * 1.2 + 1) + Player.FlatDamageBonus));
+		//HUD.HUDUpdateRate(Player.CalculateAttackRate());
     }
 
     public override void _EnterTree() {
@@ -30,6 +30,30 @@ public partial class Main : Node {
 			GD.Print($"Health: {target.Health}, Damage taken: {damage}");
 			target.ModifyHealth(-damage);
 		}
+	}
+
+	public static void GivePickup(int pickupID, int amount) {
+		switch (pickupID) {
+			case 0:
+				Player.Coins += amount;
+				break;
+
+			case 1:
+				Player.Bombs += amount;
+				break;
+				
+			case 2:
+				Player.Keys += amount;
+				break;
+		}
+	}
+
+	public static void GiveItem(int itemID) {
+		Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
+		Player.Inventory.Add(item);
+		AddItemStats(item);
+
+		GD.Print($"Picked up {item.ItemName}!");
 	}
 
 	public static void AddItemStats(Item item) {

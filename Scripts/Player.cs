@@ -4,21 +4,192 @@ using System.Collections.Generic;
 using System.Linq;
 
 public partial class Player : Character {
+	#region Properties
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
 
-	public float DamageBonus { get; set; } = 0;
-    public float HealthBonus { get; set; } = 0;
-    public float RangeBonus { get; set; } = 0;
-	public float ShotSpeedBonus { get; set; } = 0;
-    public float SpeedBonus { get; set; } = 0;
-    public float AttackDelayBonus { get; set; } = 0;
-	public float FlatDamageBonus { get; set; } = 0;
-	public float FlatAttackRateBonus { get; set; } = 0;
+	private float effectiveDamage;
+	private float effectiveFireRate;
+	private float refireDelay;
 
-	public List<Item> Inventory { get; set; }
+	#region Health
+	private float health;
+	public override float Health {
+		get => health;
+		set {
+			health = value;
+			HUD.HUDUpdateHealth(health, maxHealth + healthBonus);
+		}
+	}
 
-	public Player() {
+	private float healthBonus = 0;
+	public float HealthBonus {
+		get => healthBonus;
+		set {
+			healthBonus = value;
+			HUD.HUDUpdateHealth(health, maxHealth + healthBonus);
+		}
+	}
+
+	private float maxHealth;
+	public override float MaxHealth {
+		get => maxHealth;
+		set {
+			maxHealth = value;
+			HUD.HUDUpdateHealth(health, maxHealth + healthBonus);
+		}
+	}
+	#endregion
+
+	#region Pickups
+	private int coins;
+	public int Coins {
+		get => coins;
+		set {
+			coins = value;
+			HUD.HUDUpdateCoins(coins);
+		}
+	}
+
+	private int bombs;
+	public int Bombs {
+		get => bombs;
+		set {
+			bombs = value;
+			HUD.HUDUpdateBombs(bombs);
+		}
+	}
+
+	private int keys;
+	public int Keys {
+		get => keys;
+		set {
+			keys = value;
+			HUD.HUDUpdateKeys(keys);
+		}
+	}
+	#endregion
+
+	#region Stats
+	private float speed;
+	public override float Speed {
+		get => speed;
+		set {
+			speed = value;
+			HUD.HUDUpdateSpeed(speed + speedBonus);
+		}
+	}
+
+	private float speedBonus = 0;
+	public float SpeedBonus {
+		get => speedBonus;
+		set {
+			speedBonus = value;
+			HUD.HUDUpdateSpeed(speed + speedBonus);
+		}
+	}
+
+	private float attackDelay;
+	public override float AttackDelay {
+		get => attackDelay;
+		set {
+			attackDelay = value;
+			CalculateAttackRate();
+			HUD.HUDUpdateRate(effectiveFireRate);
+		} 
+	}
+
+	private float attackDelayBonus = 0;
+	public float AttackDelayBonus {
+		get => attackDelayBonus;
+		set {
+			attackDelayBonus = value;
+			CalculateAttackRate();
+			HUD.HUDUpdateRate(effectiveFireRate);
+		} 
+	}
+
+	private float flatAttackRateBonus = 0;
+	public float FlatAttackRateBonus {
+		get => flatAttackRateBonus;
+		set {
+			flatAttackRateBonus = value;
+			CalculateAttackRate();
+			HUD.HUDUpdateRate(effectiveFireRate);
+		} 
+	}
+
+	private float damage;
+	public override float Damage {
+		get => damage;
+		set {
+			damage = value;
+			CalculateAttackDamage();
+			HUD.HUDUpdateDamage(effectiveDamage);
+		} 
+	}
+
+	private float damageBonus = 0;
+	public float DamageBonus {
+		get => damageBonus;
+		set {
+			damageBonus = value;
+			CalculateAttackDamage();
+			HUD.HUDUpdateDamage(effectiveDamage);
+		} 
+	}
+
+	private float flatDamageBonus = 0;
+	public float FlatDamageBonus {
+		get => flatDamageBonus;
+		set {
+			flatDamageBonus = value;
+			CalculateAttackDamage();
+			HUD.HUDUpdateDamage(effectiveDamage);
+		}
+	}
+	
+	private float range;
+	public override float Range {
+		get => range;
+		set {
+			range = value;
+			HUD.HUDUpdateRange(range + rangeBonus);
+		}
+	}
+
+	private float rangeBonus = 0;
+	public float RangeBonus {
+		get => rangeBonus;
+		set {
+			rangeBonus = value;
+			HUD.HUDUpdateRange(range + rangeBonus);
+		}
+	}
+
+	private float shotSpeed;
+    public override float ShotSpeed { 
+		get => shotSpeed; 
+		set { 
+			shotSpeed = value; 
+			HUD.HUDUpdateShotSpeed(shotSpeed + shotSpeedBonus);
+		} 
+	}
+
+    private float shotSpeedBonus = 0;
+	public float ShotSpeedBonus { 
+		get => shotSpeedBonus; 
+		set { 
+			shotSpeedBonus = value; 
+			HUD.HUDUpdateShotSpeed(shotSpeed + shotSpeedBonus);
+		} 
+	}
+	#endregion
+
+    public List<Item> Inventory { get; set; }
+	#endregion
+
+    public Player() {
 		Main.Player = this;
 		Inventory = new();
 		IsAlive = true;
@@ -28,7 +199,7 @@ public partial class Player : Character {
 
     public override void _Ready() {
 		GetNode<Timer>("IFrameTimer").WaitTime = IFrameTime;
-		GetNode<Timer>("RefireTimer").WaitTime = 1f / CalculateAttackRate();
+		GetNode<Timer>("RefireTimer").WaitTime = refireDelay;
 		AddToGroup("Player");
     }
 
@@ -43,46 +214,13 @@ public partial class Player : Character {
 			KinematicCollision2D col = GetSlideCollision(i);
 			if (col.GetCollider().IsClass("StaticBody2D")) { //So far, only item pedestals are StaticBody2D objects, so no further checks are needed
 				WorldItem pedestal = col.GetCollider() as WorldItem;
-				int itemID = (int)pedestal.GetMeta("itemID");
-				
-				if (!pedestal.ItemRemoved) {
-					//THIS SHOULD BE TURNED INTO A SIGNAL AND HANDLED BY EITHER WORLD OR MAIN
-					pedestal.ItemRemoved = true;
-					pedestal.GetChild<Sprite2D>(2).Visible = false;
-
-					Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
-					Inventory.Add(item);
-					Main.AddItemStats(item);
-					GD.Print($"Picked up {Inventory.Last().ItemName}!");
-				}
+				pedestal.PlayerCollided();
 			}
 		}
     }
 
-	public override Projectile SetProjectileProperties(Projectile proj) {
-		float effectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
-		proj.Damage = effectiveDamage;
-
-		proj.Speed = 256 * ShotSpeed + ShotSpeedBonus;
-		proj.Range = Range + RangeBonus;
-
-		proj.Lifetime = (proj.Range * 32) / proj.Speed;
-
-		proj.Radius = 8; //Currently Unused
-		proj.Knockback = 5; //Currently Unused
-
-		proj.Piercing = ShotsArePiercing;
-		proj.Spectral = ShotsAreSpectral;
-
-		if (proj.Spectral) {
-			proj.SetCollisionMaskValue(3, false); //disables collision with rocks
-		}
-		proj.SetCollisionMaskValue(4, false); //disables collision with player
-
-		return proj;
-	}
-
 	private void UpdateStats(int statIndex, float amount) {
+		/*
 		switch (statIndex) {
 			case 0:
 				break;
@@ -97,27 +235,7 @@ public partial class Player : Character {
 			default:
 				break;
 		}
-	}
-
-    protected override void ShootProjectile(int dir) {
-		if (CanShoot) {
-			CanShoot = false;
-			GetNode<Timer>("RefireTimer").Start();
-
-			Projectile proj = Projectile.Instantiate() as Projectile;
-			proj = SetProjectileProperties(proj);
-			GetNode<World>("/root/Main/World").AddChild(proj);
-
-			Transform2D trans = Transform2D.Identity;
-			trans.Origin = GlobalPosition;
-
-			float rotation = (float)Math.PI * 0.5f * dir;
-			trans.X.X = trans.Y.Y = Mathf.Cos(rotation);
-			trans.X.Y = trans.Y.X = Mathf.Sin(rotation);
-			trans.Y.X *= -1;
-
-			proj.Transform = trans;
-		}
+		*/
 	}
 
 	public override void _Input(InputEvent @event) {
@@ -140,17 +258,34 @@ public partial class Player : Character {
 		}
     }
 
-	private void IFrameTimerTimeout() {
-		Invulnerable = false;
+    protected override void ShootProjectile(int dir) {
+		if (CanShoot) {
+			CanShoot = false;
+			GetNode<Timer>("RefireTimer").Start();
+
+			Projectile proj = Projectile.Instantiate() as Projectile;
+			proj.SetProjectileProperties(
+				shotSpeed + shotSpeedBonus,
+				effectiveDamage,
+				range + rangeBonus,
+				0
+			);
+			GetNode<World>("/root/Main/World").AddChild(proj);
+
+			Transform2D trans = Transform2D.Identity;
+			trans.Origin = GlobalPosition;
+
+			float rotation = (float)Math.PI * 0.5f * dir;
+			trans.X.X = trans.Y.Y = Mathf.Cos(rotation);
+			trans.X.Y = trans.Y.X = Mathf.Sin(rotation);
+			trans.Y.X *= -1;
+
+			proj.Transform = trans;
+		}
 	}
 
-    protected override void OnTakeDamage() {
-        Invulnerable = true;
-		GetNode<Timer>("IFrameTimer").Start();
-    }
-
 	protected override void RefireTimerTimeout() {
-		GetNode<Timer>("RefireTimer").WaitTime = 1f / CalculateAttackRate();
+		GetNode<Timer>("RefireTimer").WaitTime = refireDelay;
 		CanShoot = true;
 		
 		int shootingDir;
@@ -172,8 +307,20 @@ public partial class Player : Character {
 		}
 	}
 
-	public float CalculateAttackRate() {
-		//This is inefficient to calculate on every attack
+    protected override void OnTakeDamage() {
+        Invulnerable = true;
+		GetNode<Timer>("IFrameTimer").Start();
+    }
+
+	private void IFrameTimerTimeout() {
+		Invulnerable = false;
+	}
+
+	public void CalculateAttackDamage() {
+		effectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
+	}
+
+	public void CalculateAttackRate() {
 		float effectiveAttackDelay = 16 - 6 * (float)Math.Sqrt(((AttackDelay + AttackDelayBonus) * 1.3) + 1);
 		float effectiveAttackRate;
 
@@ -184,7 +331,8 @@ public partial class Player : Character {
 			effectiveAttackRate = 30 / (effectiveAttackDelay + 1) + FlatAttackRateBonus;
 		}
 
-		//GD.Print($"Delay: {effectiveAttackDelay}, Rate: {effectiveAttackRate}");
-		return effectiveAttackRate;
+		// Sets attack rate-related variables for other methods to use
+		effectiveFireRate = effectiveAttackRate;
+		refireDelay = 1f / effectiveFireRate;
 	}
 }
