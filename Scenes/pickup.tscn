@@ -1,10 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkn3vq3c5w0v4"]
+[gd_scene load_steps=3 format=3 uid="uid://bkn3vq3c5w0v4"]
+
+[ext_resource type="Script" path="res://Scripts/Pickup.cs" id="1_g0yic"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wp3dp"]
+resource_local_to_scene = true
+radius = 6.0
 
 [node name="Pickup" type="Area2D"]
+scale = Vector2(2, 2)
+collision_layer = 512
+collision_mask = 8
+script = ExtResource("1_g0yic")
+metadata/pickupID = 0
+metadata/amount = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="PickupCol" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_wp3dp")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="PickupSprite" type="Sprite2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="OnPlayerEntered"]

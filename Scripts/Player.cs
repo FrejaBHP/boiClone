@@ -317,6 +317,7 @@ public partial class Player : Character {
 	}
 
 	public void CalculateAttackDamage() {
+		// Sets damage variable for other methods to use
 		effectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
 	}
 

@@ -25,7 +25,7 @@ public partial class Enemy : Character {
     }
 
     protected override void Die() {
-        World.DecreaseEnemyCount();
+        GetNode<World>("/root/Main/World").DecreaseEnemyCount();
 		QueueFree();
     }
 

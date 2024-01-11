@@ -8,6 +8,6 @@ public static class EnemyCollection {
         EnemyScenes = new() {
             GD.Load<PackedScene>("Scenes/Enemies/basic_enemy.tscn")
         };
-        GD.Print($"Loaded enemies: {EnemyScenes.Count}");
+        GD.Print($"Loaded enemy types: {EnemyScenes.Count}");
     }
 }

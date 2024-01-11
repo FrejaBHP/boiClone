@@ -23,6 +23,7 @@ public partial class Main : Node {
         RoomCollection.CompileRoomList();
 		EnemyCollection.CompileEnemyList();
 		ItemCollection.CompileItemList();
+		PickupCollection.CompilePickupList();
     }
 
 	public static void ProcessDamage(Character source, Character target, float damage) {
@@ -35,15 +36,30 @@ public partial class Main : Node {
 	public static void GivePickup(int pickupID, int amount) {
 		switch (pickupID) {
 			case 0:
-				Player.Coins += amount;
+				if ((Player.Coins + amount) < 100) {
+					Player.Coins += amount;
+				}
+				else {
+					Player.Coins = 99;
+				}
 				break;
 
 			case 1:
-				Player.Bombs += amount;
+				if ((Player.Bombs + amount) < 100) {
+					Player.Bombs += amount;
+				}
+				else {
+					Player.Bombs = 99;
+				}
 				break;
-				
+
 			case 2:
-				Player.Keys += amount;
+				if ((Player.Keys + amount) < 100) {
+					Player.Keys += amount;
+				}
+				else {
+					Player.Keys = 99;
+				}
 				break;
 		}
 	}

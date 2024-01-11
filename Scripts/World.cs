@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public partial class World : Node {
 	public static RoomData[,] RoomsA { get; set; }
 	public static Vector2I CurrentCoords { get; set; }
@@ -65,7 +66,7 @@ public partial class World : Node {
 		//ProcessRoomMarkers(CurrentTileMap);
 		CheckDirections();
 		AddPlayer();
-		CheckIsRoomClear();
+		(CurrentTileMap as Room).CheckAndStartOpeningDoors();
 	}
 
 	private static void CheckDirections() {
@@ -84,7 +85,8 @@ public partial class World : Node {
 		Player player = Player.Instantiate() as Player;
 
 		// Stats separated to allow for different kinds of characters later
-		// Should probably be moved somewhere else, however
+		// Setting these values also sets the HUD, which is probably smart
+		// Maybe should be moved somewhere else, however
 		player.MaxHealth = 3f;
 		player.Health = player.MaxHealth;
 		player.Speed = 1f;
@@ -117,18 +119,15 @@ public partial class World : Node {
 
 				case 2:
 					break;
-				
-				default:
-					break;
 			}
 		}
 
 		if (enemiesLeft == 0) {
-			CheckIsRoomClear();
+			RoomCleared(false);
 		}
 	}
 
-	private void CreateItem(int itemID, Vector2 markerPos) {
+	private void CreateItem(int itemID, Vector2 pos) {
 		WorldItem newPedestal = ItemPedestal.Instantiate() as WorldItem;
 		Sprite2D itemSprite = newPedestal.GetNode<Sprite2D>("ItemSpriteItem");
 
@@ -155,28 +154,59 @@ public partial class World : Node {
 		}
 		
 		AddChild(newPedestal);
-		newPedestal.GlobalPosition = markerPos;
+		newPedestal.GlobalPosition = pos;
 	}
 
-	private void CreateEnemy(int enemyID, Vector2 markerPos) {
+	private void CreateEnemy(int enemyID, Vector2 pos) {
 		if (EnemyCollection.EnemyScenes[enemyID] != null) {
 			Enemy newEnemy = EnemyCollection.EnemyScenes[enemyID].Instantiate() as Enemy;
 			AddChild(newEnemy);
-			newEnemy.GlobalPosition = markerPos;
+			newEnemy.GlobalPosition = pos;
 		}
 		else {
 			GD.PushError($"Enemy with ID {enemyID} not found.");
 		}
 	}
 
-	public static void DecreaseEnemyCount() {
-		enemiesLeft--;
-		CheckIsRoomClear();
+	private void CreatePickup(int pickupID, Vector2 pos) {
+		if (PickupCollection.PickupScenes[pickupID] != null) {
+			Pickup newPickup = PickupCollection.PickupScenes[pickupID].Instantiate() as Pickup;
+			AddChild(newPickup);
+			newPickup.GlobalPosition = pos;
+		}
+		else {
+			GD.PushError($"Pickup with ID {pickupID} not found.");
+		}
 	}
 
-	private static void CheckIsRoomClear() {
+	public void DecreaseEnemyCount() {
+		enemiesLeft--;
+		
 		if (enemiesLeft == 0) {
-			(CurrentTileMap as Room).CheckAndStartOpeningDoors();
+			RoomCleared(true);
+		}
+	}
+
+	private void RoomCleared(bool hadCombat) {
+		(CurrentTileMap as Room).CheckAndStartOpeningDoors();
+		
+		if (hadCombat) {
+			CallDeferred(MethodName.RollForPickup); // To avoid runtime error, this call is deferred
+		}
+	}
+
+	private void RollForPickup() {
+		Random random = new();
+		int dropRoll = random.Next(0, 4);
+
+		if (dropRoll == 0) {
+			int pickupRoll = random.Next(1, 3);
+
+			Vector2 pickupPos;
+			pickupPos.X = CurrentTileMap.GlobalPosition.X + 240;
+			pickupPos.Y = CurrentTileMap.GlobalPosition.Y + 144;
+
+			CreatePickup(pickupRoll, pickupPos);
 		}
 	}
 

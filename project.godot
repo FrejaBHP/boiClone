@@ -78,6 +78,7 @@ shootdown={
 2d_physics/layer_7="Item"
 2d_physics/layer_8="Exit"
 2d_physics/layer_9="Projectile"
+2d_physics/layer_10="Pickup"
 
 [rendering]
 

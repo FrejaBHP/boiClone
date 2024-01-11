@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8sk67o3y00yb"]
+
+[ext_resource type="PackedScene" uid="uid://bkn3vq3c5w0v4" path="res://Scenes/pickup.tscn" id="1_75qu7"]
+[ext_resource type="Texture2D" uid="uid://dc0ge18oqou4" path="res://Images/Pickups/bomb.png" id="2_lxi75"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u4kaq"]
+resource_local_to_scene = true
+radius = 6.0
+
+[node name="Bomb" instance=ExtResource("1_75qu7")]
+metadata/pickupID = 1
+metadata/amount = 1
+
+[node name="PickupCol" parent="." index="0"]
+shape = SubResource("CircleShape2D_u4kaq")
+
+[node name="PickupSprite" parent="." index="1"]
+texture_filter = 1
+texture = ExtResource("2_lxi75")

@@ -87,6 +87,7 @@ public partial class Room : TileMap {
 	}
 
 	public void OnDoorEntered(uint dir, Node2D body) {
-		GetNode<World>("/root/Main/World").MoveRooms(dir);
+		if (body.IsInGroup("Player"))
+			GetNode<World>("/root/Main/World").MoveRooms(dir);
 	}
 }

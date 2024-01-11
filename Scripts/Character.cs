@@ -52,7 +52,7 @@ public partial class Character : CharacterBody2D {
 	public virtual void ModifyHealth(float change) {
 		if (!Invulnerable) {
 			Health += change;
-			GD.Print($"HP: {Health}, diff: {change}");
+			//GD.Print($"HP: {Health}, diff: {change}");
 
 			if (change < 0) {
 				OnTakeDamage();

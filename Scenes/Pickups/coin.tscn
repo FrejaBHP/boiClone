@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://uodqlk04yxi7"]
+
+[ext_resource type="PackedScene" uid="uid://bkn3vq3c5w0v4" path="res://Scenes/pickup.tscn" id="1_5h288"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_01lpr"]
+resource_local_to_scene = true
+radius = 6.0
+
+[node name="Coin" instance=ExtResource("1_5h288")]
+metadata/amount = 1
+
+[node name="PickupCol" parent="." index="0"]
+shape = SubResource("CircleShape2D_01lpr")
