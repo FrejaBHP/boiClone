@@ -7,6 +7,8 @@ public static class PickupCollection {
     public static void CompilePickupList() {
         PickupScenes = new() {
             GD.Load<PackedScene>("Scenes/Pickups/coin.tscn"),
+            GD.Load<PackedScene>("Scenes/Pickups/coin5.tscn"),
+            GD.Load<PackedScene>("Scenes/Pickups/coin10.tscn"),
             GD.Load<PackedScene>("Scenes/Pickups/bomb.tscn"),
             GD.Load<PackedScene>("Scenes/Pickups/key.tscn")
         };

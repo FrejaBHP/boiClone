@@ -11,10 +11,12 @@ public partial class World : Node {
 	public static TileMap CurrentTileMap { get; set; }
 	
 	private static int enemiesLeft = 0;
+	private static readonly int roomLength = 480;
+	private static readonly int roomHeight = 288;
 	private static readonly int gridSize = 50;
 	private static readonly int gridGapExtra = 128; // Until better solution is implemented, this is used to keep other rooms out of sight
-	private static readonly int gridGapX = 480 + gridGapExtra; // Each room is 32x15=480 units long
-	private static readonly int gridGapY = 288 + gridGapExtra; // Each room is 32x9=288 units tall
+	private static readonly int gridGapX = roomLength + gridGapExtra; // Each room is 32x15=480 units long
+	private static readonly int gridGapY = roomHeight + gridGapExtra; // Each room is 32x9=288 units tall
 	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
 
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
@@ -29,6 +31,29 @@ public partial class World : Node {
 		BuildLevel();
 	}
 
+
+	#region Debug
+	private static Random debugRND = new();
+
+	public override void _Input(InputEvent @event) {
+		if (@event.IsActionPressed("debugPickup")) {
+			DEBUGRollForPickup();
+		}
+    }
+
+	private void DEBUGRollForPickup() { // KP1
+		int typeRoll = debugRND.Next(0, 3);
+		int pickupRoll = DeterminePickupRarity(typeRoll);
+
+		Vector2 pickupPos;
+		pickupPos.X = CurrentTileMap.GlobalPosition.X + 240;
+		pickupPos.Y = CurrentTileMap.GlobalPosition.Y + 144;
+
+		CreatePickup(pickupRoll, pickupPos);
+	}
+	#endregion
+
+	#region Initialisation
 	private void BuildLevel() {
 		// Until coming across a better format, maps are kept track of in a 2D array for navigation
 		// And since arrays don't like negative indeces, it's offset by 25 later (for a 50x50 total map size atm)
@@ -101,8 +126,9 @@ public partial class World : Node {
 
 		AddChild(player);
 
-		player.GlobalPosition = player.GlobalPosition with { X = 240, Y = 144 }; //Middle of the starting room
+		player.GlobalPosition = player.GlobalPosition with { X = roomLength / 2, Y = roomHeight / 2 }; //Middle of the starting room
 	}
+	#endregion
 
 	private void ProcessRoomMarkers(TileMap room) {
 		Node markersNode = room.GetNode("Markers");
@@ -183,7 +209,7 @@ public partial class World : Node {
 		enemiesLeft--;
 		
 		if (enemiesLeft == 0) {
-			RoomCleared(true);
+			RoomCleared(true); // If combat occured, parameter is true, rolling for pickup
 		}
 	}
 
@@ -197,17 +223,47 @@ public partial class World : Node {
 
 	private void RollForPickup() {
 		Random random = new();
-		int dropRoll = random.Next(0, 4);
+		int dropRoll = random.Next(0, 4); // 25% chance
 
 		if (dropRoll == 0) {
-			int pickupRoll = random.Next(1, 3);
+			int typeRoll = random.Next(0, 3); // Coin, Bomb, Key
+			int pickupRoll = DeterminePickupRarity(typeRoll);
 
 			Vector2 pickupPos;
-			pickupPos.X = CurrentTileMap.GlobalPosition.X + 240;
-			pickupPos.Y = CurrentTileMap.GlobalPosition.Y + 144;
+			pickupPos.X = CurrentTileMap.GlobalPosition.X + (roomLength / 2);
+			pickupPos.Y = CurrentTileMap.GlobalPosition.Y + (roomHeight / 2);
 
 			CreatePickup(pickupRoll, pickupPos);
 		}
+	}
+
+	private int DeterminePickupRarity(int pType) {
+		Random random = new(); // Placeholder luck
+		int pID = 0;
+
+		switch (pType) {
+			case 0:
+				int cRoll = random.Next(0, 20);
+				if (cRoll == 19) {
+					pID = 2; // 10 coins
+				}
+				else if (cRoll >= 15) {
+					pID = 1; // 5 coins
+				}
+				else {
+					pID = 0; // 1 coin
+				}
+				break;
+			
+			case 1:
+				pID = 3; // Bomb, no other types exist yet
+				break;
+			
+			case 2:
+				pID = 4; // Key, no other types exist yet
+				break;
+		}
+		return pID;
 	}
 
 	public void MoveRooms(uint dir) {

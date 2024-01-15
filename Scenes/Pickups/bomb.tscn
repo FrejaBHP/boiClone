@@ -8,7 +8,7 @@ resource_local_to_scene = true
 radius = 6.0
 
 [node name="Bomb" instance=ExtResource("1_75qu7")]
-metadata/pickupID = 1
+metadata/pickupType = 1
 metadata/amount = 1
 
 [node name="PickupCol" parent="." index="0"]

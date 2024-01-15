@@ -33,8 +33,8 @@ public partial class Main : Node {
 		}
 	}
 
-	public static void GivePickup(int pickupID, int amount) {
-		switch (pickupID) {
+	public static void GivePickup(int pickupType, int amount) {
+		switch (pickupType) {
 			case 0:
 				if ((Player.Coins + amount) < 100) {
 					Player.Coins += amount;
@@ -65,11 +65,13 @@ public partial class Main : Node {
 	}
 
 	public static void GiveItem(int itemID) {
-		Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
-		Player.Inventory.Add(item);
-		AddItemStats(item);
+		if (ItemCollection.ItemTypes[itemID] != null) {
+			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
+			Player.Inventory.Add(item);
+			AddItemStats(item);
 
-		GD.Print($"Picked up {item.ItemName}!");
+			GD.Print($"Picked up {item.ItemName}!");
+		}
 	}
 
 	public static void AddItemStats(Item item) {

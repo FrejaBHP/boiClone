@@ -265,10 +265,10 @@ public partial class Player : Character {
 
 			Projectile proj = Projectile.Instantiate() as Projectile;
 			proj.SetProjectileProperties(
-				shotSpeed + shotSpeedBonus,
-				effectiveDamage,
-				range + rangeBonus,
-				0
+				shotSpeed + shotSpeedBonus, 	// Shot Speed
+				effectiveDamage, 				// Damage for the projectile to deal
+				range + rangeBonus, 			// Projectile range
+				0 								// 0 sets flag for hitting enemies
 			);
 			GetNode<World>("/root/Main/World").AddChild(proj);
 
@@ -285,7 +285,6 @@ public partial class Player : Character {
 	}
 
 	protected override void RefireTimerTimeout() {
-		GetNode<Timer>("RefireTimer").WaitTime = refireDelay;
 		CanShoot = true;
 		
 		int shootingDir;
@@ -335,5 +334,6 @@ public partial class Player : Character {
 		// Sets attack rate-related variables for other methods to use
 		effectiveFireRate = effectiveAttackRate;
 		refireDelay = 1f / effectiveFireRate;
+		GetNode<Timer>("RefireTimer").WaitTime = refireDelay;
 	}
 }

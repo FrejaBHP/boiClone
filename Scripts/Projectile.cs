@@ -15,6 +15,7 @@ public partial class Projectile : Area2D {
 	public float Lifetime { get; set; }
 
 	public override void _PhysicsProcess(double delta) {
+		// Destroys projectile after range limit
 		if (Lifetime > 0) {
 			GlobalPosition -= Transform.Y * (float)(Speed * delta);
 			Lifetime -= (float)delta;
@@ -30,15 +31,16 @@ public partial class Projectile : Area2D {
 		Range = range;
 		Lifetime = (range * 32) / speed;
 
+		// Modifies projectile object scanning behaviour
 		if (Spectral) {
-			SetCollisionMaskValue(3, false); // disables collision with rocks
+			SetCollisionMaskValue((int)CollisionLayerNames.Obstacle, false);
 		}
 
 		if (alignment == 0) {
-			SetCollisionMaskValue(5, true); // enables collision with enemies
+			SetCollisionMaskValue((int)CollisionLayerNames.Enemy, true);
 		}
 		if (alignment == 1) {
-			SetCollisionMaskValue(4, true); // enables collision with player
+			SetCollisionMaskValue((int)CollisionLayerNames.Player, true);
 		}
 	}
 

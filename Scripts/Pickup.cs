@@ -2,17 +2,17 @@ using Godot;
 using System;
 
 public partial class Pickup : Area2D {
-	protected int pickupID;
+	protected int pType;
 	protected int amount;
 	
 	public override void _Ready() {
-		pickupID = (int)GetMeta("pickupID");
+		pType = (int)GetMeta("pickupType");
 		amount = (int)GetMeta("amount");
 	}
 
 	private void OnPlayerEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
-			Main.GivePickup(pickupID, amount);
+			Main.GivePickup(pType, amount);
 			QueueFree();
 		}
 	}
