@@ -219,25 +219,6 @@ public partial class Player : Character {
 		}
     }
 
-	private void UpdateStats(int statIndex, float amount) {
-		/*
-		switch (statIndex) {
-			case 0:
-				break;
-
-			case 1:
-				if (amount > 0) {
-					Health += amount;
-				}
-				MaxHealth += amount;
-				break;
-			
-			default:
-				break;
-		}
-		*/
-	}
-
 	public override void _Input(InputEvent @event) {
 		int shootingDir;
 		if (@event.IsActionPressed("shootup")) {

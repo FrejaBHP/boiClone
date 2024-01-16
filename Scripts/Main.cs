@@ -68,95 +68,9 @@ public partial class Main : Node {
 		if (ItemCollection.ItemTypes[itemID] != null) {
 			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
 			Player.Inventory.Add(item);
-			AddItemStats(item);
+			item.OnPickedUp();
 
 			GD.Print($"Picked up {item.ItemName}!");
-		}
-	}
-
-	public static void AddItemStats(Item item) {
-		for (int i = 0; i < item.ItemBonuses.Count; i++) {
-			if (item.ItemBonuses[i] != 0) {
-				switch (i) {
-					case 0:
-						Player.DamageBonus += item.ItemBonuses[i];
-						break;
-
-					case 1:
-						Player.HealthBonus += item.ItemBonuses[i];
-						break;
-
-					case 2:
-						Player.RangeBonus += item.ItemBonuses[i];
-						break;
-
-					case 3:
-						Player.ShotSpeedBonus += item.ItemBonuses[i];
-						break;
-
-					case 4:
-						Player.SpeedBonus += item.ItemBonuses[i];
-						break;
-
-					case 5:
-						Player.AttackDelayBonus += item.ItemBonuses[i];
-						break;
-
-					case 6:
-						Player.FlatDamageBonus += item.ItemBonuses[i];
-						break;
-
-					case 7:
-						Player.FlatAttackRateBonus += item.ItemBonuses[i];
-						break;
-
-					default:
-						break;
-				}
-			}
-		}
-	}
-
-	public static void RemoveItemStats(Item item) {
-		for (int i = 0; i < item.ItemBonuses.Count; i++) {
-			if (item.ItemBonuses[i] != 0) {
-				switch (i) {
-					case 0:
-						Player.DamageBonus -= item.ItemBonuses[i];
-						break;
-
-					case 1:
-						Player.HealthBonus -= item.ItemBonuses[i];
-						break;
-
-					case 2:
-						Player.RangeBonus -= item.ItemBonuses[i];
-						break;
-
-					case 3:
-						Player.ShotSpeedBonus -= item.ItemBonuses[i];
-						break;
-
-					case 4:
-						Player.SpeedBonus -= item.ItemBonuses[i];
-						break;
-
-					case 5:
-						Player.AttackDelayBonus -= item.ItemBonuses[i];
-						break;
-
-					case 6:
-						Player.FlatDamageBonus -= item.ItemBonuses[i];
-						break;
-
-					case 7:
-						Player.FlatAttackRateBonus -= item.ItemBonuses[i];
-						break;
-						
-					default:
-						break;
-				}
-			}
 		}
 	}
 }

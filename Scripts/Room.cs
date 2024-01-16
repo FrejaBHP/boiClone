@@ -1,12 +1,36 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
 public partial class Room : TileMap {
 	public bool Visited { get; set; }
+	public List<Marker2D> EnemyMarkers { get; set; }
+	public List<Marker2D> ItemMarkers { get; set; }
 
-	private string GetDoorPath(int dir) {
+    public override void _Ready() {
+		EnemyMarkers = new();
+		ItemMarkers = new();
+		Node markersNode = GetNode("Markers");
+		foreach (Marker2D marker in markersNode.GetChildren().Cast<Marker2D>()) {
+			switch ((int)marker.GetMeta("nodeType")) {
+				case 0:
+					EnemyMarkers.Add(marker);
+					break;
+				
+				case 1:
+					ItemMarkers.Add(marker);
+					break;
+
+				case 2:
+					break;
+			}
+		}
+		GD.Print($"Enemies: {EnemyMarkers.Count}, Items: {ItemMarkers.Count}");
+    }
+
+    private string GetDoorPath(int dir) {
 		string nodePath = "";
 		switch (dir) {
 			case 0:
