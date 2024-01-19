@@ -1,11 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://cc62t4w6hl364"]
+[gd_scene load_steps=13 format=3 uid="uid://cc62t4w6hl364"]
 
 [ext_resource type="Texture2D" uid="uid://d3ilo7ucje8a2" path="res://Images/TileSet/Door0.png" id="1_4lanr"]
 [ext_resource type="Texture2D" uid="uid://ba2ftil0h0suj" path="res://Images/TileSet/Floor.png" id="2_4t76i"]
 [ext_resource type="Texture2D" uid="uid://cmptp7pu7habx" path="res://Images/TileSet/Pit0.png" id="3_qn720"]
 [ext_resource type="Texture2D" uid="uid://b6v2vkr7vel7u" path="res://Images/TileSet/Tile.png" id="4_g6qfk"]
 [ext_resource type="Texture2D" uid="uid://dhonfeqsstplo" path="res://Images/TileSet/Wall.png" id="5_3g3v8"]
-[ext_resource type="Script" path="res://Scripts/Room.cs" id="6_xdn4x"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x4rm8"]
 texture = ExtResource("1_4lanr")
@@ -7819,9 +7818,8 @@ sources/4 = SubResource("TileSetAtlasSource_2ke17")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xvpnj"]
 size = Vector2(16, 8)
 
-[node name="Room" type="TileMap"]
+[node name="TileMap" type="TileMap"]
 texture_filter = 1
-scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_wcmp5")
 format = 2
 layer_0/name = "Floor"
@@ -7833,7 +7831,6 @@ layer_1/y_sort_enabled = false
 layer_1/y_sort_origin = 0
 layer_1/z_index = 1
 layer_1/tile_data = PackedInt32Array(262158, 4, 10, 262144, 4, 10, 524295, 65540, 9, 7, 0, 0, 327680, 4, 10, 393216, 4, 10, 458752, 4, 10, 196608, 4, 10, 131072, 4, 10, 65536, 4, 10, 65550, 4, 10, 131086, 4, 10, 196622, 4, 10, 327694, 4, 10, 393230, 4, 10, 458766, 4, 10, 0, 4, 9, 14, 131076, 9, 524288, 4, 11, 524302, 131076, 11, 524301, 65540, 9, 524300, 65540, 9, 524299, 65540, 9, 524298, 65540, 9, 524297, 65540, 9, 524296, 65540, 9, 524294, 65540, 9, 524293, 65540, 9, 524292, 65540, 9, 524291, 65540, 9, 524290, 65540, 9, 524289, 65540, 9, 3, 65540, 9, 4, 65540, 9, 5, 65540, 9, 6, 65540, 9, 8, 65540, 9, 9, 65540, 9, 10, 65540, 9, 11, 65540, 9, 12, 65540, 9, 13, 65540, 9, 1, 65540, 9, 2, 65540, 9)
-script = ExtResource("6_xdn4x")
 
 [node name="Doors" type="Node2D" parent="."]
 scale = Vector2(0.5, 0.5)

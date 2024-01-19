@@ -15,8 +15,7 @@ public partial class Main : Node {
 	}
 
     public override void _Ready() {
-        //HUD.HUDUpdateDamage((float)(Player.Damage * Math.Sqrt(Player.DamageBonus * 1.2 + 1) + Player.FlatDamageBonus));
-		//HUD.HUDUpdateRate(Player.CalculateAttackRate());
+		
     }
 
     public override void _EnterTree() {

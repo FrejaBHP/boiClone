@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-public partial class Room : TileMap {
+public partial class Room : Node2D {
+	public RoomData Data { get; set; }
+	public TileMap Map { get; set; }
+	//public Vector2I Coords { get; set; }
 	public bool Visited { get; set; }
 	public List<Marker2D> EnemyMarkers { get; set; }
 	public List<Marker2D> ItemMarkers { get; set; }
 
     public override void _Ready() {
+		Visible = false;
+
 		EnemyMarkers = new();
 		ItemMarkers = new();
-		Node markersNode = GetNode("Markers");
+		Node markersNode = GetNode("TileMap/Markers");
 		foreach (Marker2D marker in markersNode.GetChildren().Cast<Marker2D>()) {
 			switch ((int)marker.GetMeta("nodeType")) {
 				case 0:
@@ -27,6 +32,10 @@ public partial class Room : TileMap {
 					break;
 			}
 		}
+
+		if (EnemyMarkers.Count > 0) {
+			Data.Flags |= RoomFlags.HasCombat;
+		}
 		GD.Print($"Enemies: {EnemyMarkers.Count}, Items: {ItemMarkers.Count}");
     }
 
@@ -34,19 +43,19 @@ public partial class Room : TileMap {
 		string nodePath = "";
 		switch (dir) {
 			case 0:
-				nodePath = "Doors/DoorNorth";
+				nodePath = "TileMap/Doors/DoorNorth";
 				break;
 			
 			case 1:
-				nodePath = "Doors/DoorEast";
+				nodePath = "TileMap/Doors/DoorEast";
 				break;
 
 			case 2:
-				nodePath = "Doors/DoorSouth";
+				nodePath = "TileMap/Doors/DoorSouth";
 				break;
 
 			case 3:
-				nodePath = "Doors/DoorWest";
+				nodePath = "TileMap/Doors/DoorWest";
 				break;
 		}
 		return nodePath;
@@ -55,8 +64,8 @@ public partial class Room : TileMap {
 	public void RemoveDoor(int dir) {
 		string nodePath = GetDoorPath(dir);
 		
-		Vector2I doorCoords = LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition));
-		Vector2I tileCoords = GetCellAtlasCoords(1, doorCoords);
+		Vector2I doorCoords = Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition));
+		Vector2I tileCoords = Map.GetCellAtlasCoords(1, doorCoords);
 		ReplaceDoorTile(doorCoords, tileCoords);
 
 		GetNode<Area2D>(nodePath).Free();
@@ -65,11 +74,11 @@ public partial class Room : TileMap {
 	private void ReplaceDoorTile(Vector2I coords, Vector2I tile) {
 		if (tile[0] == 0) {		// If horizontal door -
 			Vector2I newTile = new(1, 6);
-			SetCell(1, coords, 4, newTile);
+			Map.SetCell(1, coords, 4, newTile);
 		}
 		else {					// If vertical door |
 			Vector2I newTile = new(0, 7);
-			SetCell(1, coords, 4, newTile);
+			Map.SetCell(1, coords, 4, newTile);
 		}
 	}
 
@@ -95,18 +104,21 @@ public partial class Room : TileMap {
 
 		area.BodyEntered += (body) => OnDoorEntered(dir, body);
 
-		Vector2I doorCoords = LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition));
-		Vector2I tileCoords = GetCellAtlasCoords(1, doorCoords);
+		Vector2I doorCoords = Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition));
+		Vector2I tileCoords = Map.GetCellAtlasCoords(1, doorCoords);
+
+		GD.Print($"DC: {Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition))}, TC: {Map.GetCellAtlasCoords(1, doorCoords)}");
+
 		OpenDoorTile(doorCoords, tileCoords);
 	}
 
 	private void OpenDoorTile(Vector2I coords, Vector2I tile) {
 		if (tile[0] == 0) {
 			Vector2I newTile = new(6, tile[1]);
-			SetCell(1, coords, 0, newTile);
+			Map.SetCell(1, coords, 0, newTile);
 		}
 		else {
-			SetCell(1, coords, -1);
+			Map.SetCell(1, coords, -1);
 		}
 	}
 

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bxd6ydru2t0ut"]
+
+[ext_resource type="Script" path="res://Scripts/Room.cs" id="6_skg2d"]
+
+[node name="Room" type="Node2D"]
+scale = Vector2(2, 2)
+script = ExtResource("6_skg2d")

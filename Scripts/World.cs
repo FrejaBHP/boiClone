@@ -8,18 +8,20 @@ using System.Linq;
 public partial class World : Node {
 	private static WorldRoom[,] worldRooms;
 	private static Vector2I currentCoords;
-	private static TileMap currentTileMap;
-	private static RoomData currentRoomData;
+	private static Room currentRoom;
+	//private static TileMap currentTileMap;
+	//private static RoomData currentRoomData;
 	
 	private static int enemiesLeft = 0;
 	private static readonly int roomLength = 480;
 	private static readonly int roomHeight = 288;
 	private static readonly int gridSize = 50;
-	private static readonly int gridGapExtra = 128; // Until better solution is implemented, this is used to keep other rooms out of sight
+	private static readonly int gridGapExtra = 0; // Until better solution is implemented, this is used to keep other rooms out of sight
 	private static readonly int gridGapX = roomLength + gridGapExtra; // Each room is 32x15=480 units long
 	private static readonly int gridGapY = roomHeight + gridGapExtra; // Each room is 32x9=288 units tall
 	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
 
+	protected PackedScene Room = GD.Load<PackedScene>("Scenes/room.tscn");
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
 	protected PackedScene ItemPedestal = GD.Load<PackedScene>("Scenes/worldItem.tscn");
 
@@ -47,8 +49,8 @@ public partial class World : Node {
 		int pickupRoll = DeterminePickupRarity(typeRoll);
 
 		Vector2 pickupPos;
-		pickupPos.X = currentTileMap.GlobalPosition.X + 240;
-		pickupPos.Y = currentTileMap.GlobalPosition.Y + 144;
+		pickupPos.X = currentRoom.GlobalPosition.X + 240;
+		pickupPos.Y = currentRoom.GlobalPosition.Y + 144;
 
 		CreatePickup(pickupRoll, pickupPos);
 	}
@@ -75,37 +77,41 @@ public partial class World : Node {
 
 	private void PlaceRooms(List<WorldRoom> worldRoomList) {
 		foreach (WorldRoom worldRoom in worldRoomList) {
-			if (worldRoom.Data.Scene != null) {
-				TileMap newRoom = worldRoom.Data.Scene.Instantiate() as TileMap;
-				worldRoom.Map = newRoom;
-				worldRooms[worldRoom.Coords.X + (gridSize / 2), worldRoom.Coords.Y + (gridSize / 2)] = worldRoom;
+			if (RoomCollection.RoomDataSet[worldRoom.ID].Scene != null) {
+				Room newRoom = Room.Instantiate() as Room;
+				newRoom.Data = RoomCollection.RoomDataSet[worldRoom.ID];
+				newRoom.Map = newRoom.Data.Scene.Instantiate() as TileMap;
+
+				newRoom.AddChild(newRoom.Map);
 				AddChild(newRoom);
+
+				worldRoom.Room = newRoom;
+				worldRooms[worldRoom.Coords.X + (gridSize / 2), worldRoom.Coords.Y + (gridSize / 2)] = worldRoom;
+
+				newRoom.GlobalPosition = newRoom.GlobalPosition with { X = worldRoom.Coords.X * gridGapX, Y = worldRoom.Coords.Y * gridGapY };
 			}
 			else {
-				GD.PushError($"Room with ID {worldRoom.Data.ID} not found.");
+				GD.PushError($"Room with ID {worldRoom.ID} not found.");
 			}
-
-			worldRoom.Map.GlobalPosition = worldRoom.Map.GlobalPosition with { X = worldRoom.Coords.X * gridGapX, Y = worldRoom.Coords.Y * gridGapY };
 		}
-
-		currentTileMap = worldRooms[gridSize / 2, gridSize / 2].Map;
-		currentRoomData = worldRooms[gridSize / 2, gridSize / 2].Data;
+		currentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
+		currentRoom.Visible = true;
 
 		CheckDirections();
 		AddPlayer();
-		(currentTileMap as Room).CheckAndStartOpeningDoors();
+		currentRoom.CheckAndStartOpeningDoors();
 	}
 
 	private static void CheckDirections() {
 		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
 		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null)
-			(currentTileMap as Room).RemoveDoor(0);
+			currentRoom.RemoveDoor(0);
 		if (worldRooms[currentCoords.X + 1, currentCoords.Y] == null)
-			(currentTileMap as Room).RemoveDoor(1);
+			currentRoom.RemoveDoor(1);
 		if (worldRooms[currentCoords.X, currentCoords.Y + 1] == null)
-			(currentTileMap as Room).RemoveDoor(2);
+			currentRoom.RemoveDoor(2);
 		if (worldRooms[currentCoords.X - 1, currentCoords.Y] == null)
-			(currentTileMap as Room).RemoveDoor(3);
+			currentRoom.RemoveDoor(3);
 	}
 
 	private void AddPlayer() {
@@ -133,11 +139,11 @@ public partial class World : Node {
 	#endregion
 
 	#region Markers
-	private void ReadRoomMarkers(TileMap room) {
+	private void ReadRoomMarkers() {
 		CallDeferred(MethodName.ProcessItemMarkers); // To avoid runtime error, this call is deferred
-		GD.Print($"Flags: {currentRoomData.Flags}");
+		GD.Print($"Flags: {currentRoom.Data.Flags}");
 
-		if (!currentRoomData.Flags.HasFlag(RoomFlags.HasCombat)) {
+		if (!currentRoom.Data.Flags.HasFlag(RoomFlags.HasCombat)) {
 			RoomCleared(false);
 		}
 		else {
@@ -146,7 +152,7 @@ public partial class World : Node {
 	}
 
 	private void ProcessItemMarkers() {
-		foreach (Marker2D marker in (currentTileMap as Room).ItemMarkers) {
+		foreach (Marker2D marker in currentRoom.ItemMarkers) {
 			CreateItemPedestal((int)marker.GetMeta("entityID"), marker.GlobalPosition);
 		}
 	}
@@ -156,7 +162,7 @@ public partial class World : Node {
 	}
 
 	private void ProcessEnemyMarkers() {
-		foreach (Marker2D marker in (currentTileMap as Room).EnemyMarkers) {
+		foreach (Marker2D marker in currentRoom.EnemyMarkers) {
 			CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
 			enemiesLeft++;
 		}
@@ -227,7 +233,7 @@ public partial class World : Node {
 	}
 
 	private void RoomCleared(bool hadCombat) {
-		(currentTileMap as Room).CheckAndStartOpeningDoors();
+		currentRoom.CheckAndStartOpeningDoors();
 		
 		if (hadCombat) {
 			CallDeferred(MethodName.RollForPickup); // To avoid runtime error, this call is deferred
@@ -243,8 +249,8 @@ public partial class World : Node {
 			int pickupRoll = DeterminePickupRarity(typeRoll);
 
 			Vector2 pickupPos;
-			pickupPos.X = currentTileMap.GlobalPosition.X + (roomLength / 2);
-			pickupPos.Y = currentTileMap.GlobalPosition.Y + (roomHeight / 2);
+			pickupPos.X = currentRoom.GlobalPosition.X + (roomLength / 2);
+			pickupPos.Y = currentRoom.GlobalPosition.Y + (roomHeight / 2);
 
 			CreatePickup(pickupRoll, pickupPos);
 		}
@@ -313,19 +319,21 @@ public partial class World : Node {
 		Main.Player.GlobalPosition = pos;
 		Main.Camera.GlobalPosition = cpos;
 		currentCoords = c;
-		currentTileMap = worldRooms[currentCoords.X, currentCoords.Y].Map;
-		currentRoomData = worldRooms[currentCoords.X, currentCoords.Y].Data;
+
+		currentRoom.Visible = false;
+		currentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
 
 		EnterNewRoom();
 	}
 
 	private void EnterNewRoom() {
-		if (!(currentTileMap as Room).Visited) {
-			switch (currentRoomData.Type) {
+		currentRoom.Visible = true;
+		if (!currentRoom.Visited) {
+			switch (currentRoom.Data.Type) {
 				case RoomType.Normal:
 					break;
 
-				case RoomType.Item:
+				case RoomType.Treasure:
 					break;
 
 				case RoomType.Boss:
@@ -337,7 +345,7 @@ public partial class World : Node {
 				case RoomType.Shop:
 					break;
 			}
-			ReadRoomMarkers(currentTileMap);
+			ReadRoomMarkers();
 		}
 	}
 	#endregion

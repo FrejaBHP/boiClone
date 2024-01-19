@@ -1,11 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://cmg12jhlco5sn"]
+[gd_scene load_steps=14 format=3 uid="uid://cmg12jhlco5sn"]
 
 [ext_resource type="Texture2D" uid="uid://d3ilo7ucje8a2" path="res://Images/TileSet/Door0.png" id="1_atitf"]
 [ext_resource type="Texture2D" uid="uid://ba2ftil0h0suj" path="res://Images/TileSet/Floor.png" id="2_squak"]
 [ext_resource type="Texture2D" uid="uid://cmptp7pu7habx" path="res://Images/TileSet/Pit0.png" id="3_i0plr"]
 [ext_resource type="Texture2D" uid="uid://b6v2vkr7vel7u" path="res://Images/TileSet/Tile.png" id="4_gomdb"]
 [ext_resource type="Texture2D" uid="uid://dhonfeqsstplo" path="res://Images/TileSet/Wall.png" id="5_y2fjw"]
-[ext_resource type="Script" path="res://Scripts/Room.cs" id="6_xa3cw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x4rm8"]
 texture = ExtResource("1_atitf")
@@ -7822,9 +7821,8 @@ size = Vector2(16, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hya23"]
 size = Vector2(16, 8)
 
-[node name="Room" type="TileMap"]
+[node name="TileMap" type="TileMap"]
 texture_filter = 1
-scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_wcmp5")
 format = 2
 layer_0/name = "Floor"
@@ -7836,7 +7834,6 @@ layer_1/y_sort_enabled = false
 layer_1/y_sort_origin = 0
 layer_1/z_index = 1
 layer_1/tile_data = PackedInt32Array(524295, 0, 0, 7, 0, 0, 524297, 131076, 8, 524296, 65540, 6, 524294, 65540, 6, 524293, 4, 8, 6, 65540, 6, 8, 65540, 6, 9, 131076, 6, 5, 4, 6, 65541, 4, 7, 131077, 4, 7, 196613, 4, 7, 262149, 4, 7, 327685, 4, 7, 393221, 4, 7, 458757, 4, 7, 65545, 4, 7, 131081, 4, 7, 196617, 4, 7, 262153, 4, 7, 327689, 4, 7, 393225, 4, 7, 458761, 4, 7)
-script = ExtResource("6_xa3cw")
 
 [node name="Doors" type="Node2D" parent="."]
 scale = Vector2(0.5, 0.5)

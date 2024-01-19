@@ -14,32 +14,32 @@ public enum Exits {
 [Flags]
 public enum RoomFlags {
     NONE = 0,
-    HasCombat = 1 << 0
+    Visited = 1 << 0,
+    HasCombat = 1 << 1
 }
 
 public enum RoomType {
     Normal,
     Starting,
-    Item,
+    Treasure,
     Boss,
     Secret,
     Shop
 }
 
 public partial class RoomData {
-    public int ID { get; set; }
-    public PackedScene Scene { get; set; }
-    public Exits BaseExits { get; set; }
-    public string Name { get; set; }
-    public RoomType Type { get; set; }
+    public int ID { get; }
+    public PackedScene Scene { get; }
+    public Exits BaseExits { get; }
+    public string Name { get; }
+    public RoomType Type { get; }
     public RoomFlags Flags { get; set; }
 
-    public RoomData(int id, PackedScene scene, Exits exits, string name, RoomType type, RoomFlags flags) {
+    public RoomData(int id, PackedScene scene, Exits exits, string name, RoomType type) {
         ID = id;
         Scene = scene;
         BaseExits = exits;
         Name = name;
         Type = type;
-        Flags = flags;
     }
 }

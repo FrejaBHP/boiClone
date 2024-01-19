@@ -212,7 +212,7 @@ public partial class Player : Character {
     protected override void CheckBodyCollision() {
         for (int i = 0; i < GetSlideCollisionCount(); i++) {
 			KinematicCollision2D col = GetSlideCollision(i);
-			if (col.GetCollider().IsClass("StaticBody2D")) { //So far, only item pedestals are StaticBody2D objects, so no further checks are needed
+			if (col.GetCollider().IsClass("StaticBody2D")) { // So far, only item pedestals are StaticBody2D objects, so no further checks are needed
 				WorldItem pedestal = col.GetCollider() as WorldItem;
 				pedestal.PlayerCollided();
 			}
