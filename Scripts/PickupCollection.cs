@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 
 public static class PickupCollection {
-    public static List<PackedScene> PickupScenes { get; set; }
+    public static List<PackedScene> PickupScenes { get; private set; }
 
     public static void CompilePickupList() {
         PickupScenes = new() {

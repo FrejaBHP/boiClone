@@ -9,8 +9,6 @@ public partial class World : Node {
 	private static WorldRoom[,] worldRooms;
 	private static Vector2I currentCoords;
 	private static Room currentRoom;
-	//private static TileMap currentTileMap;
-	//private static RoomData currentRoomData;
 	
 	private static int enemiesLeft = 0;
 	private static readonly int roomLength = 480;
@@ -20,6 +18,8 @@ public partial class World : Node {
 	private static readonly int gridGapX = roomLength + gridGapExtra; // Each room is 32x15=480 units long
 	private static readonly int gridGapY = roomHeight + gridGapExtra; // Each room is 32x9=288 units tall
 	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
+
+	private Timer EnemySpawnDelayTimer;
 
 	protected PackedScene Room = GD.Load<PackedScene>("Scenes/room.tscn");
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
@@ -31,6 +31,7 @@ public partial class World : Node {
 	}
 
     public override void _Ready() {
+		EnemySpawnDelayTimer = GetNode<Timer>("EnemySpawnDelay");
 		BuildLevel();
 	}
 
@@ -55,6 +56,7 @@ public partial class World : Node {
 		CreatePickup(pickupRoll, pickupPos);
 	}
 	#endregion
+
 
 	#region Initialisation
 	private void BuildLevel() {
@@ -104,24 +106,29 @@ public partial class World : Node {
 
 	private static void CheckDirections() {
 		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
-		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null)
+		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null) {
 			currentRoom.RemoveDoor(0);
-		if (worldRooms[currentCoords.X + 1, currentCoords.Y] == null)
+		}
+		if (worldRooms[currentCoords.X + 1, currentCoords.Y] == null) {
 			currentRoom.RemoveDoor(1);
-		if (worldRooms[currentCoords.X, currentCoords.Y + 1] == null)
+		}
+		if (worldRooms[currentCoords.X, currentCoords.Y + 1] == null) {
 			currentRoom.RemoveDoor(2);
-		if (worldRooms[currentCoords.X - 1, currentCoords.Y] == null)
+		}
+		if (worldRooms[currentCoords.X - 1, currentCoords.Y] == null) {
 			currentRoom.RemoveDoor(3);
+		}
 	}
 
 	private void AddPlayer() {
 		Player player = Player.Instantiate() as Player;
+		AddChild(player);
 
 		// Stats separated to allow for different kinds of characters later
 		// Setting these values also sets the HUD, which is probably smart
 		// Maybe should be moved somewhere else, however
-		player.MaxHealth = 3f;
-		player.Health = player.MaxHealth;
+		player.GiveHeartContainer(12, 2);
+
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;
 		player.Range = 6.5f;
@@ -132,9 +139,7 @@ public partial class World : Node {
 		player.Bombs = 0;
 		player.Keys = 0;
 
-		AddChild(player);
-
-		player.GlobalPosition = player.GlobalPosition with { X = roomLength / 2, Y = roomHeight / 2 }; //Middle of the starting room
+		player.GlobalPosition = player.GlobalPosition with { X = roomLength / 2, Y = roomHeight / 2 }; // Middle of the starting room
 	}
 	#endregion
 
@@ -147,7 +152,7 @@ public partial class World : Node {
 			RoomCleared(false);
 		}
 		else {
-			GetNode<Timer>("EnemySpawnDelay").Start();
+			ProcessEnemyMarkers();
 		}
 	}
 
@@ -158,13 +163,18 @@ public partial class World : Node {
 	}
 
 	private void OnEnemySpawnDelayTimeout() {
-		ProcessEnemyMarkers();
+		//ProcessEnemyMarkers();
 	}
 
-	private void ProcessEnemyMarkers() {
-		foreach (Marker2D marker in currentRoom.EnemyMarkers) {
-			CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
-			enemiesLeft++;
+	private async void ProcessEnemyMarkers() {
+		if (currentRoom.EnemyMarkers.Count > 0) {
+			EnemySpawnDelayTimer.Start();
+			await ToSignal(EnemySpawnDelayTimer, "timeout");
+
+			foreach (Marker2D marker in currentRoom.EnemyMarkers) {
+				CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
+				enemiesLeft++;
+			}
 		}
 	}
 	#endregion
@@ -176,10 +186,10 @@ public partial class World : Node {
 
 		// If itemID is -1, it's interpreted as a random item spawn, otherwise it's a set spawn
 		if (itemID == -1) {
-			if (ItemCollection.ItemTypes.Count != 0) {
+			if (ItemCollection.ItemDataSet.Count != 0) {
 				Random random = new();
-				int rnd = random.Next(0, ItemCollection.ItemTypes.Count);
-				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemSpritePaths[rnd]);
+				int rnd = random.Next(0, ItemCollection.ItemDataSet.Count);
+				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemDataSet[rnd].SpritePath);
 				newPedestal.SetMeta("itemID", rnd);
 			}
 			else {
@@ -187,15 +197,14 @@ public partial class World : Node {
 			}
 		}
 		else {
-			if (ItemCollection.ItemTypes[itemID] != null) {
-				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemSpritePaths[itemID]);
+			if (ItemCollection.ItemDataSet[itemID] != null) {
+				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemDataSet[itemID].SpritePath);
 				newPedestal.SetMeta("itemID", itemID);
 			}
 			else {
 				GD.PushError($"Item with ID {itemID} not found.");
 			}
 		}
-		
 		AddChild(newPedestal);
 		newPedestal.GlobalPosition = pos;
 	}

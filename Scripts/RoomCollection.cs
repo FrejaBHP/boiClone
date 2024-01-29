@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 
 public static class RoomCollection {
-    public static List<RoomData> RoomDataSet { get; set; }
+    public static List<RoomData> RoomDataSet { get; private set; }
 
     public static void CompileRoomList() {
         RoomDataSet = new() {

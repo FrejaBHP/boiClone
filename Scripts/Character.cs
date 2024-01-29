@@ -4,8 +4,6 @@ using System;
 public partial class Character : CharacterBody2D {
 	protected PackedScene Projectile = GD.Load<PackedScene>("Scenes/projectile.tscn");
 	
-	public virtual float MaxHealth { get; set; }
-	public virtual float Health { get; set; }
 	public virtual float Damage { get; set; }
 	public virtual float Range { get; set; }
 	public virtual float Speed { get; set; }
@@ -49,28 +47,8 @@ public partial class Character : CharacterBody2D {
 		}
 	}
 
-	public virtual void ModifyHealth(float change) {
-		if (!Invulnerable) {
-			Health += change;
-			//GD.Print($"HP: {Health}, diff: {change}");
-
-			if (change < 0) {
-				OnTakeDamage();
-			}
-		
-			if (Health <= 0) {
-				if (IsInGroup("Player")) {
-					Main.Player.IsAlive = false;
-				}
-				else {
-					Die();
-				}
-			}
-		}
-	}
-
 	protected virtual void Die() {
-		
+
 	}
 
 	protected virtual void OnTakeDamage() {

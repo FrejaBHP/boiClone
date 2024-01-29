@@ -46,12 +46,12 @@ public partial class Projectile : Area2D {
 
 	public void OnBodyEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
-			Main.ProcessDamage((Character)body, Main.Player, Main.BasePlayerDamageTaken);
+			Main.ProcessPlayerDamage((Character)body);
 			QueueFree();
 		}
 
 		if (body.IsInGroup("Enemy")) {
-			Main.ProcessDamage(Main.Player, (Character)body, Damage);
+			Main.ProcessEnemyDamage(Main.Player, (Enemy)body, Damage);
 
 			if (!Piercing) {
 				QueueFree();

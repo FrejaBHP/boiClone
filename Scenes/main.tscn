@@ -1,78 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://cv0eftrx7wduf"]
+[gd_scene load_steps=6 format=3 uid="uid://cv0eftrx7wduf"]
 
 [ext_resource type="Script" path="res://Scripts/Main.cs" id="1_ievqw"]
+[ext_resource type="PackedScene" uid="uid://dimqcikchgtjn" path="res://Scenes/hud.tscn" id="2_2esxr"]
 [ext_resource type="Script" path="res://Scripts/Camera.cs" id="2_a60e8"]
 [ext_resource type="Script" path="res://Scripts/World.cs" id="2_r4yg3"]
-[ext_resource type="Script" path="res://Scripts/HUD.cs" id="2_wgr0b"]
-
-[sub_resource type="FontVariation" id="FontVariation_g2ckl"]
-spacing_top = -5
-
-[sub_resource type="FontVariation" id="FontVariation_6wy08"]
-spacing_top = -5
-
-[sub_resource type="FontVariation" id="FontVariation_w4y4x"]
-spacing_top = -5
+[ext_resource type="PackedScene" uid="uid://jby24lcfrjc1" path="res://Scenes/new_item_showcase.tscn" id="3_wcifv"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_ievqw")
 metadata/_edit_lock_ = true
 
-[node name="HUD" type="CanvasLayer" parent="."]
-script = ExtResource("2_wgr0b")
+[node name="HUD" parent="." instance=ExtResource("2_2esxr")]
 
-[node name="Life" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_fonts/font = SubResource("FontVariation_g2ckl")
-
-[node name="CoinText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="BombText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="KeyText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="SpeedText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="RateText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_w4y4x")
-
-[node name="DamageText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="RangeText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
-
-[node name="ShotSpeedText" type="Label" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-size_flags_horizontal = 0
-theme_override_fonts/font = SubResource("FontVariation_6wy08")
+[node name="NewItemShowcase" parent="." instance=ExtResource("3_wcifv")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(240, 144)

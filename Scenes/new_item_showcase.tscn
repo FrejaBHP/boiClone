@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://jby24lcfrjc1"]
+
+[ext_resource type="Script" path="res://Scripts/NewItemShowcase.cs" id="1_tlnjh"]
+[ext_resource type="Texture2D" uid="uid://m1at72wymlto" path="res://Images/streak.png" id="2_kas4d"]
+[ext_resource type="Theme" uid="uid://bt845sthgsebg" path="res://Scenes/Themes/LabelRegular.tres" id="3_b5qnl"]
+[ext_resource type="Theme" uid="uid://bfng2g1obtxhs" path="res://Scenes/Themes/LabelSmall.tres" id="4_fs62r"]
+
+[node name="NewItemShowcase" type="CanvasLayer"]
+script = ExtResource("1_tlnjh")
+
+[node name="TextBG" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(624, 148)
+scale = Vector2(2, 2)
+texture = ExtResource("2_kas4d")
+
+[node name="ItemName" type="Label" parent="."]
+texture_filter = 1
+custom_minimum_size = Vector2(150, 25)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 125.0
+offset_bottom = 150.0
+grow_horizontal = 2
+scale = Vector2(2, 2)
+size_flags_horizontal = 4
+theme = ExtResource("3_b5qnl")
+text = "Mutant spider"
+horizontal_alignment = 1
+
+[node name="ItemDescription" type="Label" parent="."]
+texture_filter = 1
+custom_minimum_size = Vector2(200, 100)
+offset_left = 440.0
+offset_top = 161.0
+offset_right = 640.0
+offset_bottom = 261.0
+scale = Vector2(2, 2)
+theme = ExtResource("4_fs62r")
+text = "Quad shot"
+horizontal_alignment = 1
+
+[node name="ShowcaseTimer" type="Timer" parent="."]
+wait_time = 2.0
+
+[node name="AnimationTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="ShowcaseTimer" to="." method="OnShowcaseTimerTimeout"]

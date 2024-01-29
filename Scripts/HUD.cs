@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 
 public partial class HUD : CanvasLayer {
+	private static GridContainer heartsGridContainer;
+
 	#region Labels
 	private static Label lifeDisplay;
 
@@ -21,17 +23,17 @@ public partial class HUD : CanvasLayer {
 	#endregion
 	
 	public override void _Ready() {
-		lifeDisplay = GetNode<Label>("Life");
+		heartsGridContainer = GetNode<GridContainer>("HeartsContainer");
 
-		coinsText = GetNode<Label>("CoinText");
-		bombsText = GetNode<Label>("BombText");
-		keysText = GetNode<Label>("KeyText");
+		coinsText = GetNode<Label>("PickupsContainer/CoinText");
+		bombsText = GetNode<Label>("PickupsContainer/BombText");
+		keysText = GetNode<Label>("PickupsContainer/KeyText");
 
-		speedText = GetNode<Label>("SpeedText");
-		rateText = GetNode<Label>("RateText");
-		damageText = GetNode<Label>("DamageText");
-		rangeText = GetNode<Label>("RangeText");
-		shotSpeedText = GetNode<Label>("ShotSpeedText");
+		speedText = GetNode<Label>("StatsContainer/SpeedText");
+		rateText = GetNode<Label>("StatsContainer/RateText");
+		damageText = GetNode<Label>("StatsContainer/DamageText");
+		rangeText = GetNode<Label>("StatsContainer/RangeText");
+		shotSpeedText = GetNode<Label>("StatsContainer/ShotSpeedText");
 
 		pickupLabelList = new() {
 			coinsText,
@@ -46,27 +48,71 @@ public partial class HUD : CanvasLayer {
 			rangeText,
 			shotSpeedText
 		};
-		
-		PositionLabels();
 	}
 
 	#region UpdateMethods
 	// Health
-	public static void HUDUpdateHealth(float health, float maxHealth) {
-		lifeDisplay.Text = $"Health: {health:F1} / {maxHealth:F1}";
+	public static void RedrawHearts(List<HeartContainer> conts, List<HeartBase> loose) {
+		foreach (var child in heartsGridContainer.GetChildren()) {
+			child.QueueFree();
+		}
+
+		foreach (HeartContainer container in conts) {
+            Sprite2D heart = new Sprite2D {
+                Texture = container.RedHeart.Sprite
+            };
+        }
+	}
+
+	public static void InsertHeartAtPos(int n, Texture2D image) {
+		Control control = new();
+
+        Sprite2D heart = new() {
+            Texture = image
+        };
+		
+        heartsGridContainer.AddChild(control);
+		control.AddChild(heart);
+	}
+
+	public static void UpdateHeartAtPos(int n, Texture2D image) {
+		heartsGridContainer.GetChild<Control>(n).GetChild<Sprite2D>(0).Texture = image;
+	}
+
+	public static void UpdateLastHeart(Texture2D image) {
+		heartsGridContainer.GetChild<Control>(heartsGridContainer.GetChildCount()).GetChild<Sprite2D>(0).Texture = image;
+	}
+
+	public static void RemoveLastHeart() {
+		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount()).QueueFree();
 	}
 
 	// Pickups
 	public static void HUDUpdateCoins(int coins) {
-		coinsText.Text = $"C: {coins}";
+		if (coins < 10) {
+			coinsText.Text = $"C: 0{coins}";
+		}
+		else {
+			coinsText.Text = $"C: {coins}";
+		}
 	}
 
 	public static void HUDUpdateBombs(int bombs) {
-		bombsText.Text = $"B: {bombs}";
+		if (bombs < 10) {
+			bombsText.Text = $"B: 0{bombs}";
+		}
+		else {
+			bombsText.Text = $"B: {bombs}";
+		}
 	}
 
 	public static void HUDUpdateKeys(int keys) {
-		keysText.Text = $"K: {keys}";
+		if (keys < 10) {
+			keysText.Text = $"K: 0{keys}";
+		}
+		else {
+			keysText.Text = $"K: {keys}";
+		}
 	}
 
 	// Stats
@@ -90,36 +136,4 @@ public partial class HUD : CanvasLayer {
 		shotSpeedText.Text = $"SSpeed: {shotSpeed:F2}";
 	}
 	#endregion
-
-	private static void PositionLabels() {
-		Vector2 pos;
-
-		int leftMargin = 10;
-		int pickupLabelOffset = 100;
-
-		int statLabelYOffset = 300;
-		int statLabelYGap = 30;
-		
-		pos.X = leftMargin;
-		pos.Y = leftMargin;
-		lifeDisplay.Position = pos;
-
-		// Position pickup labels
-		pos.Y = pickupLabelOffset;
-		for (int i = 0; i < pickupLabelList.Count; i++) {
-			pickupLabelList[i].Position = pos;
-			
-			if (i != pickupLabelList.Count - 1)
-				pos.Y += statLabelYGap;
-		}
-
-		// Position stat labels
-		pos.Y = statLabelYOffset;
-		for (int i = 0; i < statLabelList.Count; i++) {
-			statLabelList[i].Position = pos;
-			
-			if (i != statLabelList.Count - 1)
-				pos.Y += statLabelYGap;
-		}
-	}
 }

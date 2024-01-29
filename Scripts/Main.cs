@@ -4,18 +4,19 @@ using System.Linq;
 using System.Reflection.Emit;
 
 public partial class Main : Node {
-	public static float BasePlayerDamageTaken { get; set; }
+	public static int BasePlayerDamageTaken { get; set; }
 	public static Player Player { get; set; }
 	public static Vector2 PlayerPosition { get; set; }
 	public static Camera2D Camera { get; set; }
+	public static CanvasLayer ItemShowcase { get; set; }
 	
 	// Called when the node enters the scene tree for the first time.
 	public Main() {
-		BasePlayerDamageTaken = 0.5f;
+		BasePlayerDamageTaken = 1;
 	}
 
     public override void _Ready() {
-		
+
     }
 
     public override void _EnterTree() {
@@ -25,10 +26,17 @@ public partial class Main : Node {
 		PickupCollection.CompilePickupList();
     }
 
-	public static void ProcessDamage(Character source, Character target, float damage) {
+	public static void ProcessEnemyDamage(Character source, Enemy target, float damage) {
 		if (!target.Invulnerable) {
 			GD.Print($"Health: {target.Health}, Damage taken: {damage}");
 			target.ModifyHealth(-damage);
+		}
+	}
+
+	public static void ProcessPlayerDamage(Character source) {
+		if (!Player.Invulnerable) {
+			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
+			Player.TakeDamage(BasePlayerDamageTaken * 1, 0);
 		}
 	}
 
@@ -64,12 +72,14 @@ public partial class Main : Node {
 	}
 
 	public static void GiveItem(int itemID) {
-		if (ItemCollection.ItemTypes[itemID] != null) {
-			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemTypes[itemID]);
+		if (ItemCollection.ItemDataSet[itemID] != null) {
+			(ItemShowcase as NewItemShowcase).ShowNewItem(ItemCollection.ItemDataSet[itemID]);
+
+			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemDataSet[itemID].Type);
 			Player.Inventory.Add(item);
 			item.OnPickedUp();
 
-			GD.Print($"Picked up {item.ItemName}!");
+			//GD.Print($"Picked up {ItemCollection.ItemDataSet[itemID].Name}! {ItemCollection.ItemDataSet[itemID].Description}");
 		}
 	}
 }

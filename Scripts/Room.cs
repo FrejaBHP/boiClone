@@ -9,6 +9,7 @@ public partial class Room : Node2D {
 	public TileMap Map { get; set; }
 	//public Vector2I Coords { get; set; }
 	public bool Visited { get; set; }
+	public bool Seen { get; set; }
 	public List<Marker2D> EnemyMarkers { get; set; }
 	public List<Marker2D> ItemMarkers { get; set; }
 
@@ -36,7 +37,7 @@ public partial class Room : Node2D {
 		if (EnemyMarkers.Count > 0) {
 			Data.Flags |= RoomFlags.HasCombat;
 		}
-		GD.Print($"Enemies: {EnemyMarkers.Count}, Items: {ItemMarkers.Count}");
+		//GD.Print($"Enemies: {EnemyMarkers.Count}, Items: {ItemMarkers.Count}");
     }
 
     private string GetDoorPath(int dir) {
@@ -107,7 +108,7 @@ public partial class Room : Node2D {
 		Vector2I doorCoords = Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition));
 		Vector2I tileCoords = Map.GetCellAtlasCoords(1, doorCoords);
 
-		GD.Print($"DC: {Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition))}, TC: {Map.GetCellAtlasCoords(1, doorCoords)}");
+		//GD.Print($"DC: {Map.LocalToMap(ToLocal(GetNode<Area2D>(nodePath).GlobalPosition))}, TC: {Map.GetCellAtlasCoords(1, doorCoords)}");
 
 		OpenDoorTile(doorCoords, tileCoords);
 	}

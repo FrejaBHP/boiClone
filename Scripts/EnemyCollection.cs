@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 
 public static class EnemyCollection {
-    public static List<PackedScene> EnemyScenes { get; set; }
+    public static List<PackedScene> EnemyScenes { get; private set; }
 
     public static void CompileEnemyList() {
         EnemyScenes = new() {
