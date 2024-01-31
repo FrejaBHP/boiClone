@@ -15,9 +15,6 @@ public partial class NewItemShowcase : CanvasLayer {
 		splash = GetNode<Sprite2D>("TextBG");
 		itemNameLabel = GetNode<Label>("ItemName");
 		itemDescLabel = GetNode<Label>("ItemDescription");
-		
-		//itemNameText.Size = itemNameText.Size with { X = 200, Y = 50 };
-		//itemDescText.Size = itemDescText.Size with { X = 300, Y = 150 };
 	}
 
 	private void SetNewName(string input) {

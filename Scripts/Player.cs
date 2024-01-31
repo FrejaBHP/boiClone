@@ -26,7 +26,7 @@ public partial class Player : Character {
 		get => coins;
 		set {
 			coins = value;
-			HUD.HUDUpdateCoins(coins);
+			HUD.UpdateCoins(coins);
 		}
 	}
 
@@ -35,7 +35,7 @@ public partial class Player : Character {
 		get => bombs;
 		set {
 			bombs = value;
-			HUD.HUDUpdateBombs(bombs);
+			HUD.UpdateBombs(bombs);
 		}
 	}
 
@@ -44,7 +44,7 @@ public partial class Player : Character {
 		get => keys;
 		set {
 			keys = value;
-			HUD.HUDUpdateKeys(keys);
+			HUD.UpdateKeys(keys);
 		}
 	}
 	#endregion
@@ -55,7 +55,7 @@ public partial class Player : Character {
 		get => speed;
 		set {
 			speed = value;
-			HUD.HUDUpdateSpeed(speed + speedBonus);
+			HUD.UpdateSpeed(speed + speedBonus);
 		}
 	}
 
@@ -64,7 +64,7 @@ public partial class Player : Character {
 		get => speedBonus;
 		set {
 			speedBonus = value;
-			HUD.HUDUpdateSpeed(speed + speedBonus);
+			HUD.UpdateSpeed(speed + speedBonus);
 		}
 	}
 
@@ -74,7 +74,7 @@ public partial class Player : Character {
 		set {
 			attackDelay = value;
 			CalculateAttackRate();
-			HUD.HUDUpdateRate(effectiveFireRate);
+			HUD.UpdateRate(effectiveFireRate);
 		} 
 	}
 
@@ -84,7 +84,7 @@ public partial class Player : Character {
 		set {
 			attackDelayBonus = value;
 			CalculateAttackRate();
-			HUD.HUDUpdateRate(effectiveFireRate);
+			HUD.UpdateRate(effectiveFireRate);
 		} 
 	}
 
@@ -94,7 +94,7 @@ public partial class Player : Character {
 		set {
 			flatAttackRateBonus = value;
 			CalculateAttackRate();
-			HUD.HUDUpdateRate(effectiveFireRate);
+			HUD.UpdateRate(effectiveFireRate);
 		} 
 	}
 
@@ -104,7 +104,7 @@ public partial class Player : Character {
 		set {
 			damage = value;
 			CalculateAttackDamage();
-			HUD.HUDUpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(effectiveDamage);
 		} 
 	}
 
@@ -114,7 +114,7 @@ public partial class Player : Character {
 		set {
 			damageBonus = value;
 			CalculateAttackDamage();
-			HUD.HUDUpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(effectiveDamage);
 		} 
 	}
 
@@ -124,7 +124,7 @@ public partial class Player : Character {
 		set {
 			flatDamageBonus = value;
 			CalculateAttackDamage();
-			HUD.HUDUpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(effectiveDamage);
 		}
 	}
 	
@@ -133,7 +133,7 @@ public partial class Player : Character {
 		get => range;
 		set {
 			range = value;
-			HUD.HUDUpdateRange(range + rangeBonus);
+			HUD.UpdateRange(range + rangeBonus);
 		}
 	}
 
@@ -142,7 +142,7 @@ public partial class Player : Character {
 		get => rangeBonus;
 		set {
 			rangeBonus = value;
-			HUD.HUDUpdateRange(range + rangeBonus);
+			HUD.UpdateRange(range + rangeBonus);
 		}
 	}
 
@@ -151,7 +151,7 @@ public partial class Player : Character {
 		get => shotSpeed; 
 		set { 
 			shotSpeed = value; 
-			HUD.HUDUpdateShotSpeed(shotSpeed + shotSpeedBonus);
+			HUD.UpdateShotSpeed(shotSpeed + shotSpeedBonus);
 		} 
 	}
 
@@ -160,7 +160,25 @@ public partial class Player : Character {
 		get => shotSpeedBonus; 
 		set { 
 			shotSpeedBonus = value; 
-			HUD.HUDUpdateShotSpeed(shotSpeed + shotSpeedBonus);
+			HUD.UpdateShotSpeed(shotSpeed + shotSpeedBonus);
+		} 
+	}
+
+	private float luck;
+    public float Luck { 
+		get => luck; 
+		set { 
+			luck = value; 
+			HUD.UpdateLuck(luck + luckBonus);
+		} 
+	}
+
+    private float luckBonus = 0;
+	public float LuckBonus { 
+		get => luckBonus; 
+		set { 
+			luckBonus = value; 
+			HUD.UpdateLuck(luck + luckBonus);
 		} 
 	}
 	#endregion
@@ -269,12 +287,58 @@ public partial class Player : Character {
 		}
 	}
 
-	public void GiveHeartContainer(int n, int halves) {
+	public void GiveHeartContainers(int n, int halves) {
 		for (int i = 0; i < n; i++) {
-			HeartContainers.Add(new(halves));
-			HUD.InsertHeartAtPos(HeartContainers.Count - 1, HeartContainers[HeartContainers.Count - 1].RedHeart.Sprite);
+			if (halves >= 2) {
+				HeartContainers.Add(new(2));
+				halves -= 2;
+			}
+			else if (halves == 1) {
+				HeartContainers.Add(new(1));
+				halves -= 1;
+			}
+			else {
+				HeartContainers.Add(new(0));
+			}
 
-			GD.Print($"Added container at {HeartContainers.Count - 1}, hopefully");
+			HUD.InsertHeartAtPos(HeartContainers.Count - 1, HeartContainers[^1].RedHeart.Sprite);
+		}
+	}
+
+	public void GiveHeart(int halves, HeartEType type) {
+		switch (type) {
+			case HeartEType.RedHeart:
+				for (int i = 0; i < HeartContainers.Count; i++) {
+					while (HeartContainers[i].RedHeart.Halves < 2 && halves > 0) {
+						HeartContainers[i].RedHeart.Halves++;
+						halves--;
+						HUD.UpdateHeartAtPos(i, HeartContainers[i].RedHeart.Sprite);
+					}
+				}
+				break;
+			
+			case HeartEType.BlueHeart:
+				while (halves > 0) {
+					int totalHearts = HeartContainers.Count + LooseHearts.Count;
+
+					if (LooseHearts.Count == 0 && totalHearts != 12) {
+						LooseHearts.Add((HeartBlue)new(1));
+						HUD.InsertHeartAtPos(totalHearts, LooseHearts[0].Sprite);
+					}
+					else if (LooseHearts[^1].Halves == 2 && totalHearts != 12) {
+						LooseHearts.Add((HeartBlue)new(1));
+						HUD.InsertHeartAtPos(totalHearts, LooseHearts[^1].Sprite);
+					}
+					else if (LooseHearts[^1].Halves == 1) {
+						LooseHearts[^1].Halves++;
+						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
+					}
+					halves--;
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
 
@@ -288,7 +352,7 @@ public partial class Player : Character {
 					HUD.RemoveLastHeart();
 				}
 				else {
-					HUD.UpdateHeartAtPos(LooseHearts.Count - 1, LooseHearts.Last().Sprite);
+					HUD.UpdateLastHeart(LooseHearts.Last().Sprite);
 				}
 			}
 			else if (GetRedHearts() > 0) {
@@ -298,26 +362,36 @@ public partial class Player : Character {
 			}
 
 			CheckDeathCondition();
-			if (IsAlive) {
-				OnTakeDamage();
-			}
-			else {
+			if (!IsAlive) {
 				break;
 			}
 		}
+
+		if (IsAlive) {
+			OnTakeDamage();
+		}
 	}
 
-	private int GetRedHearts() {
+	public int GetRedHearts() {
 		int redHeartHalves = 0;
-		foreach (HeartContainer c in HeartContainers) {
-			redHeartHalves += c.RedHeart.Halves;
+		foreach (HeartContainer container in HeartContainers) {
+			redHeartHalves += container.RedHeart.Halves;
 		}
 
 		return redHeartHalves;
 	}
 
+	public int GetOtherHearts() {
+		int otherHeartHalves = 0;
+		foreach (HeartBase heart in LooseHearts) {
+			otherHeartHalves += heart.Halves;
+		}
+
+		return otherHeartHalves;
+	}
+
 	private void CheckDeathCondition() {
-		if (LooseHearts.Count == 0 && GetRedHearts() == 0) {
+		if (GetRedHearts() == 0 && GetOtherHearts() == 0) {
 			Die();
 		}
 	}

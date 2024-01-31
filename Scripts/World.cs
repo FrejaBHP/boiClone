@@ -46,7 +46,7 @@ public partial class World : Node {
     }
 
 	private void DEBUGRollForPickup() { // KP1
-		int typeRoll = debugRND.Next(0, 3);
+		int typeRoll = debugRND.Next(0, (int)PickupEType.AMOUNT);
 		int pickupRoll = DeterminePickupRarity(typeRoll);
 
 		Vector2 pickupPos;
@@ -127,13 +127,14 @@ public partial class World : Node {
 		// Stats separated to allow for different kinds of characters later
 		// Setting these values also sets the HUD, which is probably smart
 		// Maybe should be moved somewhere else, however
-		player.GiveHeartContainer(12, 2);
+		player.GiveHeartContainers(3, 1);
 
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;
 		player.Range = 6.5f;
 		player.Damage = 3.5f;
 		player.AttackDelay = 0f;
+		player.Luck = 0f;
 
 		player.Coins = 0;
 		player.Bombs = 0;
@@ -219,17 +220,6 @@ public partial class World : Node {
 			GD.PushError($"Enemy with ID {enemyID} not found.");
 		}
 	}
-
-	private void CreatePickup(int pickupID, Vector2 pos) {
-		if (PickupCollection.PickupScenes[pickupID] != null) {
-			Pickup newPickup = PickupCollection.PickupScenes[pickupID].Instantiate() as Pickup;
-			AddChild(newPickup);
-			newPickup.GlobalPosition = pos;
-		}
-		else {
-			GD.PushError($"Pickup with ID {pickupID} not found.");
-		}
-	}
 	#endregion
 
 	#region RoomAndPickupLogic
@@ -254,7 +244,7 @@ public partial class World : Node {
 		int dropRoll = random.Next(0, 4); // 25% chance
 
 		if (dropRoll == 0) {
-			int typeRoll = random.Next(0, 3); // Coin, Bomb, Key
+			int typeRoll = random.Next(0, (int)PickupEType.AMOUNT); // Coin, Bomb, Key, Red Heart
 			int pickupRoll = DeterminePickupRarity(typeRoll);
 
 			Vector2 pickupPos;
@@ -270,28 +260,59 @@ public partial class World : Node {
 		int pID = 0;
 
 		switch (pType) {
-			case 0:
+			case (int)PickupEType.Coin:
 				int cRoll = random.Next(0, 20);
 				if (cRoll == 19) {
-					pID = 2; // 10 coins
+					pID = (int)PickupEName.Coin10;
 				}
 				else if (cRoll >= 15) {
-					pID = 1; // 5 coins
+					pID = (int)PickupEName.Coin5;
 				}
 				else {
-					pID = 0; // 1 coin
+					pID = (int)PickupEName.Coin;
 				}
 				break;
 			
-			case 1:
-				pID = 3; // Bomb, no other types exist yet
+			case (int)PickupEType.Bomb:
+				pID = (int)PickupEName.Bomb;
 				break;
 			
-			case 2:
-				pID = 4; // Key, no other types exist yet
+			case (int)PickupEType.Key:
+				pID = (int)PickupEName.Key;
+				break;
+
+			case (int)PickupEType.RedHeart:
+				int hRoll = random.Next(0, 2);
+				if (hRoll == 1) {
+					pID = (int)PickupEName.RedHeartFull;
+				}
+				else if (hRoll == 0) {
+					pID = (int)PickupEName.RedHeartHalf;
+				}
+				break;
+
+			case (int)PickupEType.BlueHeart:
+				int hbRoll = random.Next(0, 2);
+				if (hbRoll == 1) {
+					pID = (int)PickupEName.BlueHeartFull;
+				}
+				else if (hbRoll == 0) {
+					pID = (int)PickupEName.BlueHeartHalf;
+				}
 				break;
 		}
 		return pID;
+	}
+
+	private void CreatePickup(int pickupID, Vector2 pos) {
+		if (PickupCollection.PickupScenes[pickupID] != null) {
+			Pickup newPickup = PickupCollection.PickupScenes[pickupID].Instantiate() as Pickup;
+			AddChild(newPickup);
+			newPickup.GlobalPosition = pos;
+		}
+		else {
+			GD.PushError($"Pickup with ID {pickupID} not found.");
+		}
 	}
 
 	public void MoveRooms(uint dir) {

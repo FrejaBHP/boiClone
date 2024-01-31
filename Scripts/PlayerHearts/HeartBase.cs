@@ -2,7 +2,7 @@ using Godot;
 
 public abstract class HeartBase {
     private int halves;
-    public int Halves {
+    public virtual int Halves {
 		get => halves;
 		set {
             halves = value;

@@ -8,46 +8,31 @@ public partial class HUD : CanvasLayer {
 	#region Labels
 	private static Label lifeDisplay;
 
-	private static Label coinsText;
-	private static Label bombsText;
-	private static Label keysText;
+	private static Label coinsLabel;
+	private static Label bombsLabel;
+	private static Label keysLabel;
 
-	private static Label speedText;
-	private static Label rateText;
-	private static Label damageText;
-	private static Label rangeText;
-	private static Label shotSpeedText;
-
-	private static List<Label> pickupLabelList;
-	private static List<Label> statLabelList;
+	private static Label speedLabel;
+	private static Label rateLabel;
+	private static Label damageLabel;
+	private static Label rangeLabel;
+	private static Label shotSpeedLabel;
+	private static Label luckLabel;
 	#endregion
 	
 	public override void _Ready() {
 		heartsGridContainer = GetNode<GridContainer>("HeartsContainer");
 
-		coinsText = GetNode<Label>("PickupsContainer/CoinText");
-		bombsText = GetNode<Label>("PickupsContainer/BombText");
-		keysText = GetNode<Label>("PickupsContainer/KeyText");
+		coinsLabel = GetNode<Label>("PickupsContainer/CoinLabel");
+		bombsLabel = GetNode<Label>("PickupsContainer/BombLabel");
+		keysLabel = GetNode<Label>("PickupsContainer/KeyLabel");
 
-		speedText = GetNode<Label>("StatsContainer/SpeedText");
-		rateText = GetNode<Label>("StatsContainer/RateText");
-		damageText = GetNode<Label>("StatsContainer/DamageText");
-		rangeText = GetNode<Label>("StatsContainer/RangeText");
-		shotSpeedText = GetNode<Label>("StatsContainer/ShotSpeedText");
-
-		pickupLabelList = new() {
-			coinsText,
-			bombsText,
-			keysText
-		};
-
-		statLabelList = new() {
-			speedText,
-			rateText,
-			damageText,
-			rangeText,
-			shotSpeedText
-		};
+		speedLabel = GetNode<Label>("StatsContainer/SpeedLabel");
+		rateLabel = GetNode<Label>("StatsContainer/RateLabel");
+		damageLabel = GetNode<Label>("StatsContainer/DamageLabel");
+		rangeLabel = GetNode<Label>("StatsContainer/RangeLabel");
+		shotSpeedLabel = GetNode<Label>("StatsContainer/ShotSpeedLabel");
+		luckLabel = GetNode<Label>("StatsContainer/LuckLabel");
 	}
 
 	#region UpdateMethods
@@ -58,7 +43,7 @@ public partial class HUD : CanvasLayer {
 		}
 
 		foreach (HeartContainer container in conts) {
-            Sprite2D heart = new Sprite2D {
+            Sprite2D heart = new() {
                 Texture = container.RedHeart.Sprite
             };
         }
@@ -73,6 +58,7 @@ public partial class HUD : CanvasLayer {
 		
         heartsGridContainer.AddChild(control);
 		control.AddChild(heart);
+		heartsGridContainer.MoveChild(control, n);
 	}
 
 	public static void UpdateHeartAtPos(int n, Texture2D image) {
@@ -80,60 +66,63 @@ public partial class HUD : CanvasLayer {
 	}
 
 	public static void UpdateLastHeart(Texture2D image) {
-		heartsGridContainer.GetChild<Control>(heartsGridContainer.GetChildCount()).GetChild<Sprite2D>(0).Texture = image;
+		heartsGridContainer.GetChild<Control>(heartsGridContainer.GetChildCount() - 1).GetChild<Sprite2D>(0).Texture = image;
 	}
 
 	public static void RemoveLastHeart() {
-		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount()).QueueFree();
+		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount() - 1).QueueFree();
 	}
 
 	// Pickups
-	public static void HUDUpdateCoins(int coins) {
+	public static void UpdateCoins(int coins) {
 		if (coins < 10) {
-			coinsText.Text = $"C: 0{coins}";
+			coinsLabel.Text = $"C: 0{coins}";
 		}
 		else {
-			coinsText.Text = $"C: {coins}";
+			coinsLabel.Text = $"C: {coins}";
 		}
 	}
 
-	public static void HUDUpdateBombs(int bombs) {
+	public static void UpdateBombs(int bombs) {
 		if (bombs < 10) {
-			bombsText.Text = $"B: 0{bombs}";
+			bombsLabel.Text = $"B: 0{bombs}";
 		}
 		else {
-			bombsText.Text = $"B: {bombs}";
+			bombsLabel.Text = $"B: {bombs}";
 		}
 	}
 
-	public static void HUDUpdateKeys(int keys) {
+	public static void UpdateKeys(int keys) {
 		if (keys < 10) {
-			keysText.Text = $"K: 0{keys}";
+			keysLabel.Text = $"K: 0{keys}";
 		}
 		else {
-			keysText.Text = $"K: {keys}";
+			keysLabel.Text = $"K: {keys}";
 		}
 	}
 
 	// Stats
-	public static void HUDUpdateSpeed(float speed) {
-		speedText.Text = $"Speed: {speed:F2}";
+	public static void UpdateSpeed(float speed) {
+		speedLabel.Text = $"Speed: {speed:F2}";
 	}
 
-	public static void HUDUpdateRate(float rate) {
-		rateText.Text = $"Rate: {rate:F2}";
+	public static void UpdateRate(float rate) {
+		rateLabel.Text = $"Rate: {rate:F2}";
 	}
 
-	public static void HUDUpdateDamage(float dmg) {
-		damageText.Text = $"DMG: {dmg:F2}";
+	public static void UpdateDamage(float dmg) {
+		damageLabel.Text = $"DMG: {dmg:F2}";
 	}
 
-	public static void HUDUpdateRange(float range) {
-		rangeText.Text = $"Range: {range:F2}";
+	public static void UpdateRange(float range) {
+		rangeLabel.Text = $"Range: {range:F2}";
 	}
 
-	public static void HUDUpdateShotSpeed(float shotSpeed) {
-		shotSpeedText.Text = $"SSpeed: {shotSpeed:F2}";
+	public static void UpdateShotSpeed(float shotSpeed) {
+		shotSpeedLabel.Text = $"SSpeed: {shotSpeed:F2}";
+	}
+	public static void UpdateLuck(float luck) {
+		luckLabel.Text = $"Luck: {luck:F2}";
 	}
 	#endregion
 }

@@ -4,6 +4,11 @@ using System.Linq;
 using System.Reflection.Emit;
 
 public partial class Main : Node {
+	// Player Z-index = 100
+	// Projectile Z-index = 50
+	// Enemy Z-index = 20
+	// Pickup Z-index = 10
+
 	public static int BasePlayerDamageTaken { get; set; }
 	public static Player Player { get; set; }
 	public static Vector2 PlayerPosition { get; set; }
@@ -67,6 +72,18 @@ public partial class Main : Node {
 				else {
 					Player.Keys = 99;
 				}
+				break;
+
+			case 3:
+				//if (Player.HeartContainers.Count * 2 > Player.GetRedHearts()) {
+					Player.GiveHeart(amount, HeartEType.RedHeart);
+				//}
+				break;
+
+			case 4:
+				//if ((Player.HeartContainers.Count + Player.LooseHearts.Count) < 13) {
+					Player.GiveHeart(amount, HeartEType.BlueHeart);
+				//}
 				break;
 		}
 	}

@@ -29,7 +29,7 @@ public partial class Projectile : Area2D {
 		Speed = 256 * speed;
 		Damage = damage;
 		Range = range;
-		Lifetime = (range * 32) / speed;
+		Lifetime = (Range * 32) / Speed;
 
 		// Modifies projectile object scanning behaviour
 		if (Spectral) {

@@ -26,19 +26,19 @@ offset_bottom = 157.0
 scale = Vector2(2, 2)
 theme_override_constants/separation = -2
 
-[node name="CoinText" type="Label" parent="PickupsContainer"]
+[node name="CoinLabel" type="Label" parent="PickupsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="BombText" type="Label" parent="PickupsContainer"]
+[node name="BombLabel" type="Label" parent="PickupsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="KeyText" type="Label" parent="PickupsContainer"]
+[node name="KeyLabel" type="Label" parent="PickupsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
@@ -52,31 +52,37 @@ offset_bottom = 341.0
 scale = Vector2(2, 2)
 theme_override_constants/separation = 0
 
-[node name="SpeedText" type="Label" parent="StatsContainer"]
+[node name="SpeedLabel" type="Label" parent="StatsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="RateText" type="Label" parent="StatsContainer"]
+[node name="RateLabel" type="Label" parent="StatsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="DamageText" type="Label" parent="StatsContainer"]
+[node name="DamageLabel" type="Label" parent="StatsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="RangeText" type="Label" parent="StatsContainer"]
+[node name="RangeLabel" type="Label" parent="StatsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("2_qdl5i")
 
-[node name="ShotSpeedText" type="Label" parent="StatsContainer"]
+[node name="ShotSpeedLabel" type="Label" parent="StatsContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("2_qdl5i")
+
+[node name="LuckLabel" type="Label" parent="StatsContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
