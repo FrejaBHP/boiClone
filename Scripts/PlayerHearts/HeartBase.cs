@@ -12,10 +12,5 @@ public abstract class HeartBase {
 
     public abstract Texture2D Sprite { get; set; }
 
-
-    public abstract void OnPickup();
-
-    public abstract void OnBroken();
-
     public abstract void ChangeSprite();
 }

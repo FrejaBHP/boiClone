@@ -32,7 +32,7 @@ public partial class Enemy : Character {
 				Character collider = (Character)col.GetCollider();
 				
 				if (collider.IsInGroup("Player")) {
-					Main.ProcessPlayerDamage(this);
+					Main.ProcessPlayerDamage(this, 1);
 				}
 				/*
 				else if (collider.IsInGroup("Enemy")) {

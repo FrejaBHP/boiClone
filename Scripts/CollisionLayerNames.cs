@@ -1,4 +1,4 @@
-public enum CollisionLayerNames {
+public enum ECollisionLayer {
     NONE,
     Boundary,
     Pit,

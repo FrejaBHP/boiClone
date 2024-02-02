@@ -33,20 +33,20 @@ public partial class Projectile : Area2D {
 
 		// Modifies projectile object scanning behaviour
 		if (Spectral) {
-			SetCollisionMaskValue((int)CollisionLayerNames.Obstacle, false);
+			SetCollisionMaskValue((int)ECollisionLayer.Obstacle, false);
 		}
 
 		if (alignment == 0) {
-			SetCollisionMaskValue((int)CollisionLayerNames.Enemy, true);
+			SetCollisionMaskValue((int)ECollisionLayer.Enemy, true);
 		}
 		if (alignment == 1) {
-			SetCollisionMaskValue((int)CollisionLayerNames.Player, true);
+			SetCollisionMaskValue((int)ECollisionLayer.Player, true);
 		}
 	}
 
 	public void OnBodyEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
-			Main.ProcessPlayerDamage((Character)body);
+			Main.ProcessPlayerDamage((Character)body, 1);
 			QueueFree();
 		}
 

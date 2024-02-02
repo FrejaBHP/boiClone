@@ -16,15 +16,6 @@ public class HeartBlue : HeartBase {
         Halves = h;
     }
 
-
-    public override void OnPickup() {
-
-    }
-
-    public override void OnBroken() {
-
-    }
-
     public override void ChangeSprite() {
         switch (halves) {
             case 1:

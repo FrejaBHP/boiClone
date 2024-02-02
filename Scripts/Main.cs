@@ -14,6 +14,7 @@ public partial class Main : Node {
 	public static Vector2 PlayerPosition { get; set; }
 	public static Camera2D Camera { get; set; }
 	public static CanvasLayer ItemShowcase { get; set; }
+	private static World world;
 	
 	// Called when the node enters the scene tree for the first time.
 	public Main() {
@@ -21,7 +22,7 @@ public partial class Main : Node {
 	}
 
     public override void _Ready() {
-
+		world = GetNode<World>("/root/Main/World");
     }
 
     public override void _EnterTree() {
@@ -38,10 +39,17 @@ public partial class Main : Node {
 		}
 	}
 
-	public static void ProcessPlayerDamage(Character source) {
+	public static void ProcessPlayerDamage(Character source, int multiplier) {
 		if (!Player.Invulnerable) {
 			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
-			Player.TakeDamage(BasePlayerDamageTaken * 1, 0);
+			Player.TakeDamage(BasePlayerDamageTaken * multiplier, 0);
+		}
+	}
+
+	public static void DamageAllEnemies(Character source, float damage) {
+        Enemy[] enemies = world.SelectAllEnemies();
+		for (int i = 0; i < enemies.Length; i++) {
+			ProcessEnemyDamage(source, enemies[i], damage);
 		}
 	}
 
@@ -75,15 +83,15 @@ public partial class Main : Node {
 				break;
 
 			case 3:
-				//if (Player.HeartContainers.Count * 2 > Player.GetRedHearts()) {
-					Player.GiveHeart(amount, HeartEType.RedHeart);
-				//}
+				Player.GiveHeart(amount, HeartEType.RedHeart);
 				break;
 
 			case 4:
-				//if ((Player.HeartContainers.Count + Player.LooseHearts.Count) < 13) {
-					Player.GiveHeart(amount, HeartEType.BlueHeart);
-				//}
+				Player.GiveHeart(amount, HeartEType.BlueHeart);
+				break;
+
+			case 5:
+				Player.GiveHeart(amount, HeartEType.BlackHeart);
 				break;
 		}
 	}

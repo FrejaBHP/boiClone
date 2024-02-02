@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://wmmb5pdtu3ix"]
+
+[ext_resource type="PackedScene" uid="uid://bkn3vq3c5w0v4" path="res://Scenes/pickup.tscn" id="1_luqx5"]
+[ext_resource type="Texture2D" uid="uid://db7pin0d5jjr1" path="res://Images/Pickups/heartBlackFull.png" id="2_vpbyt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y6e5f"]
+resource_local_to_scene = true
+radius = 6.0
+
+[node name="FullBlackHeart" instance=ExtResource("1_luqx5")]
+metadata/pickupType = 5
+metadata/amount = 2
+
+[node name="PickupCol" parent="." index="0"]
+shape = SubResource("CircleShape2D_y6e5f")
+
+[node name="PickupSprite" parent="." index="1"]
+texture_filter = 1
+texture = ExtResource("2_vpbyt")

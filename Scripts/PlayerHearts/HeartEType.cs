@@ -1,4 +1,5 @@
 public enum HeartEType {
     RedHeart,
-    BlueHeart
+    BlueHeart,
+    BlackHeart
 }

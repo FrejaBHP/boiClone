@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using Godot;
 
+public enum EnemyNames {
+    BasicEnemy
+}
+
 public static class EnemyCollection {
     public static List<PackedScene> EnemyScenes { get; private set; }
 

@@ -7,6 +7,7 @@ public enum PickupEType {
     Key,
     RedHeart,
     BlueHeart,
+    BlackHeart,
     AMOUNT
 }
 
@@ -19,7 +20,9 @@ public enum PickupEName {
     RedHeartFull,
     RedHeartHalf,
     BlueHeartFull,
-    BlueHeartHalf
+    BlueHeartHalf,
+    BlackHeartFull,
+    BlackHeartHalf
 }
 
 public static class PickupCollection {
@@ -35,7 +38,9 @@ public static class PickupCollection {
             GD.Load<PackedScene>("Scenes/Pickups/fullRedHeart.tscn"),
             GD.Load<PackedScene>("Scenes/Pickups/halfRedHeart.tscn"),
             GD.Load<PackedScene>("Scenes/Pickups/fullBlueHeart.tscn"),
-            GD.Load<PackedScene>("Scenes/Pickups/halfBlueHeart.tscn")
+            GD.Load<PackedScene>("Scenes/Pickups/halfBlueHeart.tscn"),
+            GD.Load<PackedScene>("Scenes/Pickups/fullBlackHeart.tscn"),
+            GD.Load<PackedScene>("Scenes/Pickups/halfBlackHeart.tscn")
         };
         GD.Print($"Loaded pickup types: {PickupScenes.Count}");
     }

@@ -292,12 +292,22 @@ public partial class World : Node {
 				break;
 
 			case (int)PickupEType.BlueHeart:
-				int hbRoll = random.Next(0, 2);
-				if (hbRoll == 1) {
+				int bRoll = random.Next(0, 2);
+				if (bRoll == 1) {
 					pID = (int)PickupEName.BlueHeartFull;
 				}
-				else if (hbRoll == 0) {
+				else if (bRoll == 0) {
 					pID = (int)PickupEName.BlueHeartHalf;
+				}
+				break;
+			
+			case (int)PickupEType.BlackHeart:
+				int blRoll = random.Next(0, 2);
+				if (blRoll == 1) {
+					pID = (int)PickupEName.BlackHeartFull;
+				}
+				else if (blRoll == 0) {
+					pID = (int)PickupEName.BlackHeartHalf;
 				}
 				break;
 		}
@@ -379,4 +389,8 @@ public partial class World : Node {
 		}
 	}
 	#endregion
+
+	public Enemy[] SelectAllEnemies() {
+		return GetTree().GetNodesInGroup("Enemy").Cast<Enemy>().ToArray();
+	}
 }

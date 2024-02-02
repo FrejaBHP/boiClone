@@ -70,7 +70,7 @@ public partial class HUD : CanvasLayer {
 	}
 
 	public static void RemoveLastHeart() {
-		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount() - 1).QueueFree();
+		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount() - 1).Free();
 	}
 
 	// Pickups

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using Godot;
 
-public class HeartRed : HeartBase {
+public class HeartBlack : HeartBase {
     private int halves;
     public override int Halves {
 		get => halves;
@@ -12,22 +13,26 @@ public class HeartRed : HeartBase {
 
     public override Texture2D Sprite { get; set; }
 
-    public HeartRed() {
-        
+    public HeartBlack(int h) {
+        Halves = h;
+    }
+
+    public void OnPickup() {
+
+    }
+
+    public void OnBroken() {
+        Main.DamageAllEnemies(Main.Player, 40);
     }
 
     public override void ChangeSprite() {
         switch (halves) {
-            case 0:
-                Sprite = HeartSprites.HUDRedHeartEmpty;
-                break;
-
             case 1:
-                Sprite = HeartSprites.HUDRedHeartHalf;
+                Sprite = HeartSprites.HUDBlackHeartHalf;
                 break;
 
             case 2:
-                Sprite = HeartSprites.HUDRedHeartFull;
+                Sprite = HeartSprites.HUDBlackHeartFull;
                 break;
         }
     }

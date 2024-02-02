@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 public partial class Player : Character {
+	protected PackedScene Bomb = GD.Load<PackedScene>("Scenes/entityBomb.tscn");
+
 	#region Properties
+	public List<Item> Inventory { get; set; }
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
 
@@ -182,8 +185,6 @@ public partial class Player : Character {
 		} 
 	}
 	#endregion
-
-    public List<Item> Inventory { get; set; }
 	#endregion
 
     public Player() {
@@ -225,19 +226,33 @@ public partial class Player : Character {
 			shootingDir = 0;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootright")) {
+		else if (@event.IsActionPressed("shootright")) {
 			shootingDir = 1;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootdown")) {
+		else if (@event.IsActionPressed("shootdown")) {
 			shootingDir = 2;
 			ShootProjectile(shootingDir);
 		}
-		if (@event.IsActionPressed("shootleft")) {
+		else if (@event.IsActionPressed("shootleft")) {
 			shootingDir = 3;
 			ShootProjectile(shootingDir);
 		}
+
+		if (@event.IsActionPressed("placebomb")) {
+			PlaceBomb();
+		}
     }
+
+	private void PlaceBomb() {
+		if (Bombs > 0) {
+			EntityBomb bomb = Bomb.Instantiate() as EntityBomb;
+			GetNode<World>("/root/Main/World").AddChild(bomb);
+			bomb.GlobalPosition = GlobalPosition;
+
+			Bombs--;
+		}
+	}
 
     protected override void ShootProjectile(int dir) {
 		if (CanShoot) {
@@ -273,15 +288,15 @@ public partial class Player : Character {
 			shootingDir = 0;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootright")) {
+		else if (Input.IsActionPressed("shootright")) {
 			shootingDir = 1;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootdown")) {
+		else if (Input.IsActionPressed("shootdown")) {
 			shootingDir = 2;
 			ShootProjectile(shootingDir);
 		}
-		if (Input.IsActionPressed("shootleft")) {
+		else if (Input.IsActionPressed("shootleft")) {
 			shootingDir = 3;
 			ShootProjectile(shootingDir);
 		}
@@ -333,6 +348,38 @@ public partial class Player : Character {
 						LooseHearts[^1].Halves++;
 						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
 					}
+					else {
+						break;
+					}
+					halves--;
+				}
+				break;
+			
+			case HeartEType.BlackHeart:
+				while (halves > 0) {
+					int totalHearts = HeartContainers.Count + LooseHearts.Count;
+
+					if (LooseHearts.Count == 0 && totalHearts != 12) {
+						LooseHearts.Add((HeartBlack)new(1));
+						HUD.InsertHeartAtPos(totalHearts, LooseHearts[0].Sprite);
+					}
+					else if (LooseHearts[^1].Halves == 2 && totalHearts != 12) {
+						LooseHearts.Add((HeartBlack)new(1));
+						HUD.InsertHeartAtPos(totalHearts, LooseHearts[^1].Sprite);
+					}
+					else if (LooseHearts[^1].Halves == 1) {
+						if (LooseHearts[^1].GetType() == typeof(HeartBlue)) {
+							LooseHearts.RemoveAt(LooseHearts.Count - 1);
+							LooseHearts.Add((HeartBlack)new(2));
+						}
+						else {
+							LooseHearts[^1].Halves++;
+						}
+						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
+					}
+					else {
+						break;
+					}
 					halves--;
 				}
 				break;
@@ -345,14 +392,17 @@ public partial class Player : Character {
 	public void TakeDamage(int damage, int type) {
 		for (int i = 0; i < damage; i++) {
 			if (LooseHearts.Count > 0) {
-				LooseHearts.Last().Halves -= 1;
+				LooseHearts[^1].Halves -= 1;
 
-				if (LooseHearts.Last().Halves == 0) {
+				if (LooseHearts[^1].Halves == 0) {
+					if (LooseHearts[^1].GetType() == typeof(HeartBlack)) {
+						(LooseHearts[^1] as HeartBlack).OnBroken();
+					}
 					LooseHearts.RemoveAt(LooseHearts.Count - 1);
 					HUD.RemoveLastHeart();
 				}
 				else {
-					HUD.UpdateLastHeart(LooseHearts.Last().Sprite);
+					HUD.UpdateLastHeart(LooseHearts[^1].Sprite);
 				}
 			}
 			else if (GetRedHearts() > 0) {
