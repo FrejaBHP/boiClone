@@ -27,12 +27,12 @@ public partial class HUD : CanvasLayer {
 		bombsLabel = GetNode<Label>("PickupsContainer/BombLabel");
 		keysLabel = GetNode<Label>("PickupsContainer/KeyLabel");
 
-		speedLabel = GetNode<Label>("StatsContainer/SpeedLabel");
-		rateLabel = GetNode<Label>("StatsContainer/RateLabel");
-		damageLabel = GetNode<Label>("StatsContainer/DamageLabel");
-		rangeLabel = GetNode<Label>("StatsContainer/RangeLabel");
-		shotSpeedLabel = GetNode<Label>("StatsContainer/ShotSpeedLabel");
-		luckLabel = GetNode<Label>("StatsContainer/LuckLabel");
+		speedLabel = GetNode<Label>("StatsContainer/SpeedContainer/SpeedLabel");
+		rateLabel = GetNode<Label>("StatsContainer/RateContainer/RateLabel");
+		damageLabel = GetNode<Label>("StatsContainer/DamageContainer/DamageLabel");
+		rangeLabel = GetNode<Label>("StatsContainer/RangeContainer/RangeLabel");
+		shotSpeedLabel = GetNode<Label>("StatsContainer/ShotSpeedContainer/ShotSpeedLabel");
+		luckLabel = GetNode<Label>("StatsContainer/LuckContainer/LuckLabel");
 	}
 
 	#region UpdateMethods
@@ -103,26 +103,26 @@ public partial class HUD : CanvasLayer {
 
 	// Stats
 	public static void UpdateSpeed(float speed) {
-		speedLabel.Text = $"Speed: {speed:F2}";
+		speedLabel.Text = $"{speed:F2}";
 	}
 
 	public static void UpdateRate(float rate) {
-		rateLabel.Text = $"Rate: {rate:F2}";
+		rateLabel.Text = $"{rate:F2}";
 	}
 
 	public static void UpdateDamage(float dmg) {
-		damageLabel.Text = $"DMG: {dmg:F2}";
+		damageLabel.Text = $"{dmg:F2}";
 	}
 
 	public static void UpdateRange(float range) {
-		rangeLabel.Text = $"Range: {range:F2}";
+		rangeLabel.Text = $"{range:F2}";
 	}
 
 	public static void UpdateShotSpeed(float shotSpeed) {
-		shotSpeedLabel.Text = $"SSpeed: {shotSpeed:F2}";
+		shotSpeedLabel.Text = $"{shotSpeed:F2}";
 	}
 	public static void UpdateLuck(float luck) {
-		luckLabel.Text = $"Luck: {luck:F2}";
+		luckLabel.Text = $"{luck:F2}";
 	}
 	#endregion
 }

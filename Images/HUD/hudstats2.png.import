@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bn8peucd0b6wc"
-path="res://.godot/imported/upheaval_0.png-d90622440c259eddb970d70d1a0e52c7.ctex"
+uid="uid://d2xd6k0wbb71o"
+path="res://.godot/imported/hudstats2.png-3427050d778267497f62aeb039c9e5d9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Font/upheaval_0.png"
-dest_files=["res://.godot/imported/upheaval_0.png-d90622440c259eddb970d70d1a0e52c7.ctex"]
+source_file="res://Images/HUD/hudstats2.png"
+dest_files=["res://.godot/imported/hudstats2.png-3427050d778267497f62aeb039c9e5d9.ctex"]
 
 [params]
 

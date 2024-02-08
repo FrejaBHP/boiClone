@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://Scripts/NewItemShowcase.cs" id="1_tlnjh"]
 [ext_resource type="Texture2D" uid="uid://m1at72wymlto" path="res://Images/streak.png" id="2_kas4d"]
-[ext_resource type="Theme" uid="uid://bt845sthgsebg" path="res://Scenes/Themes/LabelRegular.tres" id="3_b5qnl"]
-[ext_resource type="Theme" uid="uid://bfng2g1obtxhs" path="res://Scenes/Themes/LabelSmall.tres" id="4_fs62r"]
+[ext_resource type="Theme" uid="uid://bt845sthgsebg" path="res://Scenes/Themes/LabelHUDStreak.tres" id="3_5jy5r"]
+[ext_resource type="Theme" uid="uid://bfng2g1obtxhs" path="res://Scenes/Themes/LabelHUDPickups.tres" id="4_3n305"]
 
 [node name="NewItemShowcase" type="CanvasLayer"]
 script = ExtResource("1_tlnjh")
@@ -26,7 +26,7 @@ offset_bottom = 150.0
 grow_horizontal = 2
 scale = Vector2(2, 2)
 size_flags_horizontal = 4
-theme = ExtResource("3_b5qnl")
+theme = ExtResource("3_5jy5r")
 text = "Mutant spider"
 horizontal_alignment = 1
 
@@ -38,7 +38,7 @@ offset_top = 161.0
 offset_right = 640.0
 offset_bottom = 261.0
 scale = Vector2(2, 2)
-theme = ExtResource("4_fs62r")
+theme = ExtResource("4_3n305")
 text = "Quad shot"
 horizontal_alignment = 1
 

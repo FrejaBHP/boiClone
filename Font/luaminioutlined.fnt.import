@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://bccmfmh8abokk"
+path="res://.godot/imported/luaminioutlined.fnt-592731bc55577527038778383d55fdb1.fontdata"
+
+[deps]
+
+source_file="res://Font/luaminioutlined.fnt"
+dest_files=["res://.godot/imported/luaminioutlined.fnt-592731bc55577527038778383d55fdb1.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=false
+scaling_mode=2

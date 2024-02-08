@@ -7,7 +7,6 @@ public partial class WorldRoom {
 
     public WorldRoom(int id, int x, int y) {
         ID = id;
-        //Data = RoomCollection.RoomDataSet[RoomCollection.RoomDataSet.FindIndex(r => r.ID == id)];
         Coords = Coords with { X = x, Y = y };
     }
 }

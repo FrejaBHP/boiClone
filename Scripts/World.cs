@@ -127,7 +127,7 @@ public partial class World : Node {
 		// Stats separated to allow for different kinds of characters later
 		// Setting these values also sets the HUD, which is probably smart
 		// Maybe should be moved somewhere else, however
-		player.GiveHeartContainers(3, 1);
+		player.GiveHeartContainers(3, 6);
 
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;
@@ -137,7 +137,7 @@ public partial class World : Node {
 		player.Luck = 0f;
 
 		player.Coins = 0;
-		player.Bombs = 0;
+		player.Bombs = 5;
 		player.Keys = 0;
 
 		player.GlobalPosition = player.GlobalPosition with { X = roomLength / 2, Y = roomHeight / 2 }; // Middle of the starting room

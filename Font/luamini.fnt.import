@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://5fud41mxwkur"
+path="res://.godot/imported/luamini.fnt-6e7c23de146a4ed2d32a634aab135fbf.fontdata"
+
+[deps]
+
+source_file="res://Font/luamini.fnt"
+dest_files=["res://.godot/imported/luamini.fnt-6e7c23de146a4ed2d32a634aab135fbf.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=false
+scaling_mode=2

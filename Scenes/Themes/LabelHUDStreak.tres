@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=3 format=3 uid="uid://bt845sthgsebg"]
 
-[ext_resource type="FontFile" uid="uid://cvlv42uyj4juc" path="res://Font/upheaval.fnt" id="1_pqx3b"]
+[ext_resource type="FontFile" uid="uid://d2q5sb4cvpbot" path="res://Font/upheaval.ttf" id="1_g6e62"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wbi2g"]
 
@@ -13,6 +13,6 @@ Label/constants/outline_size = 0
 Label/constants/shadow_offset_x = 1
 Label/constants/shadow_offset_y = 1
 Label/constants/shadow_outline_size = 1
-Label/font_sizes/font_size = 16
-Label/fonts/font = ExtResource("1_pqx3b")
+Label/font_sizes/font_size = 20
+Label/fonts/font = ExtResource("1_g6e62")
 Label/styles/normal = SubResource("StyleBoxEmpty_wbi2g")

@@ -24,6 +24,7 @@ atlas = ExtResource("2_rk5b2")
 region = Rect2(64, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v6hjv"]
+resource_local_to_scene = true
 animations = [{
 "frames": [{
 "duration": 2.0,
@@ -47,10 +48,10 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tog1c"]
-radius = 16.0
+radius = 6.0
 
 [node name="Bomb" type="Node2D"]
-scale = Vector2(2, 2)
+scale = Vector2(1.5, 1.5)
 script = ExtResource("1_3nrmv")
 
 [node name="BombSprites" type="AnimatedSprite2D" parent="."]
@@ -59,13 +60,12 @@ z_as_relative = false
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_v6hjv")
 animation = &"bombFuse"
-autoplay = "bombFuse"
 frame = 4
 frame_progress = 1.0
 
 [node name="BombRadius" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 56
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BombRadius"]
 shape = SubResource("CircleShape2D_tog1c")

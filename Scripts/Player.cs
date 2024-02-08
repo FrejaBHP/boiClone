@@ -321,6 +321,7 @@ public partial class Player : Character {
 	}
 
 	public void GiveHeart(int halves, HeartEType type) {
+		// Healing is performed in half-heart steps
 		switch (type) {
 			case HeartEType.RedHeart:
 				for (int i = 0; i < HeartContainers.Count; i++) {
@@ -368,14 +369,26 @@ public partial class Player : Character {
 						HUD.InsertHeartAtPos(totalHearts, LooseHearts[^1].Sprite);
 					}
 					else if (LooseHearts[^1].Halves == 1) {
+						// Black Hearts convert half Blue Hearts if possible
 						if (LooseHearts[^1].GetType() == typeof(HeartBlue)) {
-							LooseHearts.RemoveAt(LooseHearts.Count - 1);
-							LooseHearts.Add((HeartBlack)new(2));
+							LooseHearts[^1] = (HeartBlack)new(2);
 						}
 						else {
 							LooseHearts[^1].Halves++;
 						}
 						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
+					}
+					else if (totalHearts == 12) {
+						// Black Hearts convert first found Blue Heart if hearts are full
+						int heartIndex = LooseHearts.FindIndex(h => h.GetType() == typeof(HeartBlue));
+						if (heartIndex != -1) {
+							LooseHearts[heartIndex] = (HeartBlack)new(2);
+							HUD.UpdateHeartAtPos(HeartContainers.Count + heartIndex, LooseHearts[heartIndex].Sprite);
+
+							if (halves % 2 == 0) {
+								halves--;
+							}
+						}
 					}
 					else {
 						break;
@@ -390,6 +403,7 @@ public partial class Player : Character {
 	}
 
 	public void TakeDamage(int damage, int type) {
+		// Like healing, taking damage is performed in half-heart steps
 		for (int i = 0; i < damage; i++) {
 			if (LooseHearts.Count > 0) {
 				LooseHearts[^1].Halves -= 1;

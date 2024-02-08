@@ -5,15 +5,20 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_y6e5f"]
 resource_local_to_scene = true
-radius = 6.0
+radius = 7.0
 
 [node name="Key" instance=ExtResource("1_240hf")]
 metadata/pickupType = 2
 metadata/amount = 1
 
-[node name="PickupCol" parent="." index="0"]
+[node name="ShadowTransform" parent="." index="1"]
+update_scale = true
+
+[node name="PickupCol" parent="." index="2"]
 shape = SubResource("CircleShape2D_y6e5f")
 
-[node name="PickupSprite" parent="." index="1"]
-texture_filter = 1
+[node name="PickupShadow" parent="." index="3"]
+scale = Vector2(1.2, 1.2)
+
+[node name="PickupSprite" parent="." index="4"]
 texture = ExtResource("2_0m7yv")

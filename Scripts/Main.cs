@@ -15,8 +15,9 @@ public partial class Main : Node {
 	public static Camera2D Camera { get; set; }
 	public static CanvasLayer ItemShowcase { get; set; }
 	private static World world;
+
+	public static PackedScene entityExplosion = GD.Load<PackedScene>("Scenes/entityExplosion.tscn");
 	
-	// Called when the node enters the scene tree for the first time.
 	public Main() {
 		BasePlayerDamageTaken = 1;
 	}
@@ -103,8 +104,6 @@ public partial class Main : Node {
 			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemDataSet[itemID].Type);
 			Player.Inventory.Add(item);
 			item.OnPickedUp();
-
-			//GD.Print($"Picked up {ItemCollection.ItemDataSet[itemID].Name}! {ItemCollection.ItemDataSet[itemID].Description}");
 		}
 	}
 }

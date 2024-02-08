@@ -1,0 +1,93 @@
+[gd_scene load_steps=12 format=3 uid="uid://du68gc7bkgwyj"]
+
+[ext_resource type="Texture2D" uid="uid://dcfupxsgpv831" path="res://Images/Entities/explosionSheet_24.png" id="1_40pil"]
+[ext_resource type="Script" path="res://Scripts/EntityExplosion.cs" id="1_vjo08"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_auewt"]
+atlas = ExtResource("1_40pil")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g7pj4"]
+atlas = ExtResource("1_40pil")
+region = Rect2(30, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fvcyi"]
+atlas = ExtResource("1_40pil")
+region = Rect2(60, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_newtr"]
+atlas = ExtResource("1_40pil")
+region = Rect2(90, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f5ap7"]
+atlas = ExtResource("1_40pil")
+region = Rect2(120, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qosjy"]
+atlas = ExtResource("1_40pil")
+region = Rect2(150, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bd3hc"]
+atlas = ExtResource("1_40pil")
+region = Rect2(180, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_orlt5"]
+resource_local_to_scene = true
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_auewt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g7pj4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fvcyi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_newtr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f5ap7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qosjy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bd3hc")
+}],
+"loop": false,
+"name": &"explosion",
+"speed": 20.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_j06ub"]
+resource_local_to_scene = true
+radius = 48.0
+
+[node name="EntityExplosion" type="Node2D"]
+script = ExtResource("1_vjo08")
+
+[node name="ExplosionSprites" type="AnimatedSprite2D" parent="."]
+z_index = 50
+z_as_relative = false
+texture_filter = 1
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_orlt5")
+animation = &"explosion"
+frame = 6
+frame_progress = 1.0
+
+[node name="ExplosionRadius" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 568
+input_pickable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionRadius"]
+shape = SubResource("CircleShape2D_j06ub")
+
+[node name="ExplosionTimer" type="Timer" parent="."]
+wait_time = 0.35
+one_shot = true
+
+[connection signal="timeout" from="ExplosionTimer" to="." method="OnExplosionTimerTimeout"]

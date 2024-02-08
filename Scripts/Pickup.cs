@@ -1,7 +1,8 @@
 using Godot;
 using System;
+using System.Linq;
 
-public partial class Pickup : Area2D {
+public partial class Pickup : RigidBody2D {
 	protected int pType;
 	protected int amount;
 	
@@ -10,16 +11,35 @@ public partial class Pickup : Area2D {
 		amount = (int)GetMeta("amount");
 	}
 
-	private void OnPlayerEntered(Node2D body) { // Add rules for pickups that can't yet be picked up, like red hearts at full health
-		if (body.IsInGroup("Player")) {
-			if (pType != (int)PickupEType.RedHeart) {
+	// Pickups can be pushed through corners of the tilemap. This is not a pressing concern, but should be looked into eventually
+
+	private void OnPlayerPickupRadiusEntered(Node2D body) {
+		switch (pType) {
+			case (int)PickupEType.RedHeart:
+				if (Main.Player.HeartContainers.Count * 2 > Main.Player.GetRedHearts()) {
+					Main.GivePickup(pType, amount);
+					QueueFree();
+				}
+				break;
+				
+			case (int)PickupEType.BlueHeart:
+				if ((Main.Player.HeartContainers.Count * 2) + Main.Player.GetOtherHearts() < 24) {
+					Main.GivePickup(pType, amount);
+					QueueFree();
+				}
+				break;
+				
+			case (int)PickupEType.BlackHeart:
+				if ((Main.Player.HeartContainers.Count * 2) + Main.Player.GetOtherHearts() < 24 || Main.Player.LooseHearts.OfType<HeartBlue>().Any()) {
+					Main.GivePickup(pType, amount);
+					QueueFree();
+				}
+				break;
+			
+			default:
 				Main.GivePickup(pType, amount);
 				QueueFree();
-			}
-			else if (Main.Player.HeartContainers.Count * 2 > Main.Player.GetRedHearts()) {
-				Main.GivePickup(pType, amount);
-				QueueFree();
-			}
+				break;
 		}
 	}
 }
