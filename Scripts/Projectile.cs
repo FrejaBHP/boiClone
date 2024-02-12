@@ -46,12 +46,12 @@ public partial class Projectile : Area2D {
 
 	public void OnBodyEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
-			Main.ProcessPlayerDamage((Character)body, 1);
+			//Main.ProcessPlayerDamage((Character)body, 1);
 			QueueFree();
 		}
 
 		if (body.IsInGroup("Enemy")) {
-			Main.ProcessEnemyDamage(Main.Player, (Enemy)body, Damage);
+			//Main.ProcessEnemyDamage(Main.Player, (Enemy)body, Damage);
 
 			if (!Piercing) {
 				QueueFree();
@@ -64,6 +64,10 @@ public partial class Projectile : Area2D {
 	}
 
 	public void OnAreaEntered(Area2D area) {
+		if (area.IsInGroup("EnemyHurtbox") && !Piercing) {
+			QueueFree();
+		}
+		
 		// Prevents projectiles from exiting rooms through open doors
 		if (area.HasMeta("door")) {
 			QueueFree();

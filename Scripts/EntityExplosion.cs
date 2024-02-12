@@ -27,8 +27,9 @@ public partial class EntityExplosion : Node2D {
 
         Godot.Collections.Array<Node2D> bodies = explosionArea.GetOverlappingBodies();
 		foreach (Node2D node in bodies) {
-			if (node.IsInGroup("Enemy")) {
-				Main.ProcessEnemyDamage(Main.Player, node as Enemy, Damage);
+			if (node.IsInGroup("Enemy") && node.HasNode("EnemyHealthComponent")) {
+				EnemyHealthComponent enemyHealth = node.GetNode<EnemyHealthComponent>("EnemyHealthComponent");
+				enemyHealth.TakeDamage(Damage);
 			}
 			else if (node.IsInGroup("Player")) {
 				Main.ProcessPlayerDamage(Main.Player, 2);
@@ -38,10 +39,19 @@ public partial class EntityExplosion : Node2D {
 				float knockbackFactor = 1 - ((distance * 0.75f) / shape.Radius); // 0.75f = 100% -> ~25% knockback depending on distance
 				Vector2 force = (node.GlobalTransform.Origin - GlobalTransform.Origin).Normalized() * (Knockback * knockbackFactor);
 				//Vector2 reverseforce = (GlobalTransform.Origin - node.GlobalTransform.Origin).Normalized() * (Knockback * knockbackFactor);
+				
 				switch (node) {
 					case Pickup:
 						Pickup pickup = node as Pickup;
 						pickup.ApplyCentralImpulse(force);
+						break;
+					
+					case EntityBomb:
+						EntityBomb bomb = node as EntityBomb;
+						if (bomb.Freeze) {
+							bomb.Set(EntityBomb.PropertyName.Freeze, false);
+						}
+						bomb.ApplyCentralImpulse(force);
 						break;
 
 					default:

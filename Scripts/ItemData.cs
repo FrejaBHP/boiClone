@@ -19,16 +19,16 @@ public partial class ItemData {
     public int ID { get; }
     public string Name { get; }
     public Type Type { get; }
-    public string SpritePath { get; }
+    public Texture2D Sprite { get; }
     public ItemCategories CategoryFlags { get; }
     public ItemPools PoolFlags { get; }
     public string Description { get; }
 
-    public ItemData(int id, string name, Type type, string path, ItemCategories cFlags, ItemPools pFlags, string desc) {
+    public ItemData(int id, string name, Type type, Texture2D sprite, ItemCategories cFlags, ItemPools pFlags, string desc) {
         ID = id;
         Name = name;
         Type = type;
-        SpritePath = path;
+        Sprite = sprite;
         CategoryFlags = cFlags;
         PoolFlags = pFlags;
         Description = desc;

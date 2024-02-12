@@ -3,6 +3,7 @@ using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 public partial class World : Node {
@@ -190,7 +191,7 @@ public partial class World : Node {
 			if (ItemCollection.ItemDataSet.Count != 0) {
 				Random random = new();
 				int rnd = random.Next(0, ItemCollection.ItemDataSet.Count);
-				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemDataSet[rnd].SpritePath);
+				itemSprite.Texture = ItemCollection.ItemDataSet[rnd].Sprite;
 				newPedestal.SetMeta("itemID", rnd);
 			}
 			else {
@@ -199,7 +200,7 @@ public partial class World : Node {
 		}
 		else {
 			if (ItemCollection.ItemDataSet[itemID] != null) {
-				itemSprite.Texture = GD.Load<Texture2D>(ItemCollection.ItemDataSet[itemID].SpritePath);
+				itemSprite.Texture = ItemCollection.ItemDataSet[itemID].Sprite;
 				newPedestal.SetMeta("itemID", itemID);
 			}
 			else {
@@ -223,14 +224,6 @@ public partial class World : Node {
 	#endregion
 
 	#region RoomAndPickupLogic
-	public void DecreaseEnemyCount() {
-		enemiesLeft--;
-		
-		if (enemiesLeft == 0) {
-			RoomCleared(true); // If combat occured, parameter is true, rolling for pickup
-		}
-	}
-
 	private void RoomCleared(bool hadCombat) {
 		currentRoom.CheckAndStartOpeningDoors();
 		
@@ -392,5 +385,16 @@ public partial class World : Node {
 
 	public Enemy[] SelectAllEnemies() {
 		return GetTree().GetNodesInGroup("Enemy").Cast<Enemy>().ToArray();
+	}
+
+
+	// SIGNAL HANDLING
+	public void DecreaseEnemyCount() {
+		//await ToSignal(typeof(EnemyHealthComponent), EnemyHealthComponent.SignalName.Died);
+		enemiesLeft--;
+		
+		if (enemiesLeft == 0) {
+			RoomCleared(true); // If combat occured, parameter is true, rolling for pickup
+		}
 	}
 }

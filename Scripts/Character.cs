@@ -3,17 +3,7 @@ using System;
 
 public partial class Character : CharacterBody2D {
 	protected PackedScene Projectile = GD.Load<PackedScene>("Scenes/projectile.tscn");
-	
-	public virtual float Damage { get; set; }
-	public virtual float Range { get; set; }
 	public virtual float Speed { get; set; }
-	public virtual float ShotSpeed { get; set; }
-	public virtual float AttackDelay { get; set; }
-
-	public virtual bool CanShoot { get; set; }
-	public virtual bool ShotsArePiercing { get; set; }
-	public virtual bool ShotsAreSpectral { get; set; }
-	public virtual bool Invulnerable { get; set; }
 
 	protected float moveSpeed = 208f;
 
@@ -56,6 +46,6 @@ public partial class Character : CharacterBody2D {
 	}
 
 	protected virtual void RefireTimerTimeout() {
-		CanShoot = true;
+		//CanShoot = true;
 	}
 }

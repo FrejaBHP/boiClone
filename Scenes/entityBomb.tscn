@@ -1,7 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://b6sa2avpehhuv"]
+[gd_scene load_steps=12 format=3 uid="uid://b6sa2avpehhuv"]
 
 [ext_resource type="Script" path="res://Scripts/EntityBomb.cs" id="1_3nrmv"]
 [ext_resource type="Texture2D" uid="uid://c13mob17klnnd" path="res://Images/Entities/bombSheet.png" id="2_rk5b2"]
+[ext_resource type="Texture2D" uid="uid://dijwh54f48b2k" path="res://Images/shadow.png" id="3_0cwbo"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ne28y"]
+bounce = 0.4
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tog1c"]
+radius = 7.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_krqoa"]
 atlas = ExtResource("2_rk5b2")
@@ -47,31 +54,55 @@ animations = [{
 "speed": 6.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_tog1c"]
-radius = 6.0
-
-[node name="Bomb" type="Node2D"]
-scale = Vector2(1.5, 1.5)
+[node name="Bomb" type="RigidBody2D"]
+collision_layer = 512
+collision_mask = 1023
+mass = 2.0
+physics_material_override = SubResource("PhysicsMaterial_ne28y")
+gravity_scale = 0.0
+center_of_mass_mode = 1
+can_sleep = false
+freeze = true
+freeze_mode = 1
+continuous_cd = 2
+max_contacts_reported = 1
+contact_monitor = true
 script = ExtResource("1_3nrmv")
 
+[node name="ShadowTransform" type="RemoteTransform2D" parent="."]
+remote_path = NodePath("../BombShadow")
+update_rotation = false
+update_scale = false
+
+[node name="SpriteTransform" type="RemoteTransform2D" parent="."]
+remote_path = NodePath("../BombSprites")
+update_rotation = false
+update_scale = false
+
+[node name="BombCol" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_tog1c")
+
+[node name="BombShadow" type="Sprite2D" parent="."]
+top_level = true
+texture_filter = 2
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("3_0cwbo")
+offset = Vector2(0, 3)
+
 [node name="BombSprites" type="AnimatedSprite2D" parent="."]
+top_level = true
 z_index = 50
 z_as_relative = false
 texture_filter = 1
+scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_v6hjv")
 animation = &"bombFuse"
 frame = 4
 frame_progress = 1.0
 
-[node name="BombRadius" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BombRadius"]
-shape = SubResource("CircleShape2D_tog1c")
-
 [node name="BombTimer" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
 
+[connection signal="body_exited" from="." to="." method="OnPlayerExited"]
 [connection signal="timeout" from="BombTimer" to="." method="OnBombTimerTimeout"]

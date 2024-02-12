@@ -33,13 +33,6 @@ public partial class Main : Node {
 		PickupCollection.CompilePickupList();
     }
 
-	public static void ProcessEnemyDamage(Character source, Enemy target, float damage) {
-		if (!target.Invulnerable) {
-			GD.Print($"Health: {target.Health}, Damage taken: {damage}");
-			target.ModifyHealth(-damage);
-		}
-	}
-
 	public static void ProcessPlayerDamage(Character source, int multiplier) {
 		if (!Player.Invulnerable) {
 			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
@@ -50,13 +43,16 @@ public partial class Main : Node {
 	public static void DamageAllEnemies(Character source, float damage) {
         Enemy[] enemies = world.SelectAllEnemies();
 		for (int i = 0; i < enemies.Length; i++) {
-			ProcessEnemyDamage(source, enemies[i], damage);
+			if (enemies[i].HasNode("EnemyHealthComponent")) {
+				EnemyHealthComponent enemyHealth = enemies[i].GetNode<EnemyHealthComponent>("EnemyHealthComponent");
+				enemyHealth.TakeDamage(damage);
+			}
 		}
 	}
 
 	public static void GivePickup(int pickupType, int amount) {
 		switch (pickupType) {
-			case 0:
+			case (int)PickupEType.Coin:
 				if ((Player.Coins + amount) < 100) {
 					Player.Coins += amount;
 				}
@@ -65,7 +61,7 @@ public partial class Main : Node {
 				}
 				break;
 
-			case 1:
+			case (int)PickupEType.Bomb:
 				if ((Player.Bombs + amount) < 100) {
 					Player.Bombs += amount;
 				}
@@ -74,7 +70,7 @@ public partial class Main : Node {
 				}
 				break;
 
-			case 2:
+			case (int)PickupEType.Key:
 				if ((Player.Keys + amount) < 100) {
 					Player.Keys += amount;
 				}
@@ -83,15 +79,15 @@ public partial class Main : Node {
 				}
 				break;
 
-			case 3:
+			case (int)PickupEType.RedHeart:
 				Player.GiveHeart(amount, HeartEType.RedHeart);
 				break;
 
-			case 4:
+			case (int)PickupEType.BlueHeart:
 				Player.GiveHeart(amount, HeartEType.BlueHeart);
 				break;
 
-			case 5:
+			case (int)PickupEType.BlackHeart:
 				Player.GiveHeart(amount, HeartEType.BlackHeart);
 				break;
 		}

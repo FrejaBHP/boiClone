@@ -1,12 +1,11 @@
 using Godot;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class BasicEnemy : Enemy {
+	[Export]
+	private EnemyCollisionComponent CollisionComponent;
 	public BasicEnemy() {
-		MaxHealth = 10; //20
-		Health = MaxHealth;
 		Speed = 0.5f;
-		ShotSpeed = 0.5f;
-		Range = 6.5f;
 	}
 }

@@ -1,10 +1,16 @@
 using Godot;
 using System;
 
-public partial class EntityBomb : Node2D {
+public partial class EntityBomb : RigidBody2D {
 	public override void _Ready() {
 		GetNode<AnimatedSprite2D>("BombSprites").Play("bombFuse");
 		GetNode<Timer>("BombTimer").Start();
+	}
+
+	private void OnPlayerExited(Node2D body) {
+		if (body.IsInGroup("Player") && Freeze) {
+			SetDeferred(PropertyName.Freeze, false);
+		}
 	}
 
 	private void OnBombTimerTimeout() {

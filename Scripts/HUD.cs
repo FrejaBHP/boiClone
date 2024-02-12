@@ -49,7 +49,7 @@ public partial class HUD : CanvasLayer {
         }
 	}
 
-	public static void InsertHeartAtPos(int n, Texture2D image) {
+	public static void InsertHeartAtIndex(int n, Texture2D image) {
 		Control control = new();
 
         Sprite2D heart = new() {
@@ -61,8 +61,12 @@ public partial class HUD : CanvasLayer {
 		heartsGridContainer.MoveChild(control, n);
 	}
 
-	public static void UpdateHeartAtPos(int n, Texture2D image) {
+	public static void UpdateHeartAtIndex(int n, Texture2D image) {
 		heartsGridContainer.GetChild<Control>(n).GetChild<Sprite2D>(0).Texture = image;
+	}
+
+	public static void RemoveHeartAtIndex(int n) {
+		heartsGridContainer.GetChild(n).Free();
 	}
 
 	public static void UpdateLastHeart(Texture2D image) {

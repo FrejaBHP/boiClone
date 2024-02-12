@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="2_r875e"]
 [ext_resource type="Texture2D" uid="uid://c5320ckd4iio5" path="res://Images/e.png" id="3_y8n5a"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_qjd0o"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_72va0"]
 radius = 12.0
 
 [node name="Player" instance=ExtResource("1_o5xn4")]
@@ -15,13 +15,22 @@ collision_mask = 215
 platform_on_leave = 2
 script = ExtResource("2_r875e")
 
-[node name="CharColShape" parent="." index="0"]
-shape = SubResource("CircleShape2D_qjd0o")
-
-[node name="CharSprite" parent="." index="1"]
+[node name="CharSprite" parent="." index="0"]
+scale = Vector2(0.95, 0.95)
 texture = ExtResource("3_y8n5a")
+
+[node name="PlayerCol" type="CollisionShape2D" parent="." index="1"]
+shape = SubResource("CircleShape2D_72va0")
 
 [node name="IFrameTimer" type="Timer" parent="." index="2"]
 one_shot = true
 
+[node name="RefireTimer" type="Timer" parent="." index="3"]
+one_shot = true
+
+[node name="BombPlacementTimer" type="Timer" parent="." index="4"]
+one_shot = true
+
 [connection signal="timeout" from="IFrameTimer" to="." method="IFrameTimerTimeout"]
+[connection signal="timeout" from="RefireTimer" to="." method="OnRefireTimerTimeout"]
+[connection signal="timeout" from="BombPlacementTimer" to="." method="OnBombPlacementTimerTimeout"]

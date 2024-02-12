@@ -10,13 +10,18 @@ public partial class Player : Character {
 	public List<Item> Inventory { get; set; }
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
+	public bool Invulnerable { get; private set; }
 
-	private Timer RefireTimer;
-	private Timer IFrameTimer;
+	private Timer refireTimer;
+	private Timer iFrameTimer;
+	private Timer bombPlacementTimer;
 
 	private float effectiveDamage;
 	private float effectiveFireRate;
 	private float refireDelay;
+
+	private bool canShoot;
+	private bool canPlaceBomb;
 
 	#region Health
 	public List<HeartContainer> HeartContainers { get; set; } = new();
@@ -72,7 +77,7 @@ public partial class Player : Character {
 	}
 
 	private float attackDelay;
-	public override float AttackDelay {
+	public float AttackDelay {
 		get => attackDelay;
 		set {
 			attackDelay = value;
@@ -102,7 +107,7 @@ public partial class Player : Character {
 	}
 
 	private float damage;
-	public override float Damage {
+	public float Damage {
 		get => damage;
 		set {
 			damage = value;
@@ -132,7 +137,7 @@ public partial class Player : Character {
 	}
 	
 	private float range;
-	public override float Range {
+	public float Range {
 		get => range;
 		set {
 			range = value;
@@ -150,7 +155,7 @@ public partial class Player : Character {
 	}
 
 	private float shotSpeed;
-    public override float ShotSpeed { 
+    public float ShotSpeed { 
 		get => shotSpeed; 
 		set { 
 			shotSpeed = value; 
@@ -192,14 +197,16 @@ public partial class Player : Character {
 		Inventory = new();
 		IsAlive = true;
 		IFrameTime = 1f;
-		CanShoot = true;
+		canShoot = true;
+		canPlaceBomb = true;
 	}
 
     public override void _Ready() {
-		RefireTimer = GetNode<Timer>("RefireTimer");
-		IFrameTimer = GetNode<Timer>("IFrameTimer");
+		refireTimer = GetNode<Timer>("RefireTimer");
+		iFrameTimer = GetNode<Timer>("IFrameTimer");
+		bombPlacementTimer = GetNode<Timer>("BombPlacementTimer");
 		
-		IFrameTimer.WaitTime = IFrameTime;
+		iFrameTimer.WaitTime = IFrameTime;
 
 		AddToGroup("Player");
     }
@@ -244,20 +251,10 @@ public partial class Player : Character {
 		}
     }
 
-	private void PlaceBomb() {
-		if (Bombs > 0) {
-			EntityBomb bomb = Bomb.Instantiate() as EntityBomb;
-			GetNode<World>("/root/Main/World").AddChild(bomb);
-			bomb.GlobalPosition = GlobalPosition;
-
-			Bombs--;
-		}
-	}
-
     protected override void ShootProjectile(int dir) {
-		if (CanShoot) {
-			CanShoot = false;
-			RefireTimer.Start();
+		if (canShoot) {
+			canShoot = false;
+			refireTimer.Start();
 
 			Projectile proj = Projectile.Instantiate() as Projectile;
 			proj.SetProjectileProperties(
@@ -280,8 +277,8 @@ public partial class Player : Character {
 		}
 	}
 
-	protected override void RefireTimerTimeout() {
-		CanShoot = true;
+	public void OnRefireTimerTimeout() {
+		canShoot = true;
 		
 		int shootingDir;
 		if (Input.IsActionPressed("shootup")) {
@@ -302,8 +299,25 @@ public partial class Player : Character {
 		}
 	}
 
-	public void GiveHeartContainers(int n, int halves) {
-		for (int i = 0; i < n; i++) {
+	private void PlaceBomb() {
+		if (Bombs > 0 && canPlaceBomb) {
+			EntityBomb bomb = Bomb.Instantiate() as EntityBomb;
+			GetNode<World>("/root/Main/World").AddChild(bomb);
+			bomb.GlobalPosition = GlobalPosition;
+
+			Bombs--;
+
+			canPlaceBomb = false;
+			bombPlacementTimer.Start();
+		}
+	}
+
+	private void OnBombPlacementTimerTimeout() {
+		canPlaceBomb = true;
+	}
+
+	public void GiveHeartContainers(int amount, int halves) {
+		for (int i = 0; i < amount; i++) {
 			if (halves >= 2) {
 				HeartContainers.Add(new(2));
 				halves -= 2;
@@ -316,8 +330,16 @@ public partial class Player : Character {
 				HeartContainers.Add(new(0));
 			}
 
-			HUD.InsertHeartAtPos(HeartContainers.Count - 1, HeartContainers[^1].RedHeart.Sprite);
+			HUD.InsertHeartAtIndex(HeartContainers.Count - 1, HeartContainers[^1].RedHeart.Sprite);
 		}
+	}
+
+	public void RemoveHeartContainers(int amount) {
+		for (int i = 0; i < amount; i++) {
+			HeartContainers.RemoveAt(HeartContainers.Count - 1);
+			HUD.RemoveHeartAtIndex(HeartContainers.Count - 1);
+		}
+		CheckDeathConditionAndPossiblyDie();
 	}
 
 	public void GiveHeart(int halves, HeartEType type) {
@@ -328,7 +350,7 @@ public partial class Player : Character {
 					while (HeartContainers[i].RedHeart.Halves < 2 && halves > 0) {
 						HeartContainers[i].RedHeart.Halves++;
 						halves--;
-						HUD.UpdateHeartAtPos(i, HeartContainers[i].RedHeart.Sprite);
+						HUD.UpdateHeartAtIndex(i, HeartContainers[i].RedHeart.Sprite);
 					}
 				}
 				break;
@@ -339,15 +361,15 @@ public partial class Player : Character {
 
 					if (LooseHearts.Count == 0 && totalHearts != 12) {
 						LooseHearts.Add((HeartBlue)new(1));
-						HUD.InsertHeartAtPos(totalHearts, LooseHearts[0].Sprite);
+						HUD.InsertHeartAtIndex(totalHearts, LooseHearts[0].Sprite);
 					}
 					else if (LooseHearts[^1].Halves == 2 && totalHearts != 12) {
 						LooseHearts.Add((HeartBlue)new(1));
-						HUD.InsertHeartAtPos(totalHearts, LooseHearts[^1].Sprite);
+						HUD.InsertHeartAtIndex(totalHearts, LooseHearts[^1].Sprite);
 					}
 					else if (LooseHearts[^1].Halves == 1) {
 						LooseHearts[^1].Halves++;
-						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
+						HUD.UpdateHeartAtIndex(totalHearts - 1, LooseHearts[^1].Sprite);
 					}
 					else {
 						break;
@@ -362,11 +384,11 @@ public partial class Player : Character {
 
 					if (LooseHearts.Count == 0 && totalHearts != 12) {
 						LooseHearts.Add((HeartBlack)new(1));
-						HUD.InsertHeartAtPos(totalHearts, LooseHearts[0].Sprite);
+						HUD.InsertHeartAtIndex(totalHearts, LooseHearts[0].Sprite);
 					}
 					else if (LooseHearts[^1].Halves == 2 && totalHearts != 12) {
 						LooseHearts.Add((HeartBlack)new(1));
-						HUD.InsertHeartAtPos(totalHearts, LooseHearts[^1].Sprite);
+						HUD.InsertHeartAtIndex(totalHearts, LooseHearts[^1].Sprite);
 					}
 					else if (LooseHearts[^1].Halves == 1) {
 						// Black Hearts convert half Blue Hearts if possible
@@ -376,14 +398,14 @@ public partial class Player : Character {
 						else {
 							LooseHearts[^1].Halves++;
 						}
-						HUD.UpdateHeartAtPos(totalHearts - 1, LooseHearts[^1].Sprite);
+						HUD.UpdateHeartAtIndex(totalHearts - 1, LooseHearts[^1].Sprite);
 					}
 					else if (totalHearts == 12) {
 						// Black Hearts convert first found Blue Heart if hearts are full
 						int heartIndex = LooseHearts.FindIndex(h => h.GetType() == typeof(HeartBlue));
 						if (heartIndex != -1) {
 							LooseHearts[heartIndex] = (HeartBlack)new(2);
-							HUD.UpdateHeartAtPos(HeartContainers.Count + heartIndex, LooseHearts[heartIndex].Sprite);
+							HUD.UpdateHeartAtIndex(HeartContainers.Count + heartIndex, LooseHearts[heartIndex].Sprite);
 
 							if (halves % 2 == 0) {
 								halves--;
@@ -422,10 +444,10 @@ public partial class Player : Character {
 			else if (GetRedHearts() > 0) {
 				int cIndex = (int)Math.Ceiling(((double)GetRedHearts() / 2) - 1);
 				HeartContainers[cIndex].RedHeart.Halves -= 1;
-				HUD.UpdateHeartAtPos(cIndex, HeartContainers[cIndex].RedHeart.Sprite);
+				HUD.UpdateHeartAtIndex(cIndex, HeartContainers[cIndex].RedHeart.Sprite);
 			}
 
-			CheckDeathCondition();
+			CheckDeathConditionAndPossiblyDie();
 			if (!IsAlive) {
 				break;
 			}
@@ -454,7 +476,7 @@ public partial class Player : Character {
 		return otherHeartHalves;
 	}
 
-	private void CheckDeathCondition() {
+	private void CheckDeathConditionAndPossiblyDie() {
 		if (GetRedHearts() == 0 && GetOtherHearts() == 0) {
 			Die();
 		}
@@ -466,7 +488,7 @@ public partial class Player : Character {
 
     protected override void OnTakeDamage() {
         Invulnerable = true;
-		IFrameTimer.Start();
+		iFrameTimer.Start();
     }
 
 	private void IFrameTimerTimeout() {
@@ -492,6 +514,6 @@ public partial class Player : Character {
 		// Sets attack rate-related variables for other methods to use
 		effectiveFireRate = effectiveAttackRate;
 		refireDelay = 1f / effectiveFireRate;
-		RefireTimer.WaitTime = refireDelay;
+		refireTimer.WaitTime = refireDelay;
 	}
 }

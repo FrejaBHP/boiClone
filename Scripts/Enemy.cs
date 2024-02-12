@@ -2,26 +2,8 @@ using Godot;
 using System;
 
 public partial class Enemy : Character {
-	public virtual float MaxHealth { get; set; }
-	public virtual float Health { get; set; }
-
 	public static Vector2 GetPlayerVector(Vector2 enemyPos, Vector2 playerPos) {
 		return playerPos - enemyPos;
-	}
-
-	public virtual void ModifyHealth(float change) {
-		if (!Invulnerable) {
-			Health += change;
-			//GD.Print($"HP: {Health}, diff: {change}");
-
-			if (change < 0) {
-				OnTakeDamage();
-			}
-		
-			if (Health <= 0) {
-				Die();
-			}
-		}
 	}
 
     protected override void CheckBodyCollision() {
@@ -45,11 +27,6 @@ public partial class Enemy : Character {
 
     public override void _Ready() {
         AddToGroup("Enemy");
-    }
-
-    protected override void Die() {
-        GetNode<World>("/root/Main/World").DecreaseEnemyCount();
-		QueueFree();
     }
 
     public override void _PhysicsProcess(double delta) {

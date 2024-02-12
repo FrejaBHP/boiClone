@@ -40,8 +40,8 @@ offset_top = 42.0
 offset_right = 130.0
 offset_bottom = 42.0
 scale = Vector2(2, 2)
-theme_override_constants/h_separation = 14
-theme_override_constants/v_separation = 14
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 columns = 6
 
 [node name="PickupsContainer" type="VBoxContainer" parent="."]
@@ -76,7 +76,7 @@ offset_top = 260.0
 offset_right = 65.0
 offset_bottom = 368.0
 scale = Vector2(2, 2)
-theme_override_constants/separation = 0
+theme_override_constants/separation = -2
 
 [node name="SpeedContainer" type="HBoxContainer" parent="StatsContainer"]
 layout_mode = 2

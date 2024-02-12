@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cx56kcl5bn4ym"]
+
+[ext_resource type="Script" path="res://Scripts/Components/EnemyCollisionComponent.cs" id="1_l1sww"]
+
+[node name="EnemyCollisionComponent" type="CollisionShape2D"]
+script = ExtResource("1_l1sww")

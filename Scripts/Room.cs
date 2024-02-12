@@ -7,7 +7,6 @@ using System.Numerics;
 public partial class Room : Node2D {
 	public RoomData Data { get; set; }
 	public TileMap Map { get; set; }
-	//public Vector2I Coords { get; set; }
 	public bool Visited { get; set; }
 	public bool Seen { get; set; }
 	public List<Marker2D> EnemyMarkers { get; set; }

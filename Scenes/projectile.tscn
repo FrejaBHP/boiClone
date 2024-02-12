@@ -7,7 +7,7 @@
 resource_local_to_scene = true
 radius = 8.0
 
-[node name="Projectile" type="Area2D"]
+[node name="Projectile" type="Area2D" groups=["Projectile"]]
 z_index = 50
 z_as_relative = false
 collision_layer = 256

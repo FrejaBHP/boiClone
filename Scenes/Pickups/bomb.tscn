@@ -11,8 +11,8 @@ radius = 7.0
 metadata/pickupType = 1
 metadata/amount = 1
 
-[node name="PickupCol" parent="." index="2"]
+[node name="PickupCol" parent="." index="3"]
 shape = SubResource("CircleShape2D_u4kaq")
 
-[node name="PickupSprite" parent="." index="4"]
+[node name="PickupSprite" parent="." index="5"]
 texture = ExtResource("2_lxi75")

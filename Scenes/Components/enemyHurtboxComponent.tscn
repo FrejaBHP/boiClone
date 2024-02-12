@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvj4ikewx52o"]
+
+[ext_resource type="Script" path="res://Scripts/Components/EnemyHurtboxComponent.cs" id="1_ttop5"]
+
+[node name="EnemyHurtboxComponent" type="Area2D" groups=["EnemyHurtbox"]]
+collision_layer = 16
+collision_mask = 256
+script = ExtResource("1_ttop5")
+
+[connection signal="area_entered" from="." to="." method="OnAreaEntered"]

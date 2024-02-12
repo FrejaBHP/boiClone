@@ -1,11 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dteioxjep7i5i"]
+[gd_scene load_steps=4 format=3 uid="uid://dteioxjep7i5i"]
 
 [ext_resource type="PackedScene" uid="uid://wl1p2nxunlg8" path="res://Scenes/character.tscn" id="1_ycah1"]
 [ext_resource type="Script" path="res://Scripts/Enemy.cs" id="2_x2rbt"]
 [ext_resource type="Texture2D" uid="uid://bqm8gmpunaadv" path="res://Images/plhEnemy.png" id="3_c08gt"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_2qq7s"]
-radius = 11.0
 
 [node name="Enemy" instance=ExtResource("1_ycah1")]
 z_index = 20
@@ -14,8 +11,5 @@ collision_layer = 16
 collision_mask = 31
 script = ExtResource("2_x2rbt")
 
-[node name="CharColShape" parent="." index="0"]
-shape = SubResource("CircleShape2D_2qq7s")
-
-[node name="CharSprite" parent="." index="1"]
+[node name="CharSprite" parent="." index="0"]
 texture = ExtResource("3_c08gt")
