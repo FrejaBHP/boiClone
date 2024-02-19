@@ -1,9 +1,32 @@
-using Godot;
-using System;
-using System.Collections.Generic;
+interface IInstantEffect {
+    void OnPickedUp();
+    void OnRemoved();
+}
 
-public abstract class Item {
-    public abstract void OnPickedUp();
+interface ITriggeredEffect {
+    double Chance { get; set; }
+    void OnTrigger();
+}
 
-    public abstract void OnRemoved();
+interface IActiveEffect {
+    double ChargesPerActivation { get; set; }
+    double Charge { get; set; }
+    double MaxCharges { get; set; }
+
+    void SetCharge(double newCharge) {
+        if (newCharge >= MaxCharges) {
+            Charge = MaxCharges;
+        }
+        else {
+            Charge = newCharge;
+        }
+        HUD.SetActiveChargeBarCharge(Charge);
+    }
+
+    void OnActivation();
+}
+
+
+public class Item {
+
 }

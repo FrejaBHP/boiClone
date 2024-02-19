@@ -94,12 +94,31 @@ public partial class Main : Node {
 	}
 
 	public static void GiveItem(int itemID) {
-		if (ItemCollection.ItemDataSet[itemID] != null) {
-			(ItemShowcase as NewItemShowcase).ShowNewItem(ItemCollection.ItemDataSet[itemID]);
+		ItemData itemData = ItemCollection.ItemDataSet[itemID];
+		if (itemData != null) {
+			(ItemShowcase as NewItemShowcase).ShowNewItem(itemData);
 
-			Item item = (Item)Activator.CreateInstance(ItemCollection.ItemDataSet[itemID].Type);
-			Player.Inventory.Add(item);
-			item.OnPickedUp();
+			Item item = (Item)Activator.CreateInstance(itemData.Type);
+
+            if (item is IActiveEffect a) {
+                Player.ActiveItem = item; // NOTE: Implement behaviour for swapping active items with pedestals
+
+				HUD.UpdateActiveItem(itemData.Sprite, a.Charge, a.MaxCharges);
+            }
+            else {
+                Player.Inventory.Add(item);
+            }
+
+			if (item is IInstantEffect i) {
+				i.OnPickedUp();
+			}
 		}
+	}
+
+	public static void RemoveItem() {
+		/*
+		IInstantEffect i = item as IInstantEffect;
+		i?.OnRemoved();
+		*/
 	}
 }

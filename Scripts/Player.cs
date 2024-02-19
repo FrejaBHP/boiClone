@@ -8,6 +8,8 @@ public partial class Player : Character {
 
 	#region Properties
 	public List<Item> Inventory { get; set; }
+	public Item ActiveItem { get; set; }
+
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
 	public bool Invulnerable { get; private set; }
@@ -249,6 +251,10 @@ public partial class Player : Character {
 		if (@event.IsActionPressed("placebomb")) {
 			PlaceBomb();
 		}
+
+		if (@event.IsActionPressed("activateItem")) {
+			ActivateItem();
+		}
     }
 
     protected override void ShootProjectile(int dir) {
@@ -316,8 +322,28 @@ public partial class Player : Character {
 		canPlaceBomb = true;
 	}
 
+	private void ActivateItem() {
+		if (ActiveItem != null) {
+			IActiveEffect a = ActiveItem as IActiveEffect;
+
+			if (a.Charge >= a.ChargesPerActivation) {
+				a.OnActivation();
+			}
+		}
+	}
+
+	public void GainCharge(float charge) {
+		if (ActiveItem != null) {
+			IActiveEffect a = ActiveItem as IActiveEffect;
+
+			a.SetCharge(a.Charge + charge);
+		}
+	}
+
 	public void GiveHeartContainers(int amount, int halves) {
 		for (int i = 0; i < amount; i++) {
+			HeartContainers.Add(new(0));
+			/*
 			if (halves >= 2) {
 				HeartContainers.Add(new(2));
 				halves -= 2;
@@ -329,9 +355,12 @@ public partial class Player : Character {
 			else {
 				HeartContainers.Add(new(0));
 			}
+			*/
 
 			HUD.InsertHeartAtIndex(HeartContainers.Count - 1, HeartContainers[^1].RedHeart.Sprite);
 		}
+
+		GiveHeart(halves, HeartEType.RedHeart);
 	}
 
 	public void RemoveHeartContainers(int amount) {

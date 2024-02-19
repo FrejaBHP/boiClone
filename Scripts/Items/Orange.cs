@@ -1,15 +1,15 @@
 using Godot;
 using System;
 
-public partial class Orange : Item {
+public partial class Orange : Item, IInstantEffect {
     private int healthBonus = 1;
     private int halvesToFill = 2;
 
-    public override void OnPickedUp() {
+    public void OnPickedUp() {
         Main.Player.GiveHeartContainers(healthBonus, halvesToFill);
     }
 
-    public override void OnRemoved() {
+    public void OnRemoved() {
         Main.Player.RemoveHeartContainers(healthBonus);
     }
 }

@@ -7865,3 +7865,8 @@ metadata/entityID = 1
 position = Vector2(336, 48)
 metadata/nodeType = 1
 metadata/entityID = 2
+
+[node name="Item3" type="Marker2D" parent="Markers"]
+position = Vector2(368, 48)
+metadata/nodeType = 1
+metadata/entityID = 3

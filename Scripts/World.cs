@@ -44,6 +44,9 @@ public partial class World : Node {
 		if (@event.IsActionPressed("debugPickup")) {
 			DEBUGRollForPickup();
 		}
+		else if (@event.IsActionPressed("debugChargeSingle")) {
+			Main.Player.GainCharge(1);
+		}
     }
 
 	private void DEBUGRollForPickup() { // KP1
@@ -229,6 +232,7 @@ public partial class World : Node {
 		
 		if (hadCombat) {
 			CallDeferred(MethodName.RollForPickup); // To avoid runtime error, this call is deferred
+			Main.Player.GainCharge(1);
 		}
 	}
 

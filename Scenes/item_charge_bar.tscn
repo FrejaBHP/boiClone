@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://044ei2fccjkc"]
+
+[ext_resource type="Texture2D" uid="uid://dlkbk46r5i7nv" path="res://Images/HUD/ui_chargebar.png" id="1_yutom"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gwde4"]
+atlas = ExtResource("1_yutom")
+region = Rect2(0, 0, 12, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ba4ya"]
+atlas = ExtResource("1_yutom")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oxh0b"]
+atlas = ExtResource("1_yutom")
+region = Rect2(16, 2, 12, 24)
+
+[node name="ChargeBar" type="TextureProgressBar"]
+offset_right = 16.0
+offset_bottom = 32.0
+max_value = 6.0
+fill_mode = 3
+texture_under = SubResource("AtlasTexture_gwde4")
+texture_over = SubResource("AtlasTexture_ba4ya")
+texture_progress = SubResource("AtlasTexture_oxh0b")
+texture_progress_offset = Vector2(0, 2)

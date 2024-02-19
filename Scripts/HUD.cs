@@ -5,9 +5,10 @@ using System.Collections.Generic;
 public partial class HUD : CanvasLayer {
 	private static GridContainer heartsGridContainer;
 
-	#region Labels
-	private static Label lifeDisplay;
+	private static TextureRect activeItemSprite;
+	private static TextureProgressBar activeItemChargeBar;
 
+	#region Labels
 	private static Label coinsLabel;
 	private static Label bombsLabel;
 	private static Label keysLabel;
@@ -23,6 +24,9 @@ public partial class HUD : CanvasLayer {
 	public override void _Ready() {
 		heartsGridContainer = GetNode<GridContainer>("HeartsContainer");
 
+		activeItemSprite = GetNode<TextureRect>("ActiveItemContainer/ActiveItemSprite");
+		activeItemChargeBar = GetNode<TextureProgressBar>("ActiveItemContainer/ChargeBar");
+
 		coinsLabel = GetNode<Label>("PickupsContainer/CoinLabel");
 		bombsLabel = GetNode<Label>("PickupsContainer/BombLabel");
 		keysLabel = GetNode<Label>("PickupsContainer/KeyLabel");
@@ -37,7 +41,7 @@ public partial class HUD : CanvasLayer {
 
 	#region UpdateMethods
 	// Health
-	public static void RedrawHearts(List<HeartContainer> conts, List<HeartBase> loose) {
+	public static void RedrawHearts(List<HeartContainer> conts, List<HeartBase> loose) { // Doesn't work and is currently unused
 		foreach (var child in heartsGridContainer.GetChildren()) {
 			child.QueueFree();
 		}
@@ -49,11 +53,11 @@ public partial class HUD : CanvasLayer {
         }
 	}
 
-	public static void InsertHeartAtIndex(int n, Texture2D image) {
+	public static void InsertHeartAtIndex(int n, Texture2D sprite) {
 		Control control = new();
 
         Sprite2D heart = new() {
-            Texture = image
+            Texture = sprite
         };
 		
         heartsGridContainer.AddChild(control);
@@ -61,21 +65,92 @@ public partial class HUD : CanvasLayer {
 		heartsGridContainer.MoveChild(control, n);
 	}
 
-	public static void UpdateHeartAtIndex(int n, Texture2D image) {
-		heartsGridContainer.GetChild<Control>(n).GetChild<Sprite2D>(0).Texture = image;
+	public static void UpdateHeartAtIndex(int n, Texture2D sprite) {
+		heartsGridContainer.GetChild<Control>(n).GetChild<Sprite2D>(0).Texture = sprite;
 	}
 
 	public static void RemoveHeartAtIndex(int n) {
 		heartsGridContainer.GetChild(n).Free();
 	}
 
-	public static void UpdateLastHeart(Texture2D image) {
-		heartsGridContainer.GetChild<Control>(heartsGridContainer.GetChildCount() - 1).GetChild<Sprite2D>(0).Texture = image;
+	public static void UpdateLastHeart(Texture2D sprite) {
+		heartsGridContainer.GetChild<Control>(heartsGridContainer.GetChildCount() - 1).GetChild<Sprite2D>(0).Texture = sprite;
 	}
 
 	public static void RemoveLastHeart() {
 		heartsGridContainer.GetChild(heartsGridContainer.GetChildCount() - 1).Free();
 	}
+
+	// Active item
+	public static void UpdateActiveItem(Texture2D sprite, double charge, double maxCharge) {
+		SetActiveItemSprite(sprite);
+		UpdateActiveChargeBar(charge, maxCharge);
+	}
+
+	private static void UpdateActiveChargeBar(double charge, double maxCharge) {
+		SetActiveChargeBarCharge(charge);
+		GetAndSetChargeBarSprite(maxCharge);
+		SetActiveChargeBarLimit(maxCharge);
+	}
+
+	public static void SetActiveItemSprite(Texture2D sprite) {
+		activeItemSprite.Texture = sprite;
+	}
+
+	public static void SetActiveChargeBarCharge(double charge) {
+		activeItemChargeBar.Value = charge;
+	}
+
+	private static void GetAndSetChargeBarSprite(double maxCharge) {
+		switch (maxCharge) {
+			case 1:
+				SetActiveChargeBarSprite(48, 32);
+				break;
+			
+			case 2:
+				SetActiveChargeBarSprite(32, 32);
+				break;
+			
+			case 3:
+				SetActiveChargeBarSprite(16, 32);
+				break;
+			
+			case 4:
+				SetActiveChargeBarSprite(0, 32);
+				break;
+			
+			case 5:
+				SetActiveChargeBarSprite(64, 0);
+				break;
+			
+			case 6:
+				SetActiveChargeBarSprite(48, 0);
+				break;
+			
+			case 8:
+				SetActiveChargeBarSprite(64, 32);
+				break;
+
+			case 12:
+				SetActiveChargeBarSprite(32, 0);
+				break;
+
+			default:
+				GD.PushError($"Invalid charge count of {maxCharge}");
+				break;
+		}
+	}
+
+	private static void SetActiveChargeBarSprite(int x, int y) {
+		Rect2 newRegion = new(x, y, 16, 32);
+		AtlasTexture atlas = activeItemChargeBar.TextureOver as AtlasTexture;
+		atlas.Region = newRegion;
+	}
+
+	private static void SetActiveChargeBarLimit(double maxCharge) {
+		activeItemChargeBar.MaxValue = maxCharge;
+	}
+
 
 	// Pickups
 	public static void UpdateCoins(int coins) {

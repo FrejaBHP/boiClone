@@ -1,14 +1,14 @@
 using Godot;
 using System;
 
-public partial class TearsItem : Item {
+public partial class TearsItem : Item, IInstantEffect {
     private float delayBonus = 0.7f;
 
-    public override void OnPickedUp() {
+    public void OnPickedUp() {
         Main.Player.AttackDelayBonus += delayBonus;
     }
 
-    public override void OnRemoved() {
+    public void OnRemoved() {
         Main.Player.AttackDelayBonus -= delayBonus;
     }
 }
