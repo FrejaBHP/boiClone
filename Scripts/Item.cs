@@ -28,5 +28,5 @@ interface IActiveEffect {
 
 
 public class Item {
-
+    public virtual int ItemDataID { get; protected set; }
 }

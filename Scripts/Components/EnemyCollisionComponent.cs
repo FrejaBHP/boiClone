@@ -5,25 +5,18 @@ using System;
 public partial class EnemyCollisionComponent : Node2D {
 	[Export]
 	private bool dealsContactDamage;
-	/*
-	public void CheckBodyCollision() {
-        for (int i = 0; i < GetSlideCollisionCount(); i++) {
-			KinematicCollision2D col = GetSlideCollision(i);
+	
+	public void CheckBodyCollision(Enemy enemy) {
+        for (int i = 0; i < enemy.GetSlideCollisionCount(); i++) {
+			KinematicCollision2D col = enemy.GetSlideCollision(i);
 			
 			if (col.GetCollider().IsClass("CharacterBody2D")) {
-				Character collider = (Character)col.GetCollider();
+				CharacterBody2D collider = (CharacterBody2D)col.GetCollider();
 				
-				if (collider.IsInGroup("Player")) {
-					Main.ProcessPlayerDamage(this, 1);
+				if (collider.IsInGroup("Player") && dealsContactDamage) {
+					Main.ProcessPlayerDamage(enemy, 1);
 				}
-				
-				else if (collider.IsInGroup("Enemy")) {
-					Main.ProcessEnemyDamage(this, (Enemy)collider, Damage);
-				}
-				
 			}
 		}
     }
-	*/
-
 }

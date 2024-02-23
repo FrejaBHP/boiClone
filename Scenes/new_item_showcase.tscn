@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://bfng2g1obtxhs" path="res://Scenes/Themes/LabelHUDPickups.tres" id="4_3n305"]
 
 [node name="NewItemShowcase" type="CanvasLayer"]
+visible = false
 script = ExtResource("1_tlnjh")
 
 [node name="TextBG" type="Sprite2D" parent="."]

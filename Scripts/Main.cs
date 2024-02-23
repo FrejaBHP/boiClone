@@ -33,14 +33,21 @@ public partial class Main : Node {
 		PickupCollection.CompilePickupList();
     }
 
-	public static void ProcessPlayerDamage(Character source, int multiplier) {
+	public static void ProcessPlayerDamage(int multiplier) {
 		if (!Player.Invulnerable) {
 			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
 			Player.TakeDamage(BasePlayerDamageTaken * multiplier, 0);
 		}
 	}
 
-	public static void DamageAllEnemies(Character source, float damage) {
+	public static void ProcessPlayerDamage(Enemy source, int multiplier) {
+		if (!Player.Invulnerable) {
+			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
+			Player.TakeDamage(BasePlayerDamageTaken * multiplier, 0);
+		}
+	}
+
+	public static void DamageAllEnemies(float damage) {
         Enemy[] enemies = world.SelectAllEnemies();
 		for (int i = 0; i < enemies.Length; i++) {
 			if (enemies[i].HasNode("EnemyHealthComponent")) {
@@ -101,7 +108,7 @@ public partial class Main : Node {
 			Item item = (Item)Activator.CreateInstance(itemData.Type);
 
             if (item is IActiveEffect a) {
-                Player.ActiveItem = item; // NOTE: Implement behaviour for swapping active items with pedestals
+                Player.ActiveItem = item;
 
 				HUD.UpdateActiveItem(itemData.Sprite, a.Charge, a.MaxCharges);
             }

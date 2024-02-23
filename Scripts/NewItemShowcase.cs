@@ -9,7 +9,6 @@ public partial class NewItemShowcase : CanvasLayer {
 
 	public override void _Ready() {
 		Main.ItemShowcase = this;
-		Visible = false;
 
 		showcaseTimer = GetNode<Timer>("ShowcaseTimer");
 		splash = GetNode<Sprite2D>("TextBG");

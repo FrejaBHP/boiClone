@@ -22,7 +22,7 @@ public class HeartBlack : HeartBase {
     }
 
     public void OnBroken() {
-        Main.DamageAllEnemies(Main.Player, 40);
+        Main.DamageAllEnemies(40);
     }
 
     public override void ChangeSprite() {

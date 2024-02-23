@@ -1,11 +1,13 @@
 using Godot;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 public partial class BasicEnemy : Enemy {
 	[Export]
 	private EnemyCollisionComponent CollisionComponent;
-	public BasicEnemy() {
-		Speed = 0.5f;
-	}
+	[Export]
+	private EnemyMovementComponent MovementComponent;
+
+	public override void _Process(double delta) {
+		MovementComponent.MoveTowardsPlayer(this);
+		CollisionComponent.CheckBodyCollision(this);
+    }
 }

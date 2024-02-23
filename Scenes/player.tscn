@@ -1,34 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://be8php5clny76"]
+[gd_scene load_steps=4 format=3 uid="uid://be8php5clny76"]
 
-[ext_resource type="PackedScene" uid="uid://wl1p2nxunlg8" path="res://Scenes/character.tscn" id="1_o5xn4"]
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="2_r875e"]
 [ext_resource type="Texture2D" uid="uid://c5320ckd4iio5" path="res://Images/e.png" id="3_y8n5a"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_72va0"]
 radius = 12.0
 
-[node name="Player" instance=ExtResource("1_o5xn4")]
+[node name="Player" type="CharacterBody2D"]
 z_index = 100
 z_as_relative = false
 collision_layer = 8
 collision_mask = 215
+motion_mode = 1
 platform_on_leave = 2
 script = ExtResource("2_r875e")
+metadata/_edit_group_ = true
 
-[node name="CharSprite" parent="." index="0"]
+[node name="CharSprite" type="Sprite2D" parent="."]
 scale = Vector2(0.95, 0.95)
 texture = ExtResource("3_y8n5a")
 
-[node name="PlayerCol" type="CollisionShape2D" parent="." index="1"]
+[node name="PlayerCol" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_72va0")
 
-[node name="IFrameTimer" type="Timer" parent="." index="2"]
+[node name="IFrameTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="RefireTimer" type="Timer" parent="." index="3"]
+[node name="RefireTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="BombPlacementTimer" type="Timer" parent="." index="4"]
+[node name="BombPlacementTimer" type="Timer" parent="."]
 one_shot = true
 
 [connection signal="timeout" from="IFrameTimer" to="." method="IFrameTimerTimeout"]

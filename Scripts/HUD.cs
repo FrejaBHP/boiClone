@@ -1,8 +1,10 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 public partial class HUD : CanvasLayer {
+	private static CanvasLayer hud;
 	private static GridContainer heartsGridContainer;
 
 	private static TextureRect activeItemSprite;
@@ -22,6 +24,8 @@ public partial class HUD : CanvasLayer {
 	#endregion
 	
 	public override void _Ready() {
+		hud = this;
+
 		heartsGridContainer = GetNode<GridContainer>("HeartsContainer");
 
 		activeItemSprite = GetNode<TextureRect>("ActiveItemContainer/ActiveItemSprite");
@@ -37,6 +41,14 @@ public partial class HUD : CanvasLayer {
 		rangeLabel = GetNode<Label>("StatsContainer/RangeContainer/RangeLabel");
 		shotSpeedLabel = GetNode<Label>("StatsContainer/ShotSpeedContainer/ShotSpeedLabel");
 		luckLabel = GetNode<Label>("StatsContainer/LuckContainer/LuckLabel");
+	}
+
+	public static void HideHUD() {
+		hud.Visible = true;
+	}
+
+	public static void ShowHUD() {
+		hud.Visible = true;
 	}
 
 	#region UpdateMethods
@@ -85,12 +97,23 @@ public partial class HUD : CanvasLayer {
 	public static void UpdateActiveItem(Texture2D sprite, double charge, double maxCharge) {
 		SetActiveItemSprite(sprite);
 		UpdateActiveChargeBar(charge, maxCharge);
+		ShowActiveItemHUD();
 	}
 
 	private static void UpdateActiveChargeBar(double charge, double maxCharge) {
 		SetActiveChargeBarCharge(charge);
 		GetAndSetChargeBarSprite(maxCharge);
 		SetActiveChargeBarLimit(maxCharge);
+	}
+
+	public static void ShowActiveItemHUD() {
+		activeItemSprite.Visible = true;
+		activeItemChargeBar.Visible = true;
+	}
+
+	public static void HideActiveItemHUD() {
+		activeItemSprite.Visible = false;
+		activeItemChargeBar.Visible = false;
 	}
 
 	public static void SetActiveItemSprite(Texture2D sprite) {

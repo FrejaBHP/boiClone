@@ -105,6 +105,7 @@ public partial class World : Node {
 
 		CheckDirections();
 		AddPlayer();
+		HUD.ShowHUD();
 		currentRoom.CheckAndStartOpeningDoors();
 	}
 
@@ -194,7 +195,8 @@ public partial class World : Node {
 			if (ItemCollection.ItemDataSet.Count != 0) {
 				Random random = new();
 				int rnd = random.Next(0, ItemCollection.ItemDataSet.Count);
-				itemSprite.Texture = ItemCollection.ItemDataSet[rnd].Sprite;
+
+				newPedestal.SetItemSprite(rnd);
 				newPedestal.SetMeta("itemID", rnd);
 			}
 			else {

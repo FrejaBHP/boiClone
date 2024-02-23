@@ -31,6 +31,7 @@ atlas = ExtResource("3_wukwc")
 region = Rect2(32, 16, 16, 16)
 
 [node name="HUD" type="CanvasLayer"]
+visible = false
 script = ExtResource("1_gjthg")
 
 [node name="HeartsContainer" type="GridContainer" parent="."]
@@ -54,11 +55,13 @@ scale = Vector2(2, 2)
 theme_override_constants/separation = -1
 
 [node name="ActiveItemSprite" type="TextureRect" parent="ActiveItemContainer"]
+visible = false
 texture_filter = 1
 layout_mode = 2
 expand_mode = 3
 
 [node name="ChargeBar" parent="ActiveItemContainer" instance=ExtResource("2_168f2")]
+visible = false
 layout_mode = 2
 
 [node name="PickupsContainer" type="VBoxContainer" parent="."]

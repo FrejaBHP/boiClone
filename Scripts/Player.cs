@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class Player : Character {
+public partial class Player : CharacterBody2D {
 	protected PackedScene Bomb = GD.Load<PackedScene>("Scenes/entityBomb.tscn");
+	protected PackedScene Projectile = GD.Load<PackedScene>("Scenes/projectile.tscn");
 
 	#region Properties
 	public List<Item> Inventory { get; set; }
@@ -18,6 +19,7 @@ public partial class Player : Character {
 	private Timer iFrameTimer;
 	private Timer bombPlacementTimer;
 
+	private float baseSpeed = 208f;
 	private float effectiveDamage;
 	private float effectiveFireRate;
 	private float refireDelay;
@@ -61,7 +63,7 @@ public partial class Player : Character {
 
 	#region Stats
 	private float speed;
-	public override float Speed {
+	public float Speed {
 		get => speed;
 		set {
 			speed = value;
@@ -219,12 +221,21 @@ public partial class Player : Character {
 		Main.PlayerPosition = GlobalPosition;
 	}
 
-    protected override void CheckBodyCollision() {
+	public void Move(Vector2 dir) {
+		if (dir != Vector2.Zero) {
+			Velocity = dir * (baseSpeed * Speed);
+			MoveAndSlide();
+			//CheckTile();
+			CheckBodyCollision();
+		}
+	}
+
+    private void CheckBodyCollision() {
         for (int i = 0; i < GetSlideCollisionCount(); i++) {
 			KinematicCollision2D col = GetSlideCollision(i);
 			if (col.GetCollider().IsClass("StaticBody2D")) { // So far, only item pedestals are StaticBody2D objects, so no further checks are needed
 				WorldItem pedestal = col.GetCollider() as WorldItem;
-				pedestal.PlayerCollided();
+				pedestal.OnPlayerCollision();
 			}
 		}
     }
@@ -257,7 +268,7 @@ public partial class Player : Character {
 		}
     }
 
-    protected override void ShootProjectile(int dir) {
+    private void ShootProjectile(int dir) {
 		if (canShoot) {
 			canShoot = false;
 			refireTimer.Start();
@@ -343,23 +354,8 @@ public partial class Player : Character {
 	public void GiveHeartContainers(int amount, int halves) {
 		for (int i = 0; i < amount; i++) {
 			HeartContainers.Add(new(0));
-			/*
-			if (halves >= 2) {
-				HeartContainers.Add(new(2));
-				halves -= 2;
-			}
-			else if (halves == 1) {
-				HeartContainers.Add(new(1));
-				halves -= 1;
-			}
-			else {
-				HeartContainers.Add(new(0));
-			}
-			*/
-
 			HUD.InsertHeartAtIndex(HeartContainers.Count - 1, HeartContainers[^1].RedHeart.Sprite);
 		}
-
 		GiveHeart(halves, HeartEType.RedHeart);
 	}
 
@@ -511,11 +507,11 @@ public partial class Player : Character {
 		}
 	}
 
-	protected override void Die() {
+	private void Die() {
 		Main.Player.IsAlive = false;
 	}
 
-    protected override void OnTakeDamage() {
+    private void OnTakeDamage() {
         Invulnerable = true;
 		iFrameTimer.Start();
     }

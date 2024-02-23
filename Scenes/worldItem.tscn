@@ -28,3 +28,7 @@ texture = ExtResource("2_e8pm1")
 texture_filter = 1
 scale = Vector2(1.2, 1.2)
 offset = Vector2(0, -6)
+
+[node name="SwapTimer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true

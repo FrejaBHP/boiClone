@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://bxg237t0621so"]
+[gd_scene load_steps=10 format=3 uid="uid://bxg237t0621so"]
 
 [ext_resource type="PackedScene" uid="uid://dteioxjep7i5i" path="res://Scenes/enemy.tscn" id="1_ysfnt"]
 [ext_resource type="Script" path="res://Scripts/Enemies/BasicEnemy.cs" id="2_1dgds"]
 [ext_resource type="PackedScene" uid="uid://csvf1sbu4pqwa" path="res://Scenes/Components/enemyHealthComponent.tscn" id="3_8uw1x"]
 [ext_resource type="PackedScene" uid="uid://cx56kcl5bn4ym" path="res://Scenes/Components/enemyCollisionComponent.tscn" id="4_rl87v"]
 [ext_resource type="PackedScene" uid="uid://cvj4ikewx52o" path="res://Scenes/Components/enemyHurtboxComponent.tscn" id="5_ytnea"]
+[ext_resource type="PackedScene" uid="uid://b2m8q2pug5y7k" path="res://Scenes/Components/enemyMovementComponent.tscn" id="6_suumb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_svf5q"]
 radius = 12.0
@@ -15,8 +16,10 @@ radius = 11.0
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_31fmm"]
 load_path = "res://.godot/imported/plhEnemy.png-3823bf25fd3f1a07e65814fd1b5246d5.ctex"
 
-[node name="BasicEnemy" instance=ExtResource("1_ysfnt")]
+[node name="BasicEnemy" node_paths=PackedStringArray("CollisionComponent", "MovementComponent") instance=ExtResource("1_ysfnt")]
 script = ExtResource("2_1dgds")
+CollisionComponent = NodePath("EnemyCollisionComponent")
+MovementComponent = NodePath("EnemyMovementComponent")
 
 [node name="EnemyHealthComponent" parent="." index="0" instance=ExtResource("3_8uw1x")]
 MaxHealth = 20.0
@@ -30,6 +33,10 @@ shape = SubResource("CircleShape2D_svf5q")
 
 [node name="EnemyCollisionComponent" parent="." index="2" instance=ExtResource("4_rl87v")]
 shape = SubResource("CircleShape2D_ei55o")
+dealsContactDamage = true
 
-[node name="CharSprite" parent="." index="3"]
+[node name="EnemyMovementComponent" parent="." index="3" instance=ExtResource("6_suumb")]
+SpeedMult = 0.5
+
+[node name="CharSprite" parent="." index="4"]
 texture = SubResource("CompressedTexture2D_31fmm")

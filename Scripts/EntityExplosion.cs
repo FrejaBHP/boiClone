@@ -32,7 +32,7 @@ public partial class EntityExplosion : Node2D {
 				enemyHealth.TakeDamage(Damage);
 			}
 			else if (node.IsInGroup("Player")) {
-				Main.ProcessPlayerDamage(Main.Player, 2);
+				Main.ProcessPlayerDamage(2);
 			}
 			else {
                 float distance = GlobalPosition.DistanceTo(node.GlobalPosition);

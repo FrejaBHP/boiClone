@@ -1,4 +1,4 @@
-public partial class ActiveItemTest : Item, IActiveEffect {
+public partial class ActiveItemTest2 : Item, IActiveEffect {
     public double ChargesPerActivation { get; set; }
     public double Charge { get; set; }
     public double MaxCharges { get; set; }
@@ -7,17 +7,17 @@ public partial class ActiveItemTest : Item, IActiveEffect {
 
     private readonly IActiveEffect a;
 
-    public ActiveItemTest() {
-        ItemDataID = 3;
+    public ActiveItemTest2() {
+        ItemDataID = 4;
         a = this;
         
-        ChargesPerActivation = 6;
-        Charge = 6;
-        MaxCharges = 6;
+        ChargesPerActivation = 4;
+        Charge = 4;
+        MaxCharges = 4;
     }
 
     public void OnActivation() {
-        Main.Player.GiveHeart(2, HeartEType.BlueHeart);
+        Main.Player.GiveHeart(1, HeartEType.BlackHeart);
         a.SetCharge(0);
     }
 }
