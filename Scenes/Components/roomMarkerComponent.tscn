@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cw1dqva8l3bw1"]
+
+[node name="RoomMarker" type="Marker2D"]
+gizmo_extents = 12.0
+metadata/markerType = 0
+metadata/entityID = 0

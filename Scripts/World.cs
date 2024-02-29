@@ -103,13 +103,13 @@ public partial class World : Node {
 		currentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
 		currentRoom.Visible = true;
 
-		CheckDirections();
+		//CheckDirections();
 		AddPlayer();
 		HUD.ShowHUD();
 		currentRoom.CheckAndStartOpeningDoors();
 	}
 
-	private static void CheckDirections() {
+	private static void CheckDirections() { // Obsolete. Fix for new rooms structure and big rooms
 		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
 		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null) {
 			currentRoom.RemoveDoor(0);
@@ -212,7 +212,7 @@ public partial class World : Node {
 				GD.PushError($"Item with ID {itemID} not found.");
 			}
 		}
-		AddChild(newPedestal);
+		currentRoom.Pedestals.AddChild(newPedestal);
 		newPedestal.GlobalPosition = pos;
 	}
 
@@ -324,7 +324,9 @@ public partial class World : Node {
 		}
 	}
 
-	public void MoveRooms(uint dir) {
+	public void MoveRooms(int dir) {
+		currentRoom.RemoveEmptyPedestals();
+
 		Vector2 pos = Main.Player.GlobalPosition;
 		Vector2 cpos = Main.Camera.GlobalPosition;
 		Vector2I c = currentCoords;

@@ -213,6 +213,15 @@ public partial class Player : CharacterBody2D {
 		iFrameTimer.WaitTime = IFrameTime;
 
 		AddToGroup("Player");
+
+		/*
+		var bombstate = Bomb.GetState();
+		for (int i = 0; i < bombstate.GetNodeCount(); i++) {
+			for (int j = 0; j < bombstate.GetNodePropertyCount(i); j++) {
+				GD.Print($"Name: {bombstate.GetNodePropertyName(i, j)}, Value: {bombstate.GetNodePropertyValue(i, j)}");
+			}
+		}
+		*/
     }
 
     public override void _PhysicsProcess(double delta) {
