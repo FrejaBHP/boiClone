@@ -27,7 +27,7 @@ public partial class Main : Node {
     }
 
     public override void _EnterTree() {
-        RoomCollection.CompileRoomList();
+		RoomCollection.CompileRoomList();
 		EnemyCollection.CompileEnemyList();
 		ItemCollection.CompileItemList();
 		PickupCollection.CompilePickupList();

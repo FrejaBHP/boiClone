@@ -243,7 +243,7 @@ public partial class Player : CharacterBody2D {
         for (int i = 0; i < GetSlideCollisionCount(); i++) {
 			KinematicCollision2D col = GetSlideCollision(i);
 			if (col.GetCollider().IsClass("StaticBody2D")) { // So far, only item pedestals are StaticBody2D objects, so no further checks are needed
-				WorldItem pedestal = col.GetCollider() as WorldItem;
+				ItemPedestal pedestal = col.GetCollider() as ItemPedestal;
 				pedestal.OnPlayerCollision();
 			}
 		}
@@ -289,7 +289,8 @@ public partial class Player : CharacterBody2D {
 				range + rangeBonus, 			// Projectile range
 				0 								// 0 sets flag for hitting enemies
 			);
-			GetNode<World>("/root/Main/World").AddChild(proj);
+			//GetNode<World>("/root/Main/World").AddChild(proj);
+			World.CurrentRoom.ProjectilesNode.AddChild(proj);
 
 			Transform2D trans = Transform2D.Identity;
 			trans.Origin = GlobalPosition;
@@ -299,7 +300,7 @@ public partial class Player : CharacterBody2D {
 			trans.X.Y = trans.Y.X = Mathf.Sin(rotation);
 			trans.Y.X *= -1;
 
-			proj.Transform = trans;
+			proj.GlobalTransform = trans;
 		}
 	}
 
@@ -328,7 +329,8 @@ public partial class Player : CharacterBody2D {
 	private void PlaceBomb() {
 		if (Bombs > 0 && canPlaceBomb) {
 			EntityBomb bomb = Bomb.Instantiate() as EntityBomb;
-			GetNode<World>("/root/Main/World").AddChild(bomb);
+			//GetNode<World>("/root/Main/World").AddChild(bomb);
+			World.CurrentRoom.EntitiesNode.AddChild(bomb);
 			bomb.GlobalPosition = GlobalPosition;
 
 			Bombs--;

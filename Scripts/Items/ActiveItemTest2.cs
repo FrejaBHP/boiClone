@@ -3,8 +3,6 @@ public partial class ActiveItemTest2 : Item, IActiveEffect {
     public double Charge { get; set; }
     public double MaxCharges { get; set; }
 
-    public override int ItemDataID => base.ItemDataID;
-
     private readonly IActiveEffect a;
 
     public ActiveItemTest2() {

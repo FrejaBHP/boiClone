@@ -101,9 +101,9 @@ public partial class HUD : CanvasLayer {
 	}
 
 	private static void UpdateActiveChargeBar(double charge, double maxCharge) {
-		SetActiveChargeBarCharge(charge);
 		GetAndSetChargeBarSprite(maxCharge);
 		SetActiveChargeBarLimit(maxCharge);
+		SetActiveChargeBarCharge(charge);
 	}
 
 	public static void ShowActiveItemHUD() {
@@ -159,7 +159,7 @@ public partial class HUD : CanvasLayer {
 				break;
 
 			default:
-				GD.PushError($"Invalid charge count of {maxCharge}");
+				GD.PushError($"Invalid max charge count of {maxCharge}");
 				break;
 		}
 	}

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcs20adgm0ba6"]
+
+[ext_resource type="PackedScene" uid="uid://dtoo8ljsmdcpd" path="res://Scenes/roomTemplate.tscn" id="1_67qgd"]
+[ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="2_5f7ui"]
+[ext_resource type="PackedScene" uid="uid://d34dlv4hdv7gq" path="res://Scenes/Components/roomDoorVertComponent.tscn" id="3_6nkb1"]
+
+[node name="Room" instance=ExtResource("1_67qgd")]
+RoomName = "Test Starting Room"
+Exits = 15
+Type = 2
+
+[node name="DoorHorizontal" parent="Doors" index="0" instance=ExtResource("2_5f7ui")]
+position = Vector2(120, 8)
+
+[node name="DoorVertical" parent="Doors" index="1" instance=ExtResource("3_6nkb1")]
+position = Vector2(232, 72)
+metadata/direction = 1
+
+[node name="DoorHorizontal2" parent="Doors" index="2" instance=ExtResource("2_5f7ui")]
+position = Vector2(120, 136)
+metadata/direction = 2
+
+[node name="DoorVertical2" parent="Doors" index="3" instance=ExtResource("3_6nkb1")]
+position = Vector2(8, 72)
+metadata/direction = 3
+
+[editable path="TileMap"]

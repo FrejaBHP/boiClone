@@ -6,7 +6,11 @@ public partial class BasicEnemy : Enemy {
 	[Export]
 	private EnemyMovementComponent MovementComponent;
 
-	public override void _Process(double delta) {
+    public override void _Ready() {
+		CountsTowardsEnemyCount = true;
+    }
+
+    public override void _Process(double delta) {
 		MovementComponent.MoveTowardsPlayer(this);
 		CollisionComponent.CheckBodyCollision(this);
     }

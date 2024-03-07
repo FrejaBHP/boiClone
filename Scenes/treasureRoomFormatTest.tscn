@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://c0yva2wpptmqt"]
+
+[ext_resource type="PackedScene" uid="uid://dtoo8ljsmdcpd" path="res://Scenes/roomTemplate.tscn" id="1_4xnea"]
+[ext_resource type="PackedScene" uid="uid://cw1dqva8l3bw1" path="res://Scenes/Components/roomMarkerComponent.tscn" id="2_hsnnl"]
+[ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="2_koqbi"]
+
+[node name="Room" instance=ExtResource("1_4xnea")]
+Exits = 1
+Type = 3
+
+[node name="TileMap" parent="." index="0"]
+layer_0/tile_data = PackedInt32Array(65537, 1, 3, 65538, 65537, 3, 65539, 65537, 3, 65540, 65537, 3, 65541, 65537, 3, 65542, 65537, 3, 65543, 65537, 3, 65544, 65537, 3, 65545, 65537, 3, 65546, 65537, 3, 65547, 65537, 3, 65548, 65537, 3, 65549, 131073, 3, 131085, 131073, 4, 196621, 131073, 4, 262157, 131073, 4, 327693, 131073, 4, 393229, 131073, 4, 458765, 131073, 5, 458764, 65537, 5, 458763, 65537, 5, 458762, 65537, 5, 458761, 65537, 5, 458760, 65537, 5, 458759, 65537, 5, 458758, 65537, 5, 458757, 65537, 5, 458756, 65537, 5, 458755, 65537, 5, 458754, 65537, 5, 458753, 1, 5, 393217, 1, 4, 327681, 1, 4, 262145, 1, 4, 196609, 1, 4, 131073, 1, 4, 131074, 65537, 4, 196610, 65537, 4, 262146, 65537, 4, 327682, 65537, 4, 393218, 65537, 4, 393219, 65537, 4, 393220, 65537, 4, 393221, 65537, 4, 393222, 65537, 4, 393223, 65537, 4, 393224, 65537, 4, 393225, 65537, 4, 393226, 65537, 4, 393227, 65537, 4, 393228, 65537, 4, 327692, 65537, 4, 327691, 65537, 4, 327690, 65537, 4, 327689, 65537, 4, 327688, 65537, 4, 327687, 65537, 4, 327686, 65537, 4, 327685, 65537, 4, 327684, 65537, 4, 327683, 65537, 4, 262147, 65537, 4, 262148, 65537, 4, 262149, 65537, 4, 262150, 65537, 4, 262151, 65537, 4, 262152, 65537, 4, 262153, 65537, 4, 262154, 65537, 4, 262155, 65537, 4, 262156, 65537, 4, 196620, 65537, 4, 196619, 65537, 4, 196618, 65537, 4, 196617, 65537, 4, 196616, 65537, 4, 196615, 65537, 4, 196614, 65537, 4, 196613, 65537, 4, 196612, 65537, 4, 196611, 65537, 4, 131075, 65537, 4, 131076, 65537, 4, 131077, 65537, 4, 131078, 65537, 4, 131079, 65537, 4, 131080, 65537, 4, 131081, 65537, 4, 131082, 65537, 4, 131083, 65537, 4, 131084, 65537, 4, 262144, 327683, 2, 262158, 327683, 2, 7, 327683, 2, 524295, 327683, 2)
+layer_1/tile_data = PackedInt32Array(262158, 4, 10, 262144, 4, 10, 524295, 65540, 9, 7, 0, 0, 327680, 4, 10, 393216, 4, 10, 458752, 4, 10, 196608, 4, 10, 131072, 4, 10, 65536, 4, 10, 65550, 4, 10, 131086, 4, 10, 196622, 4, 10, 327694, 4, 10, 393230, 4, 10, 458766, 4, 10, 0, 4, 9, 14, 131076, 9, 524288, 4, 11, 524302, 131076, 11, 524301, 65540, 9, 524300, 65540, 9, 524299, 65540, 9, 524298, 65540, 9, 524297, 65540, 9, 524296, 65540, 9, 524294, 65540, 9, 524293, 65540, 9, 524292, 65540, 9, 524291, 65540, 9, 524290, 65540, 9, 524289, 65540, 9, 1, 65540, 9, 2, 65540, 9, 3, 65540, 9, 4, 65540, 9, 5, 65540, 9, 6, 65540, 9, 8, 65540, 9, 9, 65540, 9, 10, 65540, 9, 11, 65540, 9, 12, 65540, 9, 13, 65540, 9)
+
+[node name="DoorHorizontal" parent="Doors" index="0" instance=ExtResource("2_koqbi")]
+position = Vector2(120, 8)
+
+[node name="RoomMarker" parent="Markers" index="0" instance=ExtResource("2_hsnnl")]
+position = Vector2(240, 144)
+metadata/markerType = 1
+metadata/entityID = -1
+
+[node name="RoomMarker2" parent="Markers" index="1" instance=ExtResource("2_hsnnl")]
+position = Vector2(272, 48)
+metadata/markerType = 1
+
+[node name="RoomMarker3" parent="Markers" index="2" instance=ExtResource("2_hsnnl")]
+position = Vector2(304, 48)
+metadata/markerType = 1
+metadata/entityID = 1
+
+[node name="RoomMarker4" parent="Markers" index="3" instance=ExtResource("2_hsnnl")]
+position = Vector2(336, 48)
+metadata/markerType = 1
+metadata/entityID = 2
+
+[node name="RoomMarker5" parent="Markers" index="4" instance=ExtResource("2_hsnnl")]
+position = Vector2(368, 48)
+metadata/markerType = 1
+metadata/entityID = 3
+
+[node name="RoomMarker6" parent="Markers" index="5" instance=ExtResource("2_hsnnl")]
+position = Vector2(400, 48)
+metadata/markerType = 1
+metadata/entityID = 4

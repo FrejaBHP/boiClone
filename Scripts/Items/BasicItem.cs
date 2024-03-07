@@ -2,7 +2,6 @@ using Godot;
 using System;
 
 public partial class BasicItem : Item, IInstantEffect {
-    public override int ItemDataID => base.ItemDataID;
     private float damageBonus = 1;
 
     public BasicItem() {

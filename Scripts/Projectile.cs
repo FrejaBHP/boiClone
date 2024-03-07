@@ -17,7 +17,7 @@ public partial class Projectile : Area2D {
 	public override void _PhysicsProcess(double delta) {
 		// Destroys projectile after range limit
 		if (Lifetime > 0) {
-			GlobalPosition -= Transform.Y * (float)(Speed * delta);
+			GlobalPosition -= GlobalTransform.Y * (float)(Speed * delta);
 			Lifetime -= (float)delta;
 		}
 		else {
@@ -69,7 +69,7 @@ public partial class Projectile : Area2D {
 		}
 		
 		// Prevents projectiles from exiting rooms through open doors
-		if (area.HasMeta("door")) {
+		if (area.IsInGroup("Door")) {
 			QueueFree();
 		}
 	}

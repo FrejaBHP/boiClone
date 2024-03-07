@@ -2,7 +2,6 @@ using Godot;
 using System;
 
 public partial class TearsItem : Item, IInstantEffect {
-    public override int ItemDataID => base.ItemDataID;
     private float delayBonus = 0.7f;
 
     public TearsItem() {

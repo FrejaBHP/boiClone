@@ -24,6 +24,8 @@ metadata/_edit_lock_ = true
 script = ExtResource("2_r4yg3")
 metadata/_edit_lock_ = true
 
+[node name="Rooms" type="Node2D" parent="World"]
+
 [node name="EnemySpawnDelay" type="Timer" parent="World"]
 wait_time = 0.3
 one_shot = true

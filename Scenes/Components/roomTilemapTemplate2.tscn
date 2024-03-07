@@ -1,13 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://dbatlauveycsw"]
+[gd_scene load_steps=12 format=3 uid="uid://buxkm7dmj0qw8"]
 
-[ext_resource type="Texture2D" uid="uid://d3ilo7ucje8a2" path="res://Images/TileSet/Door0.png" id="1_hhhxd"]
-[ext_resource type="Texture2D" uid="uid://ba2ftil0h0suj" path="res://Images/TileSet/Floor.png" id="2_ncp6c"]
-[ext_resource type="Texture2D" uid="uid://cmptp7pu7habx" path="res://Images/TileSet/Pit0.png" id="3_pxw6d"]
-[ext_resource type="Texture2D" uid="uid://b6v2vkr7vel7u" path="res://Images/TileSet/Tile.png" id="4_srvfb"]
-[ext_resource type="Texture2D" uid="uid://dhonfeqsstplo" path="res://Images/TileSet/Wall.png" id="5_oo45o"]
+[ext_resource type="Texture2D" uid="uid://d3ilo7ucje8a2" path="res://Images/TileSet/Door0.png" id="1_5kwxf"]
+[ext_resource type="Texture2D" uid="uid://ba2ftil0h0suj" path="res://Images/TileSet/Floor.png" id="2_7y3r4"]
+[ext_resource type="Texture2D" uid="uid://cmptp7pu7habx" path="res://Images/TileSet/Pit0.png" id="3_evwly"]
+[ext_resource type="Texture2D" uid="uid://b6v2vkr7vel7u" path="res://Images/TileSet/Tile.png" id="4_mtiic"]
+[ext_resource type="Texture2D" uid="uid://dhonfeqsstplo" path="res://Images/TileSet/Wall.png" id="5_b5m6t"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x4rm8"]
-texture = ExtResource("1_hhhxd")
+texture = ExtResource("1_5kwxf")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -256,7 +256,7 @@ texture = ExtResource("1_hhhxd")
 6:1/0/physics_layer_1/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qenby"]
-texture = ExtResource("2_ncp6c")
+texture = ExtResource("2_7y3r4")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -2659,7 +2659,7 @@ texture = ExtResource("2_ncp6c")
 3:38/0/physics_layer_1/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_p4dto"]
-texture = ExtResource("3_pxw6d")
+texture = ExtResource("3_evwly")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -3718,7 +3718,7 @@ texture = ExtResource("3_pxw6d")
 4:31/0/physics_layer_1/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2uh5f"]
-texture = ExtResource("4_srvfb")
+texture = ExtResource("4_mtiic")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -3881,7 +3881,7 @@ texture = ExtResource("4_srvfb")
 7:3/0/physics_layer_1/angular_velocity = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2ke17"]
-texture = ExtResource("5_oo45o")
+texture = ExtResource("5_b5m6t")
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
@@ -7815,9 +7815,6 @@ sources/2 = SubResource("TileSetAtlasSource_p4dto")
 sources/3 = SubResource("TileSetAtlasSource_2uh5f")
 sources/4 = SubResource("TileSetAtlasSource_2ke17")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_usrwq"]
-size = Vector2(8, 16)
-
 [node name="TileMap" type="TileMap"]
 texture_filter = 1
 tile_set = SubResource("TileSet_wcmp5")
@@ -7826,37 +7823,4 @@ layer_0/name = "Floor"
 layer_0/tile_data = PackedInt32Array(65537, 1, 6, 65538, 65537, 6, 65539, 65537, 6, 65540, 65537, 6, 65541, 65537, 6, 65542, 65537, 6, 65543, 65537, 6, 65544, 65537, 6, 65545, 65537, 6, 65546, 65537, 6, 65547, 65537, 6, 65548, 65537, 6, 65549, 131073, 6, 131085, 131073, 7, 196621, 131073, 7, 262157, 131073, 7, 327693, 131073, 7, 393229, 131073, 7, 458765, 131073, 8, 458764, 65537, 8, 458763, 65537, 8, 458762, 65537, 8, 458761, 65537, 8, 458760, 65537, 8, 458759, 65537, 8, 458758, 65537, 8, 458757, 65537, 8, 458756, 65537, 8, 458755, 65537, 8, 458754, 65537, 8, 458753, 1, 8, 393217, 1, 7, 327681, 1, 7, 262145, 1, 7, 196609, 1, 7, 131073, 1, 7, 131074, 65537, 7, 196610, 65537, 7, 262146, 65537, 7, 327682, 65537, 7, 393218, 65537, 7, 393219, 65537, 7, 393220, 65537, 7, 393221, 65537, 7, 393222, 65537, 7, 393223, 65537, 7, 393224, 65537, 7, 393225, 65537, 7, 393226, 65537, 7, 393227, 65537, 7, 393228, 65537, 7, 327692, 65537, 7, 327691, 65537, 7, 327690, 65537, 7, 327689, 65537, 7, 327688, 65537, 7, 327687, 65537, 7, 327686, 65537, 7, 327685, 65537, 7, 327684, 65537, 7, 327683, 65537, 7, 262147, 65537, 7, 262148, 65537, 7, 262149, 65537, 7, 262150, 65537, 7, 262151, 65537, 7, 262152, 65537, 7, 262153, 65537, 7, 262154, 65537, 7, 262155, 65537, 7, 262156, 65537, 7, 196620, 65537, 7, 196619, 65537, 7, 196618, 65537, 7, 196617, 65537, 7, 196616, 65537, 7, 196615, 65537, 7, 196614, 65537, 7, 196613, 65537, 7, 196612, 65537, 7, 196611, 65537, 7, 131075, 65537, 7, 131076, 65537, 7, 131077, 65537, 7, 131078, 65537, 7, 131079, 65537, 7, 131080, 65537, 7, 131081, 65537, 7, 131082, 65537, 7, 131083, 65537, 7, 131084, 65537, 7, 262144, 327683, 2, 262158, 327683, 2, 7, 327683, 2, 524295, 327683, 2)
 layer_1/name = "Wall"
 layer_1/z_index = 1
-layer_1/tile_data = PackedInt32Array(262158, 65536, 0, 262144, 4, 7, 524295, 65540, 6, 7, 65540, 6, 327680, 4, 7, 393216, 4, 7, 458752, 4, 7, 196608, 4, 7, 131072, 4, 7, 65536, 4, 7, 65550, 4, 7, 131086, 4, 7, 196622, 4, 7, 327694, 4, 7, 393230, 4, 7, 458766, 4, 7, 0, 4, 6, 14, 131076, 6, 524288, 4, 8, 524302, 131076, 8, 524301, 65540, 6, 524300, 65540, 6, 524299, 65540, 6, 524298, 65540, 6, 524297, 65540, 6, 524296, 65540, 6, 524294, 65540, 6, 524293, 65540, 6, 524292, 65540, 6, 524291, 65540, 6, 524290, 65540, 6, 524289, 65540, 6, 1, 65540, 6, 2, 65540, 6, 3, 65540, 6, 4, 65540, 6, 5, 65540, 6, 6, 65540, 6, 8, 65540, 6, 9, 65540, 6, 10, 65540, 6, 11, 65540, 6, 12, 65540, 6, 13, 65540, 6)
-
-[node name="Doors" type="Node2D" parent="."]
-scale = Vector2(0.5, 0.5)
-
-[node name="DoorEast" type="Area2D" parent="Doors"]
-position = Vector2(465, 145)
-scale = Vector2(2, 2)
-collision_layer = 32
-collision_mask = 8
-metadata/_edit_group_ = true
-metadata/door = true
-metadata/direction = 1
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Doors/DoorEast"]
-shape = SubResource("RectangleShape2D_usrwq")
-
-[node name="Markers" type="Node2D" parent="."]
-scale = Vector2(0.5, 0.5)
-
-[node name="Marker2D" type="Marker2D" parent="Markers"]
-position = Vector2(48, 48)
-metadata/nodeType = 0
-metadata/entityID = 0
-
-[node name="Marker2D2" type="Marker2D" parent="Markers"]
-position = Vector2(48, 240)
-metadata/nodeType = 0
-metadata/entityID = 0
-
-[node name="Marker2D3" type="Marker2D" parent="Markers"]
-position = Vector2(180, 144)
-metadata/nodeType = 0
-metadata/entityID = 0
+layer_1/tile_data = PackedInt32Array(262158, 65536, 0, 262144, 65536, 0, 524295, 0, 0, 7, 0, 0, 327680, 4, 7, 393216, 4, 7, 458752, 4, 7, 196608, 4, 7, 131072, 4, 7, 65536, 4, 7, 65550, 4, 7, 131086, 4, 7, 196622, 4, 7, 327694, 4, 7, 393230, 4, 7, 458766, 4, 7, 0, 4, 6, 14, 131076, 6, 524288, 4, 8, 524302, 131076, 8, 524301, 65540, 6, 524300, 65540, 6, 524299, 65540, 6, 524298, 65540, 6, 524297, 65540, 6, 524296, 65540, 6, 524294, 65540, 6, 524293, 65540, 6, 524292, 65540, 6, 524291, 65540, 6, 524290, 65540, 6, 524289, 65540, 6, 1, 65540, 6, 2, 65540, 6, 3, 65540, 6, 4, 65540, 6, 5, 65540, 6, 6, 65540, 6, 8, 65540, 6, 9, 65540, 6, 10, 65540, 6, 11, 65540, 6, 12, 65540, 6, 13, 65540, 6)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dry7pqt3fqvrx"]
 
-[ext_resource type="Script" path="res://Scripts/WorldItem.cs" id="1_argy2"]
+[ext_resource type="Script" path="res://Scripts/ItemPedestal.cs" id="1_argy2"]
 [ext_resource type="Texture2D" uid="uid://blunpprhunht0" path="res://Images/testPedestal.png" id="2_e8pm1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nbwh4"]

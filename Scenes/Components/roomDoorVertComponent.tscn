@@ -3,7 +3,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_52mxa"]
 size = Vector2(10, 16)
 
-[node name="DoorVertical" type="Area2D"]
+[node name="DoorVertical" type="Area2D" groups=["Door"]]
 collision_layer = 32
 collision_mask = 8
 metadata/direction = 0

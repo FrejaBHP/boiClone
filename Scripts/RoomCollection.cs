@@ -11,17 +11,34 @@ public enum RoomNames {
 }
 
 public static class RoomCollection {
-    public static List<RoomData> RoomDataSet { get; private set; }
+    public static List<ExternalRoomData> RoomData { get; private set; }
 
     public static void CompileRoomList() {
-        RoomDataSet = new() {
-            new(0, GD.Load<PackedScene>("Scenes/Rooms/StartingRoom.tscn"), Exits.North | Exits.East | Exits.South | Exits.West, "Starting Room", RoomType.Normal),
-            new(1, GD.Load<PackedScene>("Scenes/Rooms/RRoom.tscn"), Exits.West, "Right Room", RoomType.Normal),
-            new(2, GD.Load<PackedScene>("Scenes/Rooms/UDLongRoom.tscn"), Exits.North | Exits.South, "Thin Room", RoomType.Normal),
-            new(3, GD.Load<PackedScene>("Scenes/Rooms/UTestItemRoom.tscn"), Exits.North, "Test Item Room", RoomType.Treasure),
-            new(4, GD.Load<PackedScene>("Scenes/Rooms/defaultRoom.tscn"), Exits.North | Exits.East | Exits.South | Exits.West, "Old Default Room", RoomType.Normal),
-            new(5, GD.Load<PackedScene>("Scenes/Rooms/SRoom.tscn"), Exits.South, "Small Room", RoomType.Normal)
+        RoomData = new() {
+            new(0, GD.Load<PackedScene>("Scenes/startingRoomTest.tscn")),
+            new(1, GD.Load<PackedScene>("Scenes/treasureRoomFormatTest.tscn")),
+            new(1, GD.Load<PackedScene>("Scenes/encounterRoomFormatTest.tscn"))
         };
-        GD.Print($"Loaded rooms: {RoomDataSet.Count}");
+
+        foreach (ExternalRoomData room in RoomData) {
+            SceneState sceneState = room.Scene.GetState();
+
+            for (int i = 0; i < sceneState.GetNodePropertyCount(0); i++) {
+                switch (sceneState.GetNodePropertyName(0, i)) {
+                    case "Exits":
+                        room.SetMetaExits((Exits)sceneState.GetNodePropertyValue(0, i).AsInt32());
+                        break;
+                        
+                    case "Type":
+                        room.SetMetaType((RoomType)sceneState.GetNodePropertyValue(0, i).AsInt32());
+                        break;
+                    
+                    default:
+                        break;
+                }
+			}
+            //GD.Print($"Exits: {room.Exits}. Type: {room.Type}");
+        }
+        GD.Print($"Loaded rooms: {RoomData.Count}");
     }
 }

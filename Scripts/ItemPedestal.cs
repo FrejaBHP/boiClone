@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class WorldItem : StaticBody2D {
+public partial class ItemPedestal : StaticBody2D {
 	public bool ItemRemoved {
 		get => itemRemoved;
 		set {

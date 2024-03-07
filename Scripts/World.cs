@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 
 public partial class World : Node {
+	public static Room CurrentRoom { get; private set; }
+
 	private static WorldRoom[,] worldRooms;
 	private static Vector2I currentCoords;
-	private static Room currentRoom;
+	private static Node2D roomsNode;
 	
 	private static int enemiesLeft = 0;
+
 	private static readonly int roomLength = 480;
 	private static readonly int roomHeight = 288;
 	private static readonly int gridSize = 50;
@@ -20,11 +23,11 @@ public partial class World : Node {
 	private static readonly int gridGapY = roomHeight + gridGapExtra; // Each room is 32x9=288 units tall
 	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
 
-	private Timer EnemySpawnDelayTimer;
+	private static Timer EnemySpawnDelayTimer;
 
-	protected PackedScene Room = GD.Load<PackedScene>("Scenes/room.tscn");
+	//protected PackedScene Room = GD.Load<PackedScene>("Scenes/room.tscn");
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
-	protected PackedScene ItemPedestal = GD.Load<PackedScene>("Scenes/worldItem.tscn");
+	protected PackedScene ItemPedestal = GD.Load<PackedScene>("Scenes/itemPedestal.tscn");
 
 	public World() {
 		worldRooms = new WorldRoom[gridSize, gridSize];
@@ -33,7 +36,8 @@ public partial class World : Node {
 
     public override void _Ready() {
 		EnemySpawnDelayTimer = GetNode<Timer>("EnemySpawnDelay");
-		BuildLevel();
+		roomsNode = GetNode<Node2D>("Rooms");
+		GenerateRooms();
 	}
 
 
@@ -54,8 +58,8 @@ public partial class World : Node {
 		int pickupRoll = DeterminePickupRarity(typeRoll);
 
 		Vector2 pickupPos;
-		pickupPos.X = currentRoom.GlobalPosition.X + 240;
-		pickupPos.Y = currentRoom.GlobalPosition.Y + 144;
+		pickupPos.X = CurrentRoom.GlobalPosition.X + 240;
+		pickupPos.Y = CurrentRoom.GlobalPosition.Y + 144;
 
 		CreatePickup(pickupRoll, pickupPos);
 	}
@@ -63,33 +67,23 @@ public partial class World : Node {
 
 
 	#region Initialisation
-	private void BuildLevel() {
-		// Until coming across a better format, maps are kept track of in a 2D array for navigation
-		// And since arrays don't like negative indeces, it's offset by 25 later (for a 50x50 total map size atm)
-		// Coordinates here are however still written as starting at [0, 0] for ease of use
-
-		List<WorldRoom> tempList = new() {
-			new((int)RoomNames.StartingRoom, 0, 0),
-			new((int)RoomNames.UDLR_BaseRoom, 1, 0),
-			new((int)RoomNames.R_Room, -1, 0),
-			new((int)RoomNames.UD_LongRoom, 0, 1),
-			new((int)RoomNames.U_TestItemRoom, 0, 2),
-			new((int)RoomNames.S_Room, 0, -1)
-			//new((int)RoomNames.UDLR_BaseRoom, 0, -1)
+	private void GenerateRooms() {
+		List<WorldRoom> roomList = new() {
+			new(0, 0, 0),
+			new(1, 0, 1),
+			new(2, -1, 0)
 		};
-		
-		PlaceRooms(tempList);
+
+		PlaceRooms(roomList);
 	}
 
-	private void PlaceRooms(List<WorldRoom> worldRoomList) {
-		foreach (WorldRoom worldRoom in worldRoomList) {
-			if (RoomCollection.RoomDataSet[worldRoom.ID].Scene != null) {
-				Room newRoom = Room.Instantiate() as Room;
-				newRoom.Data = RoomCollection.RoomDataSet[worldRoom.ID];
-				newRoom.Map = newRoom.Data.Scene.Instantiate() as TileMap;
+	private void PlaceRooms(List<WorldRoom> roomList) {
+		foreach (WorldRoom worldRoom in roomList) {
+			if (RoomCollection.RoomData[worldRoom.ID] != null) {
+				Room newRoom = RoomCollection.RoomData[worldRoom.ID].Scene.Instantiate() as Room;
+				newRoom.RoomID = worldRoom.ID;
 
-				newRoom.AddChild(newRoom.Map);
-				AddChild(newRoom);
+				roomsNode.AddChild(newRoom);
 
 				worldRoom.Room = newRoom;
 				worldRooms[worldRoom.Coords.X + (gridSize / 2), worldRoom.Coords.Y + (gridSize / 2)] = worldRoom;
@@ -100,29 +94,68 @@ public partial class World : Node {
 				GD.PushError($"Room with ID {worldRoom.ID} not found.");
 			}
 		}
-		currentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
-		currentRoom.Visible = true;
+		CurrentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
+		CurrentRoom.Visible = true;
 
-		//CheckDirections();
+		RoomFlexBoundaryPass();
+
 		AddPlayer();
 		HUD.ShowHUD();
-		currentRoom.CheckAndStartOpeningDoors();
+		CurrentRoom.CheckAndStartOpeningDoors();
+	}
+
+	private void RoomFlexBoundaryPass() {
+		int i = 0;
+		foreach (WorldRoom wr in worldRooms) {
+			i++;
+			if (wr != null) {
+				if ((int)wr.Room.Exits == 15) {
+					GD.Print($"You are here: ID: {wr.ID}, X: {wr.Coords.X + (gridSize / 2)}, Y: {wr.Coords.Y + (gridSize / 2)}. I = {i}");
+
+					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) - 1}]");
+					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1] == null) {
+						GD.Print("Void found.");
+						wr.Room.RemoveDoor(0);
+					}
+
+					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) + 1}, {wr.Coords.Y + (gridSize / 2)}]");
+					if (wr.Coords.X == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)] == null) {
+						GD.Print("Void found.");
+						wr.Room.RemoveDoor(1);
+					}
+
+					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) + 1}]");
+					if (wr.Coords.Y == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1] == null) {
+						GD.Print("Void found.");
+						wr.Room.RemoveDoor(2);
+					}
+
+					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) - 1}, {wr.Coords.Y + (gridSize / 2)}]");
+					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)] == null) {
+						GD.Print("Void found.");
+						wr.Room.RemoveDoor(3);
+					}
+				}
+			}
+		}
 	}
 
 	private static void CheckDirections() { // Obsolete. Fix for new rooms structure and big rooms
 		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
+		/*
 		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null) {
-			currentRoom.RemoveDoor(0);
+			CurrentRoom.RemoveDoor(0);
 		}
 		if (worldRooms[currentCoords.X + 1, currentCoords.Y] == null) {
-			currentRoom.RemoveDoor(1);
+			CurrentRoom.RemoveDoor(1);
 		}
 		if (worldRooms[currentCoords.X, currentCoords.Y + 1] == null) {
-			currentRoom.RemoveDoor(2);
+			CurrentRoom.RemoveDoor(2);
 		}
 		if (worldRooms[currentCoords.X - 1, currentCoords.Y] == null) {
-			currentRoom.RemoveDoor(3);
+			CurrentRoom.RemoveDoor(3);
 		}
+		*/
 	}
 
 	private void AddPlayer() {
@@ -152,10 +185,10 @@ public partial class World : Node {
 	#region Markers
 	private void ReadRoomMarkers() {
 		CallDeferred(MethodName.ProcessItemMarkers); // To avoid runtime error, this call is deferred
-		GD.Print($"Flags: {currentRoom.Data.Flags}");
+		//GD.Print($"Flags: {CurrentRoom.Data.Flags}");
 
-		if (!currentRoom.Data.Flags.HasFlag(RoomFlags.HasCombat)) {
-			RoomCleared(false);
+		if (!CurrentRoom.Flags.HasFlag(RoomFlags.HasCombat)) {
+			RoomCleared();
 		}
 		else {
 			ProcessEnemyMarkers();
@@ -163,7 +196,7 @@ public partial class World : Node {
 	}
 
 	private void ProcessItemMarkers() {
-		foreach (Marker2D marker in currentRoom.ItemMarkers) {
+		foreach (Marker2D marker in CurrentRoom.ItemMarkers) {
 			CreateItemPedestal((int)marker.GetMeta("entityID"), marker.GlobalPosition);
 		}
 	}
@@ -173,13 +206,12 @@ public partial class World : Node {
 	}
 
 	private async void ProcessEnemyMarkers() {
-		if (currentRoom.EnemyMarkers.Count > 0) {
+		if (CurrentRoom.EnemyMarkers.Count > 0) {
 			EnemySpawnDelayTimer.Start();
 			await ToSignal(EnemySpawnDelayTimer, "timeout");
 
-			foreach (Marker2D marker in currentRoom.EnemyMarkers) {
+			foreach (Marker2D marker in CurrentRoom.EnemyMarkers) {
 				CreateEnemy((int)marker.GetMeta("entityID"), marker.GlobalPosition);
-				enemiesLeft++;
 			}
 		}
 	}
@@ -187,7 +219,7 @@ public partial class World : Node {
 
 	#region MarkerDataInstantiation
 	private void CreateItemPedestal(int itemID, Vector2 pos) {
-		WorldItem newPedestal = ItemPedestal.Instantiate() as WorldItem;
+		ItemPedestal newPedestal = ItemPedestal.Instantiate() as ItemPedestal;
 		Sprite2D itemSprite = newPedestal.GetNode<Sprite2D>("ItemSpriteItem");
 
 		// If itemID is -1, it's interpreted as a random item spawn, otherwise it's a set spawn
@@ -212,15 +244,19 @@ public partial class World : Node {
 				GD.PushError($"Item with ID {itemID} not found.");
 			}
 		}
-		currentRoom.Pedestals.AddChild(newPedestal);
+		CurrentRoom.PedestalsNode.AddChild(newPedestal);
 		newPedestal.GlobalPosition = pos;
 	}
 
 	private void CreateEnemy(int enemyID, Vector2 pos) {
 		if (EnemyCollection.EnemyScenes[enemyID] != null) {
 			Enemy newEnemy = EnemyCollection.EnemyScenes[enemyID].Instantiate() as Enemy;
-			AddChild(newEnemy);
+			CurrentRoom.EnemiesNode.AddChild(newEnemy);
 			newEnemy.GlobalPosition = pos;
+
+			if (newEnemy.CountsTowardsEnemyCount) {
+				enemiesLeft++;
+			}
 		}
 		else {
 			GD.PushError($"Enemy with ID {enemyID} not found.");
@@ -229,10 +265,10 @@ public partial class World : Node {
 	#endregion
 
 	#region RoomAndPickupLogic
-	private void RoomCleared(bool hadCombat) {
-		currentRoom.CheckAndStartOpeningDoors();
+	private void RoomCleared() {
+		CurrentRoom.CheckAndStartOpeningDoors();
 		
-		if (hadCombat) {
+		if (CurrentRoom.Flags.HasFlag(RoomFlags.HasCombat)) {
 			CallDeferred(MethodName.RollForPickup); // To avoid runtime error, this call is deferred
 			Main.Player.GainCharge(1);
 		}
@@ -247,8 +283,8 @@ public partial class World : Node {
 			int pickupRoll = DeterminePickupRarity(typeRoll);
 
 			Vector2 pickupPos;
-			pickupPos.X = currentRoom.GlobalPosition.X + (roomLength / 2);
-			pickupPos.Y = currentRoom.GlobalPosition.Y + (roomHeight / 2);
+			pickupPos.X = CurrentRoom.GlobalPosition.X + (roomLength / 2);
+			pickupPos.Y = CurrentRoom.GlobalPosition.Y + (roomHeight / 2);
 
 			CreatePickup(pickupRoll, pickupPos);
 		}
@@ -325,7 +361,7 @@ public partial class World : Node {
 	}
 
 	public void MoveRooms(int dir) {
-		currentRoom.RemoveEmptyPedestals();
+		CurrentRoom.RemoveEmptyPedestals();
 
 		Vector2 pos = Main.Player.GlobalPosition;
 		Vector2 cpos = Main.Camera.GlobalPosition;
@@ -361,17 +397,19 @@ public partial class World : Node {
 		Main.Camera.GlobalPosition = cpos;
 		currentCoords = c;
 
-		currentRoom.Visible = false;
-		currentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
+		CurrentRoom.Visible = false;
+		CurrentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
 
 		EnterNewRoom();
 	}
 
 	private void EnterNewRoom() {
-		currentRoom.Visible = true;
-		if (!currentRoom.Visited) {
-			switch (currentRoom.Data.Type) {
-				case RoomType.Normal:
+		enemiesLeft = 0;
+
+		CurrentRoom.Visible = true;
+		if (!CurrentRoom.Visited) {
+			switch (CurrentRoom.Type) {
+				case RoomType.Default:
 					break;
 
 				case RoomType.Treasure:
@@ -395,14 +433,13 @@ public partial class World : Node {
 		return GetTree().GetNodesInGroup("Enemy").Cast<Enemy>().ToArray();
 	}
 
-
 	// SIGNAL HANDLING
 	public void DecreaseEnemyCount() {
 		//await ToSignal(typeof(EnemyHealthComponent), EnemyHealthComponent.SignalName.Died);
 		enemiesLeft--;
 		
 		if (enemiesLeft == 0) {
-			RoomCleared(true); // If combat occured, parameter is true, rolling for pickup
+			RoomCleared();
 		}
 	}
 }

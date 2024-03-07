@@ -2,7 +2,6 @@ using Godot;
 using System;
 
 public partial class Orange : Item, IInstantEffect {
-    public override int ItemDataID => base.ItemDataID;
     private int healthBonus = 1;
     private int halvesToFill = 2;
 
