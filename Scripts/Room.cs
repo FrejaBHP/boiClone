@@ -30,6 +30,10 @@ public partial class Room : Node2D {
 	public bool Visited { get; set; }
 	public bool Seen { get; set; }
 
+
+	private static Vector2I floorTile = new(1, 7);
+
+
     public override void _Ready() {
 		Visible = false;
 
@@ -74,7 +78,7 @@ public partial class Room : Node2D {
 				Vector2I doorCoords = MapNode.LocalToMap(ToLocal(door.GlobalPosition));
 				Vector2I tileCoords = MapNode.GetCellAtlasCoords(1, doorCoords);
 
-				GD.Print($"DC: {doorCoords}, TC: {tileCoords}");
+				//GD.Print($"DC: {doorCoords}, TC: {tileCoords}");
 				ReplaceDoorTile(doorCoords, tileCoords);
 				
 				door.Free();
@@ -87,13 +91,24 @@ public partial class Room : Node2D {
 		if (tile[0] == 0) {		// If horizontal door -
 			Vector2I newTile = new(1, 6);
 			MapNode.SetCell(1, coords, 4, newTile);
-			GD.Print("Replaced horizontal door");
+			//GD.Print("Replaced horizontal door");
 		}
 		else {					// If vertical door |
 			Vector2I newTile = new(0, 7);
 			//MapNode.EraseCell(1, coords);
 			MapNode.SetCell(1, coords, 4, newTile);
-			GD.Print("Replaced vertical door");
+			//GD.Print("Replaced vertical door");
+		}
+	}
+
+	public void HandleExplosion(Vector2 explosionScaledLocalPos, int explosionScaledRadius) {
+        Vector2I[] allCells = MapNode.GetUsedCells(2).ToArray();
+		foreach (Vector2I cell in allCells) {
+            Vector2 tileLocalPos = MapNode.MapToLocal(cell);
+			if (explosionScaledLocalPos.DistanceTo(tileLocalPos) <= explosionScaledRadius + 8) { // scaled explosion + quarter of a tile
+				MapNode.EraseCell(2, cell);
+				//GD.Print($"Destroyed cell at {tileLocalPos} (Map: {cell})");
+			}
 		}
 	}
 

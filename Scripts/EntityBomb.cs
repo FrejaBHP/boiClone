@@ -18,9 +18,9 @@ public partial class EntityBomb : RigidBody2D {
 		explosion.Radius = 48;
 		explosion.Damage = 100;
 		explosion.Knockback = 1000;
-		explosion.GlobalPosition = GlobalPosition;
 
-		GetNode<World>("/root/Main/World").AddChild(explosion);
+		World.CurrentRoom.EntitiesNode.AddChild(explosion);
+		explosion.GlobalPosition = GlobalPosition;
 		
 		QueueFree();
 	}

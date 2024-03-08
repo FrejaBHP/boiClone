@@ -1,17 +1,21 @@
-[gd_scene load_steps=4 format=3 uid="uid://brdhht3pasqvb"]
+[gd_scene load_steps=5 format=3 uid="uid://brdhht3pasqvb"]
 
 [ext_resource type="PackedScene" uid="uid://dtoo8ljsmdcpd" path="res://Scenes/roomTemplate.tscn" id="1_brq14"]
 [ext_resource type="PackedScene" uid="uid://d34dlv4hdv7gq" path="res://Scenes/Components/roomDoorVertComponent.tscn" id="2_5kl4i"]
 [ext_resource type="PackedScene" uid="uid://cw1dqva8l3bw1" path="res://Scenes/Components/roomMarkerComponent.tscn" id="3_skkji"]
+[ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="3_uo6sq"]
 
 [node name="Room" instance=ExtResource("1_brq14")]
-Exits = 2
+Exits = 3
 Type = 1
 
 [node name="TileMap" parent="." index="0"]
-layer_1/tile_data = PackedInt32Array(262158, 65536, 0, 262144, 4, 7, 524295, 65540, 6, 7, 65540, 6, 327680, 4, 7, 393216, 4, 7, 458752, 4, 7, 196608, 4, 7, 131072, 4, 7, 65536, 4, 7, 65550, 4, 7, 131086, 4, 7, 196622, 4, 7, 327694, 4, 7, 393230, 4, 7, 458766, 4, 7, 0, 4, 6, 14, 131076, 6, 524288, 4, 8, 524302, 131076, 8, 524301, 65540, 6, 524300, 65540, 6, 524299, 65540, 6, 524298, 65540, 6, 524297, 65540, 6, 524296, 65540, 6, 524294, 65540, 6, 524293, 65540, 6, 524292, 65540, 6, 524291, 65540, 6, 524290, 65540, 6, 524289, 65540, 6, 1, 65540, 6, 2, 65540, 6, 3, 65540, 6, 4, 65540, 6, 5, 65540, 6, 6, 65540, 6, 8, 65540, 6, 9, 65540, 6, 10, 65540, 6, 11, 65540, 6, 12, 65540, 6, 13, 65540, 6)
+layer_1/tile_data = PackedInt32Array(262158, 65536, 0, 262144, 4, 7, 524295, 65540, 6, 7, 0, 0, 327680, 4, 7, 393216, 4, 7, 458752, 4, 7, 196608, 4, 7, 131072, 4, 7, 65536, 4, 7, 65550, 4, 7, 131086, 4, 7, 196622, 4, 7, 327694, 4, 7, 393230, 4, 7, 458766, 4, 7, 0, 4, 6, 14, 131076, 6, 524288, 4, 8, 524302, 131076, 8, 524301, 65540, 6, 524300, 65540, 6, 524299, 65540, 6, 524298, 65540, 6, 524297, 65540, 6, 524296, 65540, 6, 524294, 65540, 6, 524293, 65540, 6, 524292, 65540, 6, 524291, 65540, 6, 524290, 65540, 6, 524289, 65540, 6, 1, 65540, 6, 2, 65540, 6, 3, 65540, 6, 4, 65540, 6, 5, 65540, 6, 6, 65540, 6, 8, 65540, 6, 9, 65540, 6, 10, 65540, 6, 11, 65540, 6, 12, 65540, 6, 13, 65540, 6)
 
-[node name="DoorVertical" parent="Doors" index="0" instance=ExtResource("2_5kl4i")]
+[node name="DoorHorizontal" parent="Doors" index="0" instance=ExtResource("3_uo6sq")]
+position = Vector2(120, 8)
+
+[node name="DoorVertical" parent="Doors" index="1" instance=ExtResource("2_5kl4i")]
 position = Vector2(232, 72)
 metadata/direction = 1
 

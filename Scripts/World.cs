@@ -71,7 +71,8 @@ public partial class World : Node {
 		List<WorldRoom> roomList = new() {
 			new(0, 0, 0),
 			new(1, 0, 1),
-			new(2, -1, 0)
+			new(2, -1, 0),
+			new(3, -1, -1)
 		};
 
 		PlaceRooms(roomList);
@@ -110,29 +111,25 @@ public partial class World : Node {
 			i++;
 			if (wr != null) {
 				if ((int)wr.Room.Exits == 15) {
-					GD.Print($"You are here: ID: {wr.ID}, X: {wr.Coords.X + (gridSize / 2)}, Y: {wr.Coords.Y + (gridSize / 2)}. I = {i}");
+					//GD.Print($"All exits at ID: {wr.ID}, X: {wr.Coords.X + (gridSize / 2)}, Y: {wr.Coords.Y + (gridSize / 2)}. I = {i}");
 
-					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) - 1}]");
+					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) - 1}]");
 					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1] == null) {
-						GD.Print("Void found.");
 						wr.Room.RemoveDoor(0);
 					}
 
-					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) + 1}, {wr.Coords.Y + (gridSize / 2)}]");
+					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) + 1}, {wr.Coords.Y + (gridSize / 2)}]");
 					if (wr.Coords.X == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)] == null) {
-						GD.Print("Void found.");
 						wr.Room.RemoveDoor(1);
 					}
 
-					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) + 1}]");
+					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) + 1}]");
 					if (wr.Coords.Y == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1] == null) {
-						GD.Print("Void found.");
 						wr.Room.RemoveDoor(2);
 					}
 
-					GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) - 1}, {wr.Coords.Y + (gridSize / 2)}]");
+					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) - 1}, {wr.Coords.Y + (gridSize / 2)}]");
 					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)] == null) {
-						GD.Print("Void found.");
 						wr.Room.RemoveDoor(3);
 					}
 				}

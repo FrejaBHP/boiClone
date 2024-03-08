@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://2qptifsu2xc8"]
+
+[ext_resource type="PackedScene" uid="uid://dtoo8ljsmdcpd" path="res://Scenes/roomTemplate.tscn" id="1_cvay8"]
+[ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="2_4cmo5"]
+[ext_resource type="PackedScene" uid="uid://d34dlv4hdv7gq" path="res://Scenes/Components/roomDoorVertComponent.tscn" id="3_0x1mx"]
+
+[node name="Room" instance=ExtResource("1_cvay8")]
+RoomName = "Rock Room"
+Exits = 15
+Type = 1
+
+[node name="TileMap" parent="." index="0"]
+layer_2/tile_data = PackedInt32Array(65537, 524292, 22, 131073, 524292, 22, 65538, 524292, 22, 65548, 524292, 22, 65549, 524292, 22, 131085, 524292, 22, 458765, 524292, 22, 458764, 524292, 22, 393229, 524292, 22, 458754, 524292, 22, 458753, 524292, 22, 393217, 524292, 22, 131079, 524292, 22, 196614, 524292, 22, 262149, 524292, 22, 327686, 524292, 22, 393223, 524292, 22, 327688, 524292, 22, 262153, 524292, 22, 196616, 524292, 22, 262152, 524292, 22, 262151, 524292, 22, 262150, 524292, 22, 196615, 524292, 22, 327687, 524292, 22)
+
+[node name="DoorHorizontal" parent="Doors" index="0" instance=ExtResource("2_4cmo5")]
+position = Vector2(120, 8)
+
+[node name="DoorVertical" parent="Doors" index="1" instance=ExtResource("3_0x1mx")]
+position = Vector2(232, 72)
+metadata/direction = 1
+
+[node name="DoorHorizontal2" parent="Doors" index="2" instance=ExtResource("2_4cmo5")]
+position = Vector2(120, 136)
+metadata/direction = 2
+
+[node name="DoorVertical2" parent="Doors" index="3" instance=ExtResource("3_0x1mx")]
+position = Vector2(8, 72)
+metadata/direction = 3

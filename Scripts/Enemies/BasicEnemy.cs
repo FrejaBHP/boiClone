@@ -6,7 +6,7 @@ public partial class BasicEnemy : Enemy {
 	[Export]
 	private EnemyMovementComponent MovementComponent;
 
-    public override void _Ready() {
+    protected override void Setup() {
 		CountsTowardsEnemyCount = true;
     }
 
