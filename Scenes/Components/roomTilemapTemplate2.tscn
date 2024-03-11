@@ -8,6 +8,7 @@
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x4rm8"]
 texture = ExtResource("1_5kwxf")
+0:0/next_alternative_id = 2
 0:0/0 = 0
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0

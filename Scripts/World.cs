@@ -72,7 +72,8 @@ public partial class World : Node {
 			new(0, 0, 0),
 			new(1, 0, 1),
 			new(2, -1, 0),
-			new(3, -1, -1)
+			new(3, -1, -1),
+			new(4, -2, -1)
 		};
 
 		PlaceRooms(roomList);
@@ -98,40 +99,58 @@ public partial class World : Node {
 		CurrentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
 		CurrentRoom.Visible = true;
 
-		RoomFlexBoundaryPass();
+		RoomPass();
 
 		AddPlayer();
 		HUD.ShowHUD();
 		CurrentRoom.CheckAndStartOpeningDoors();
 	}
 
-	private void RoomFlexBoundaryPass() {
+	private void RoomPass() {
 		int i = 0;
 		foreach (WorldRoom wr in worldRooms) {
 			i++;
 			if (wr != null) {
+				WorldRoom wrNorth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1];
+				WorldRoom wrEast = worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)];
+				WorldRoom wrSouth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1];
+				WorldRoom wrWest = worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)];
+
 				if ((int)wr.Room.Exits == 15) {
 					//GD.Print($"All exits at ID: {wr.ID}, X: {wr.Coords.X + (gridSize / 2)}, Y: {wr.Coords.Y + (gridSize / 2)}. I = {i}");
 
 					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) - 1}]");
-					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1] == null) {
+					if (wr.Coords.Y == -(gridSize / 2) - 1 || wrNorth == null) {
 						wr.Room.RemoveDoor(0);
 					}
 
 					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) + 1}, {wr.Coords.Y + (gridSize / 2)}]");
-					if (wr.Coords.X == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)] == null) {
+					if (wr.Coords.X == (gridSize / 2) || wrEast == null) {
 						wr.Room.RemoveDoor(1);
 					}
 
 					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) + 1}]");
-					if (wr.Coords.Y == (gridSize / 2) || worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1] == null) {
+					if (wr.Coords.Y == (gridSize / 2) || wrSouth == null) {
 						wr.Room.RemoveDoor(2);
 					}
 
 					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) - 1}, {wr.Coords.Y + (gridSize / 2)}]");
-					if (wr.Coords.Y == -(gridSize / 2) - 1 || worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)] == null) {
+					if (wr.Coords.Y == -(gridSize / 2) - 1 || wrWest == null) {
 						wr.Room.RemoveDoor(3);
 					}
+				}
+
+				if (wrNorth != null && wrNorth.Room.Type == RoomType.Secret) {
+					wr.Room.ReplaceDoorWithSecretDoor(0);
+				}
+				else if (wrEast != null && wrEast.Room.Type == RoomType.Secret) {
+					wr.Room.ReplaceDoorWithSecretDoor(1);
+				}
+				else if (wrSouth != null && wrSouth.Room.Type == RoomType.Secret) {
+					wr.Room.ReplaceDoorWithSecretDoor(2);
+				}
+				else if (wrWest != null && wrWest.Room.Type == RoomType.Secret) {
+					wr.Room.ReplaceDoorWithSecretDoor(3);
 				}
 			}
 		}
@@ -397,10 +416,10 @@ public partial class World : Node {
 		CurrentRoom.Visible = false;
 		CurrentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
 
-		EnterNewRoom();
+		EnterNewRoom(dir);
 	}
 
-	private void EnterNewRoom() {
+	private void EnterNewRoom(int dir) {
 		enemiesLeft = 0;
 
 		CurrentRoom.Visible = true;
@@ -416,6 +435,22 @@ public partial class World : Node {
 					break;
 				
 				case RoomType.Secret:
+					int dirFrom = 0;
+
+					if (dir == 0) {
+						dirFrom = 2;
+					}
+					else if (dir == 1) {
+						dirFrom = 3;
+					}
+					else if (dir == 2) {
+						dirFrom = 0;
+					}
+					else if (dir == 3) {
+						dirFrom = 1;
+					}
+					
+					CurrentRoom.OpenSecretDoor(dirFrom);
 					break;
 				
 				case RoomType.Shop:

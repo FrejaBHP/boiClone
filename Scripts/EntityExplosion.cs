@@ -59,7 +59,7 @@ public partial class EntityExplosion : Node2D {
 				}
 			}
 		}
-		World.CurrentRoom.HandleExplosion(Position / 2, Radius / 2);
+		World.CurrentRoom.BlowUpObstacleTiles(Position / 2, Radius / 2);
 	}
 
 	private void OnExplosionTimerTimeout() {

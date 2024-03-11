@@ -18,7 +18,8 @@ public static class RoomCollection {
             new(0, GD.Load<PackedScene>("Scenes/startingRoomTest.tscn")),
             new(1, GD.Load<PackedScene>("Scenes/treasureRoomFormatTest.tscn")),
             new(2, GD.Load<PackedScene>("Scenes/encounterRoomFormatTest.tscn")),
-            new(3, GD.Load<PackedScene>("Scenes/rockRoomTest.tscn"))
+            new(3, GD.Load<PackedScene>("Scenes/rockRoomTest.tscn")),
+            new(4, GD.Load<PackedScene>("Scenes/secretRoomTest.tscn"))
         };
 
         foreach (ExternalRoomData room in RoomData) {

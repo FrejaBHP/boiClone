@@ -27,6 +27,8 @@ public partial class Room : Node2D {
 	public List<Marker2D> EnemyMarkers { get; private set; }
 	public List<Marker2D> ItemMarkers { get; private set; }
 
+	private Area2D[] doors;
+
 	public bool Visited { get; set; }
 	public bool Seen { get; set; }
 
@@ -44,6 +46,8 @@ public partial class Room : Node2D {
 		PedestalsNode = GetNode<Node2D>("Pedestals");
 		DoorsNode = GetNode<Node2D>("Doors");
 		EnemiesNode = GetNode<Node2D>("Enemies");
+
+		doors = DoorsNode.GetChildren().Cast<Area2D>().ToArray();
 
 		EnemyMarkers = new();
 		ItemMarkers = new();
@@ -71,23 +75,23 @@ public partial class Room : Node2D {
 		}
     }
 
-	public void RemoveDoor(int dir) { // Legacy function, obsolete!! Fix for new rooms structure and big rooms
-        Area2D[] doors = DoorsNode.GetChildren().Cast<Area2D>().ToArray();
+	public void RemoveDoor(int dir) { // Still needs implementation for big rooms when they're added
 		foreach (Area2D door in doors) {
 			if ((int)door.GetMeta("direction") == dir) {
 				Vector2I doorCoords = MapNode.LocalToMap(ToLocal(door.GlobalPosition));
 				Vector2I tileCoords = MapNode.GetCellAtlasCoords(1, doorCoords);
 
 				//GD.Print($"DC: {doorCoords}, TC: {tileCoords}");
-				ReplaceDoorTile(doorCoords, tileCoords);
+				ReplaceDoorTileWithWall(doorCoords, tileCoords);
 				
 				door.Free();
+				doors = DoorsNode.GetChildren().Cast<Area2D>().ToArray();
 				break;
 			}
 		}
 	}
 
-	private void ReplaceDoorTile(Vector2I coords, Vector2I tile) { // Only uses default doors and wall textures. TODO: act-dependent switch?
+	private void ReplaceDoorTileWithWall(Vector2I coords, Vector2I tile) { // Only uses default doors and wall textures. TODO: act-dependent switch?
 		if (tile[0] == 0) {		// If horizontal door -
 			Vector2I newTile = new(1, 6);
 			MapNode.SetCell(1, coords, 4, newTile);
@@ -101,7 +105,40 @@ public partial class Room : Node2D {
 		}
 	}
 
-	public void HandleExplosion(Vector2 explosionScaledLocalPos, int explosionScaledRadius) {
+	public void ReplaceDoorWithSecretDoor(int dir) { // Needs implementation for big rooms when they're added
+		foreach (Area2D door in doors) {
+			if ((int)door.GetMeta("direction") == dir) {
+				Vector2I doorCoords = MapNode.LocalToMap(ToLocal(door.GlobalPosition));
+				Vector2I tileCoords = MapNode.GetCellAtlasCoords(1, doorCoords);
+
+				if (tileCoords[0] == 0) {	// If horizontal door -
+					Vector2I newTile = new(1, 6);
+					MapNode.EraseCell(1, doorCoords);
+					MapNode.SetCell(2, doorCoords, 4, newTile);
+				}
+				else {						// If vertical door |
+					Vector2I newTile = new(0, 7);
+					MapNode.EraseCell(1, doorCoords);
+					MapNode.SetCell(2, doorCoords, 4, newTile);
+				}
+				
+				break;
+			}
+		}
+	}
+
+	public void OpenSecretDoor(int dir) {
+		foreach (Area2D door in doors) {
+			if ((int)door.GetMeta("direction") == dir) {
+				Vector2I doorCoords = MapNode.LocalToMap(ToLocal(door.GlobalPosition));
+				MapNode.EraseCell(2, doorCoords);
+				
+				break;
+			}
+		}
+	}
+
+	public void BlowUpObstacleTiles(Vector2 explosionScaledLocalPos, int explosionScaledRadius) {
         Vector2I[] allCells = MapNode.GetUsedCells(2).ToArray();
 		foreach (Vector2I cell in allCells) {
             Vector2 tileLocalPos = MapNode.MapToLocal(cell);
