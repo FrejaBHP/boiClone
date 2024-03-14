@@ -1,42 +1,76 @@
-[gd_scene load_steps=10 format=3 uid="uid://bxg237t0621so"]
+[gd_scene load_steps=13 format=3 uid="uid://bxg237t0621so"]
 
-[ext_resource type="PackedScene" uid="uid://dteioxjep7i5i" path="res://Scenes/enemy.tscn" id="1_ysfnt"]
 [ext_resource type="Script" path="res://Scripts/Enemies/BasicEnemy.cs" id="2_1dgds"]
 [ext_resource type="PackedScene" uid="uid://csvf1sbu4pqwa" path="res://Scenes/Components/enemyHealthComponent.tscn" id="3_8uw1x"]
 [ext_resource type="PackedScene" uid="uid://cx56kcl5bn4ym" path="res://Scenes/Components/enemyCollisionComponent.tscn" id="4_rl87v"]
 [ext_resource type="PackedScene" uid="uid://cvj4ikewx52o" path="res://Scenes/Components/enemyHurtboxComponent.tscn" id="5_ytnea"]
+[ext_resource type="Texture2D" uid="uid://d1pjspn7pet03" path="res://Images/enemy_rat.png" id="6_my8sp"]
 [ext_resource type="PackedScene" uid="uid://b2m8q2pug5y7k" path="res://Scenes/Components/enemyMovementComponent.tscn" id="6_suumb"]
+[ext_resource type="Texture2D" uid="uid://dijwh54f48b2k" path="res://Images/shadow.png" id="7_b2mji"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_svf5q"]
-radius = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ei55o"]
-radius = 11.0
+radius = 9.0
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_31fmm"]
-load_path = "res://.godot/imported/plhEnemy.png-3823bf25fd3f1a07e65814fd1b5246d5.ctex"
+[sub_resource type="AtlasTexture" id="AtlasTexture_kfmjh"]
+atlas = ExtResource("6_my8sp")
+region = Rect2(0, 0, 16, 16)
 
-[node name="BasicEnemy" node_paths=PackedStringArray("CollisionComponent", "MovementComponent") instance=ExtResource("1_ysfnt")]
+[sub_resource type="AtlasTexture" id="AtlasTexture_k7n8u"]
+atlas = ExtResource("6_my8sp")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7jm8f"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kfmjh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k7n8u")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 2.0
+}]
+
+[node name="BasicEnemy" type="CharacterBody2D" node_paths=PackedStringArray("CollisionComponent", "MovementComponent")]
+z_index = 20
+z_as_relative = false
+collision_layer = 16
+collision_mask = 31
+motion_mode = 1
 script = ExtResource("2_1dgds")
 CollisionComponent = NodePath("EnemyCollisionComponent")
 MovementComponent = NodePath("EnemyMovementComponent")
+metadata/_edit_group_ = true
 
-[node name="EnemyHealthComponent" parent="." index="0" instance=ExtResource("3_8uw1x")]
+[node name="EnemyHealthComponent" parent="." instance=ExtResource("3_8uw1x")]
 MaxHealth = 20.0
 Health = 20.0
 
-[node name="EnemyHurtboxComponent" parent="." index="1" node_paths=PackedStringArray("HealthComponent") instance=ExtResource("5_ytnea")]
+[node name="EnemyHurtboxComponent" parent="." node_paths=PackedStringArray("HealthComponent") instance=ExtResource("5_ytnea")]
 HealthComponent = NodePath("../EnemyHealthComponent")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHurtboxComponent" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHurtboxComponent"]
 shape = SubResource("CircleShape2D_svf5q")
 
-[node name="EnemyCollisionComponent" parent="." index="2" instance=ExtResource("4_rl87v")]
+[node name="EnemyCollisionComponent" parent="." instance=ExtResource("4_rl87v")]
 shape = SubResource("CircleShape2D_ei55o")
 dealsContactDamage = true
 
-[node name="EnemyMovementComponent" parent="." index="3" instance=ExtResource("6_suumb")]
+[node name="EnemyMovementComponent" parent="." instance=ExtResource("6_suumb")]
 SpeedMult = 0.5
 
-[node name="CharSprite" parent="." index="4"]
-texture = SubResource("CompressedTexture2D_31fmm")
+[node name="EnemySprites" type="AnimatedSprite2D" parent="."]
+z_index = 1
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("SpriteFrames_7jm8f")
+animation = &"moving"
+
+[node name="SpriteShadow" type="Sprite2D" parent="."]
+scale = Vector2(1.5, 1.25)
+texture = ExtResource("7_b2mji")
+offset = Vector2(0, 3)

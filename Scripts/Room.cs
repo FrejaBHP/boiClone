@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 public partial class Room : Node2D {
-	//public RoomData Data { get; set; }
-	//public RoomTestData TestData { get; set; }
 	public int RoomID { get; set; }
 	public RoomFlags Flags { get; set; }
 
@@ -31,10 +29,6 @@ public partial class Room : Node2D {
 
 	public bool Visited { get; set; }
 	public bool Seen { get; set; }
-
-
-	private static Vector2I floorTile = new(1, 7);
-
 
     public override void _Ready() {
 		Visible = false;
@@ -81,7 +75,6 @@ public partial class Room : Node2D {
 				Vector2I doorCoords = MapNode.LocalToMap(ToLocal(door.GlobalPosition));
 				Vector2I tileCoords = MapNode.GetCellAtlasCoords(1, doorCoords);
 
-				//GD.Print($"DC: {doorCoords}, TC: {tileCoords}");
 				ReplaceDoorTileWithWall(doorCoords, tileCoords);
 				
 				door.Free();
@@ -95,13 +88,10 @@ public partial class Room : Node2D {
 		if (tile[0] == 0) {		// If horizontal door -
 			Vector2I newTile = new(1, 6);
 			MapNode.SetCell(1, coords, 4, newTile);
-			//GD.Print("Replaced horizontal door");
 		}
 		else {					// If vertical door |
 			Vector2I newTile = new(0, 7);
-			//MapNode.EraseCell(1, coords);
 			MapNode.SetCell(1, coords, 4, newTile);
-			//GD.Print("Replaced vertical door");
 		}
 	}
 
@@ -166,7 +156,6 @@ public partial class Room : Node2D {
 		Vector2I tileCoords = MapNode.GetCellAtlasCoords(1, doorCoords);
 
 		//GD.Print($"DC: {Map.LocalToMap(ToLocal(door.GlobalPosition))}, TC: {Map.GetCellAtlasCoords(1, doorCoords)}");
-
 		OpenDoorTile(doorCoords, tileCoords);
 	}
 
@@ -181,8 +170,9 @@ public partial class Room : Node2D {
 	}
 
 	public void OnDoorEntered(int dir, Node2D body) {
-		if (body.IsInGroup("Player"))
+		if (body.IsInGroup("Player")) {
 			GetNode<World>("/root/Main/World").MoveRooms(dir);
+		}
 	}
 
 	public void RemoveEmptyPedestals() {

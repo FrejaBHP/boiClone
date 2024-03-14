@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 
 public partial class World : Node {
+	public static Room PreviousRoom { get; private set; }
 	public static Room CurrentRoom { get; private set; }
 
 	private static WorldRoom[,] worldRooms;
@@ -24,8 +25,7 @@ public partial class World : Node {
 	private static readonly int skip = 80 + gridGapExtra; // About 80 units seems like a good base value for jumping between rooms
 
 	private static Timer EnemySpawnDelayTimer;
-
-	//protected PackedScene Room = GD.Load<PackedScene>("Scenes/room.tscn");
+	
 	protected PackedScene Player = GD.Load<PackedScene>("Scenes/player.tscn");
 	protected PackedScene ItemPedestal = GD.Load<PackedScene>("Scenes/itemPedestal.tscn");
 
@@ -97,81 +97,55 @@ public partial class World : Node {
 			}
 		}
 		CurrentRoom = worldRooms[gridSize / 2, gridSize / 2].Room;
+		PreviousRoom = CurrentRoom; // To avoid possible future problems
 		CurrentRoom.Visible = true;
 
-		RoomPass();
+        RoomPass();
 
 		AddPlayer();
 		HUD.ShowHUD();
 		CurrentRoom.CheckAndStartOpeningDoors();
 	}
 
-	private void RoomPass() {
-		int i = 0;
+	private static void RoomPass() {
 		foreach (WorldRoom wr in worldRooms) {
-			i++;
 			if (wr != null) {
 				WorldRoom wrNorth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1];
 				WorldRoom wrEast = worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)];
 				WorldRoom wrSouth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1];
 				WorldRoom wrWest = worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)];
 
+				// Removes superfluous doors from Flex rooms
 				if ((int)wr.Room.Exits == 15) {
-					//GD.Print($"All exits at ID: {wr.ID}, X: {wr.Coords.X + (gridSize / 2)}, Y: {wr.Coords.Y + (gridSize / 2)}. I = {i}");
-
-					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) - 1}]");
 					if (wr.Coords.Y == -(gridSize / 2) - 1 || wrNorth == null) {
 						wr.Room.RemoveDoor(0);
 					}
-
-					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) + 1}, {wr.Coords.Y + (gridSize / 2)}]");
 					if (wr.Coords.X == (gridSize / 2) || wrEast == null) {
 						wr.Room.RemoveDoor(1);
 					}
-
-					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2)}, {wr.Coords.Y + (gridSize / 2) + 1}]");
 					if (wr.Coords.Y == (gridSize / 2) || wrSouth == null) {
 						wr.Room.RemoveDoor(2);
 					}
-
-					//GD.Print($"Checking [{wr.Coords.X + (gridSize / 2) - 1}, {wr.Coords.Y + (gridSize / 2)}]");
 					if (wr.Coords.Y == -(gridSize / 2) - 1 || wrWest == null) {
 						wr.Room.RemoveDoor(3);
 					}
 				}
 
-				if (wrNorth != null && wrNorth.Room.Type == RoomType.Secret) {
+				// Removes ordinary door tiles from exits towards secret rooms and replaces them with breakable walls
+				if (wrNorth != null && wr.Room.Exits.HasFlag(Exits.North) && wrNorth.Room.Type == RoomType.Secret) {
 					wr.Room.ReplaceDoorWithSecretDoor(0);
 				}
-				else if (wrEast != null && wrEast.Room.Type == RoomType.Secret) {
+				if (wrEast != null && wr.Room.Exits.HasFlag(Exits.East) && wrEast.Room.Type == RoomType.Secret) {
 					wr.Room.ReplaceDoorWithSecretDoor(1);
 				}
-				else if (wrSouth != null && wrSouth.Room.Type == RoomType.Secret) {
+				if (wrSouth != null && wr.Room.Exits.HasFlag(Exits.South) && wrSouth.Room.Type == RoomType.Secret) {
 					wr.Room.ReplaceDoorWithSecretDoor(2);
 				}
-				else if (wrWest != null && wrWest.Room.Type == RoomType.Secret) {
+				if (wrWest != null && wr.Room.Exits.HasFlag(Exits.West) && wrWest.Room.Type == RoomType.Secret) {
 					wr.Room.ReplaceDoorWithSecretDoor(3);
 				}
 			}
 		}
-	}
-
-	private static void CheckDirections() { // Obsolete. Fix for new rooms structure and big rooms
-		// Checks for empty spaces at adjacent coordinates, then removes and seals up extra doors to them. Only applies to starting room for the time being.
-		/*
-		if (worldRooms[currentCoords.X, currentCoords.Y - 1] == null) {
-			CurrentRoom.RemoveDoor(0);
-		}
-		if (worldRooms[currentCoords.X + 1, currentCoords.Y] == null) {
-			CurrentRoom.RemoveDoor(1);
-		}
-		if (worldRooms[currentCoords.X, currentCoords.Y + 1] == null) {
-			CurrentRoom.RemoveDoor(2);
-		}
-		if (worldRooms[currentCoords.X - 1, currentCoords.Y] == null) {
-			CurrentRoom.RemoveDoor(3);
-		}
-		*/
 	}
 
 	private void AddPlayer() {
@@ -414,50 +388,73 @@ public partial class World : Node {
 		currentCoords = c;
 
 		CurrentRoom.Visible = false;
+		PreviousRoom = CurrentRoom;
 		CurrentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
 
-		EnterNewRoom(dir);
+		ApplyRoomStuff();
+
+		if (!CurrentRoom.Visited) {
+			EnterNewRoom(dir); // Entering a room for the first time
+		}
+	}
+
+	private void ApplyRoomStuff() {
+		CurrentRoom.Visible = true;
+
+		switch (CurrentRoom.Type) {
+			case RoomType.Default:
+				break;
+
+			case RoomType.Treasure:
+				break;
+
+			case RoomType.Boss:
+				break;
+				
+			case RoomType.Secret:
+				break;
+				
+			case RoomType.Shop:
+				break;
+		}
 	}
 
 	private void EnterNewRoom(int dir) {
 		enemiesLeft = 0;
 
-		CurrentRoom.Visible = true;
-		if (!CurrentRoom.Visited) {
-			switch (CurrentRoom.Type) {
-				case RoomType.Default:
-					break;
+		switch (CurrentRoom.Type) {
+			case RoomType.Default:
+				break;
 
-				case RoomType.Treasure:
-					break;
+			case RoomType.Treasure:
+				break;
 
-				case RoomType.Boss:
-					break;
+			case RoomType.Boss:
+				break;
 				
-				case RoomType.Secret:
-					int dirFrom = 0;
+			case RoomType.Secret:
+				int dirFrom = 0;
 
-					if (dir == 0) {
-						dirFrom = 2;
-					}
-					else if (dir == 1) {
-						dirFrom = 3;
-					}
-					else if (dir == 2) {
-						dirFrom = 0;
-					}
-					else if (dir == 3) {
-						dirFrom = 1;
-					}
-					
-					CurrentRoom.OpenSecretDoor(dirFrom);
-					break;
+				if (dir == 0) {
+					dirFrom = 2;
+				}
+				else if (dir == 1) {
+					dirFrom = 3;
+				}
+				else if (dir == 2) {
+					dirFrom = 0;
+				}
+				else if (dir == 3) {
+					dirFrom = 1;
+				}
+
+				CurrentRoom.OpenSecretDoor(dirFrom);
+				break;
 				
-				case RoomType.Shop:
-					break;
-			}
-			ReadRoomMarkers();
+			case RoomType.Shop:
+				break;
 		}
+		ReadRoomMarkers();
 	}
 	#endregion
 
@@ -467,7 +464,6 @@ public partial class World : Node {
 
 	// SIGNAL HANDLING
 	public void DecreaseEnemyCount() {
-		//await ToSignal(typeof(EnemyHealthComponent), EnemyHealthComponent.SignalName.Died);
 		enemiesLeft--;
 		
 		if (enemiesLeft == 0) {

@@ -11,4 +11,13 @@ public partial class Enemy : CharacterBody2D {
     protected virtual void Setup() {
 
     }
+
+    protected virtual bool GetIfFlipSpriteH(Vector2 norm) {
+        if (norm.X <= 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }
