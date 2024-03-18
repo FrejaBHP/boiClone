@@ -25,34 +25,13 @@ public partial class Projectile : Area2D {
 		}
 	}
 
-	public void SetProjectileProperties(float speed, float damage, float range, int alignment) {
-		Speed = 256 * speed;
-		Damage = damage;
-		Range = range;
-		Lifetime = (Range * 32) / Speed;
-
-		// Modifies projectile object scanning behaviour
-		if (Spectral) {
-			SetCollisionMaskValue((int)ECollisionLayer.Obstacle, false);
-		}
-
-		if (alignment == 0) {
-			SetCollisionMaskValue((int)ECollisionLayer.Enemy, true);
-		}
-		if (alignment == 1) {
-			SetCollisionMaskValue((int)ECollisionLayer.Player, true);
-		}
-	}
-
 	public void OnBodyEntered(Node2D body) {
 		if (body.IsInGroup("Player")) {
-			//Main.ProcessPlayerDamage((Character)body, 1);
+			Main.ProcessPlayerDamage(1);
 			QueueFree();
 		}
 
 		if (body.IsInGroup("Enemy")) {
-			//Main.ProcessEnemyDamage(Main.Player, (Enemy)body, Damage);
-
 			if (!Piercing) {
 				QueueFree();
 			}

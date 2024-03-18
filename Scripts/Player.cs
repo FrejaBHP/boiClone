@@ -11,6 +11,13 @@ public partial class Player : CharacterBody2D {
 	public List<Item> Inventory { get; set; }
 	public Item ActiveItem { get; set; }
 
+	public AttackType AttackType { get; set; }
+	public AttackFlags AttackFlags { get; set; }
+
+	public float EffectiveDamage { get; private set; }
+	public float EffectiveFireRate { get; private set; }
+	public int ProjectilesPerAttack { get; set; }
+
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
 	public bool Invulnerable { get; private set; }
@@ -20,8 +27,6 @@ public partial class Player : CharacterBody2D {
 	private Timer bombPlacementTimer;
 
 	private float baseSpeed = 208f;
-	private float effectiveDamage;
-	private float effectiveFireRate;
 	private float refireDelay;
 
 	private bool canShoot;
@@ -86,7 +91,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			attackDelay = value;
 			CalculateAttackRate();
-			HUD.UpdateRate(effectiveFireRate);
+			HUD.UpdateRate(EffectiveFireRate);
 		} 
 	}
 
@@ -96,7 +101,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			attackDelayBonus = value;
 			CalculateAttackRate();
-			HUD.UpdateRate(effectiveFireRate);
+			HUD.UpdateRate(EffectiveFireRate);
 		} 
 	}
 
@@ -106,7 +111,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			flatAttackRateBonus = value;
 			CalculateAttackRate();
-			HUD.UpdateRate(effectiveFireRate);
+			HUD.UpdateRate(EffectiveFireRate);
 		} 
 	}
 
@@ -116,7 +121,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			damage = value;
 			CalculateAttackDamage();
-			HUD.UpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(EffectiveDamage);
 		} 
 	}
 
@@ -126,7 +131,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			damageBonus = value;
 			CalculateAttackDamage();
-			HUD.UpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(EffectiveDamage);
 		} 
 	}
 
@@ -136,7 +141,7 @@ public partial class Player : CharacterBody2D {
 		set {
 			flatDamageBonus = value;
 			CalculateAttackDamage();
-			HUD.UpdateDamage(effectiveDamage);
+			HUD.UpdateDamage(EffectiveDamage);
 		}
 	}
 	
@@ -203,6 +208,7 @@ public partial class Player : CharacterBody2D {
 		IFrameTime = 1f;
 		canShoot = true;
 		canPlaceBomb = true;
+		ProjectilesPerAttack = 1;
 	}
 
     public override void _Ready() {
@@ -213,15 +219,6 @@ public partial class Player : CharacterBody2D {
 		iFrameTimer.WaitTime = IFrameTime;
 
 		AddToGroup("Player");
-
-		/*
-		var bombstate = Bomb.GetState();
-		for (int i = 0; i < bombstate.GetNodeCount(); i++) {
-			for (int j = 0; j < bombstate.GetNodePropertyCount(i); j++) {
-				GD.Print($"Name: {bombstate.GetNodePropertyName(i, j)}, Value: {bombstate.GetNodePropertyValue(i, j)}");
-			}
-		}
-		*/
     }
 
     public override void _PhysicsProcess(double delta) {
@@ -234,7 +231,6 @@ public partial class Player : CharacterBody2D {
 		if (dir != Vector2.Zero) {
 			Velocity = dir * (baseSpeed * Speed);
 			MoveAndSlide();
-			//CheckTile();
 			CheckBodyCollision();
 		}
 	}
@@ -253,19 +249,23 @@ public partial class Player : CharacterBody2D {
 		int shootingDir;
 		if (@event.IsActionPressed("shootup")) {
 			shootingDir = 0;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootright")) {
 			shootingDir = 1;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootdown")) {
 			shootingDir = 2;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootleft")) {
 			shootingDir = 3;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 
 		if (@event.IsActionPressed("placebomb")) {
@@ -277,30 +277,18 @@ public partial class Player : CharacterBody2D {
 		}
     }
 
-    private void ShootProjectile(int dir) {
+	private void StartAttack(int dir) {
 		if (canShoot) {
-			canShoot = false;
-			refireTimer.Start();
-
-			Projectile proj = Projectile.Instantiate() as Projectile;
-			proj.SetProjectileProperties(
-				shotSpeed + shotSpeedBonus, 	// Shot Speed
-				effectiveDamage, 				// Damage for the projectile to deal
-				range + rangeBonus, 			// Projectile range
-				0 								// 0 sets flag for hitting enemies
-			);
-			//GetNode<World>("/root/Main/World").AddChild(proj);
-			World.CurrentRoom.ProjectilesNode.AddChild(proj);
-
-			Transform2D trans = Transform2D.Identity;
-			trans.Origin = GlobalPosition;
-
-			float rotation = (float)Math.PI * 0.5f * dir;
-			trans.X.X = trans.Y.Y = Mathf.Cos(rotation);
-			trans.X.Y = trans.Y.X = Mathf.Sin(rotation);
-			trans.Y.X *= -1;
-
-			proj.GlobalTransform = trans;
+			switch (AttackType) {
+				case AttackType.Projectile:
+					canShoot = false;
+					refireTimer.Start();
+					Attack.PrepareProjectileAttack(this, dir);
+					break;
+			
+				default:
+					break;
+			}
 		}
 	}
 
@@ -310,26 +298,29 @@ public partial class Player : CharacterBody2D {
 		int shootingDir;
 		if (Input.IsActionPressed("shootup")) {
 			shootingDir = 0;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootright")) {
 			shootingDir = 1;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootdown")) {
 			shootingDir = 2;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootleft")) {
 			shootingDir = 3;
-			ShootProjectile(shootingDir);
+			//ShootProjectile(shootingDir);
+			StartAttack(shootingDir);
 		}
 	}
 
 	private void PlaceBomb() {
 		if (Bombs > 0 && canPlaceBomb) {
 			EntityBomb bomb = Bomb.Instantiate() as EntityBomb;
-			//GetNode<World>("/root/Main/World").AddChild(bomb);
 			World.CurrentRoom.EntitiesNode.AddChild(bomb);
 			bomb.GlobalPosition = GlobalPosition;
 
@@ -460,7 +451,7 @@ public partial class Player : CharacterBody2D {
 		}
 	}
 
-	public void TakeDamage(int damage, int type) {
+	public void TakeDamage(int damage, int type) { // TODO: Implement Red Heart-only damage switch
 		// Like healing, taking damage is performed in half-heart steps
 		for (int i = 0; i < damage; i++) {
 			if (LooseHearts.Count > 0) {
@@ -533,7 +524,7 @@ public partial class Player : CharacterBody2D {
 
 	public void CalculateAttackDamage() {
 		// Sets damage variable for other methods to use
-		effectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
+		EffectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
 	}
 
 	public void CalculateAttackRate() {
@@ -548,8 +539,8 @@ public partial class Player : CharacterBody2D {
 		}
 
 		// Sets attack rate-related variables for other methods to use
-		effectiveFireRate = effectiveAttackRate;
-		refireDelay = 1f / effectiveFireRate;
+		EffectiveFireRate = effectiveAttackRate;
+		refireDelay = 1f / EffectiveFireRate;
 		refireTimer.WaitTime = refireDelay;
 	}
 }

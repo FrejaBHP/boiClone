@@ -5,6 +5,7 @@ public partial class BasicEnemy : Enemy {
 	private EnemyCollisionComponent CollisionComponent;
 	[Export]
 	private EnemyMovementComponent MovementComponent;
+	
 	private AnimatedSprite2D enemySprites;
 	readonly StateMachine stateMachine = new();
 
@@ -23,7 +24,7 @@ public partial class BasicEnemy : Enemy {
 			owner.MovementComponent.MoveTowardsPlayer(owner);
 			owner.CollisionComponent.CheckBodyCollision(owner);
 
-			owner.enemySprites.FlipH = owner.GetIfFlipSpriteH(owner.MovementComponent.PlayerNormVector);
+			owner.enemySprites.FlipH = owner.GetIfFlipSpriteH(owner.GetPlayerVectorNormalised());
 		}
 
 		public void Exit() {

@@ -73,7 +73,8 @@ public partial class World : Node {
 			new(1, 0, 1),
 			new(2, -1, 0),
 			new(3, -1, -1),
-			new(4, -2, -1)
+			new(4, -2, -1),
+			new(5, 1, 0)
 		};
 
 		PlaceRooms(roomList);
@@ -156,6 +157,7 @@ public partial class World : Node {
 		// Setting these values also sets the HUD, which is probably smart
 		// Maybe should be moved somewhere else, however
 		player.GiveHeartContainers(3, 6);
+		player.AttackType = AttackType.Projectile;
 
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;
@@ -387,18 +389,18 @@ public partial class World : Node {
 		Main.Camera.GlobalPosition = cpos;
 		currentCoords = c;
 
-		CurrentRoom.Visible = false;
 		PreviousRoom = CurrentRoom;
 		CurrentRoom = worldRooms[currentCoords.X, currentCoords.Y].Room;
 
-		ApplyRoomStuff();
+		EnterRoom();
 
 		if (!CurrentRoom.Visited) {
 			EnterNewRoom(dir); // Entering a room for the first time
 		}
 	}
 
-	private void ApplyRoomStuff() {
+	private void EnterRoom() {
+		PreviousRoom.Visible = false;
 		CurrentRoom.Visible = true;
 
 		switch (CurrentRoom.Type) {

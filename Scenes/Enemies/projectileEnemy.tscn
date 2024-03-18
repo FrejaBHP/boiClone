@@ -1,0 +1,99 @@
+[gd_scene load_steps=17 format=3 uid="uid://cqain0og581el"]
+
+[ext_resource type="PackedScene" uid="uid://dteioxjep7i5i" path="res://Scenes/enemy.tscn" id="1_mo74t"]
+[ext_resource type="Script" path="res://Scripts/Enemies/ProjectileEnemy.cs" id="2_i1yei"]
+[ext_resource type="Texture2D" uid="uid://jfsu1fy2hg30" path="res://Images/enemyWraith.png" id="3_ij76r"]
+[ext_resource type="Texture2D" uid="uid://bhwuyqykjx8c" path="res://Images/enemyWraithAttacking.png" id="3_j0pq0"]
+[ext_resource type="PackedScene" uid="uid://csvf1sbu4pqwa" path="res://Scenes/Components/enemyHealthComponent.tscn" id="3_rscob"]
+[ext_resource type="PackedScene" uid="uid://cvj4ikewx52o" path="res://Scenes/Components/enemyHurtboxComponent.tscn" id="4_k5rai"]
+[ext_resource type="PackedScene" uid="uid://b2m8q2pug5y7k" path="res://Scenes/Components/enemyMovementComponent.tscn" id="4_m3wmb"]
+[ext_resource type="PackedScene" uid="uid://cx56kcl5bn4ym" path="res://Scenes/Components/enemyCollisionComponent.tscn" id="5_5a611"]
+[ext_resource type="PackedScene" uid="uid://cscb7ukcfljx2" path="res://Scenes/Components/enemyProjectileComponent.tscn" id="6_dapad"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_43f0c"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ogcrq"]
+radius = 9.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5qmxh"]
+atlas = ExtResource("3_j0pq0")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kyht5"]
+atlas = ExtResource("3_j0pq0")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8yk2"]
+atlas = ExtResource("3_ij76r")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydi3f"]
+atlas = ExtResource("3_ij76r")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e00ds"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5qmxh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kyht5")
+}],
+"loop": true,
+"name": &"attacking",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d8yk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydi3f")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 2.0
+}]
+
+[node name="ProjectileEnemy" node_paths=PackedStringArray("CollisionComponent", "MovementComponent", "ProjectileComponent") instance=ExtResource("1_mo74t")]
+script = ExtResource("2_i1yei")
+CollisionComponent = NodePath("EnemyCollisionComponent")
+MovementComponent = NodePath("EnemyMovementComponent")
+ProjectileComponent = NodePath("EnemyProjectileComponent")
+
+[node name="EnemyHealthComponent" parent="." index="0" instance=ExtResource("3_rscob")]
+MaxHealth = 15.0
+Health = 15.0
+
+[node name="EnemyHurtboxComponent" parent="." index="1" node_paths=PackedStringArray("HealthComponent") instance=ExtResource("4_k5rai")]
+HealthComponent = NodePath("../EnemyHealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHurtboxComponent" index="0"]
+shape = SubResource("CircleShape2D_43f0c")
+
+[node name="EnemyMovementComponent" parent="." index="2" instance=ExtResource("4_m3wmb")]
+SpeedMult = 0.35
+
+[node name="EnemyCollisionComponent" parent="." index="3" instance=ExtResource("5_5a611")]
+shape = SubResource("CircleShape2D_ogcrq")
+dealsContactDamage = true
+
+[node name="EnemyProjectileComponent" parent="." index="4" instance=ExtResource("6_dapad")]
+Range = 5.0
+ShotSpeed = 0.75
+AttackTime = 3.0
+AttackDelay = 0.75
+ProjectilesPerAttack = 3
+
+[node name="EnemySprites" parent="." index="5"]
+z_index = 1
+texture_filter = 1
+scale = Vector2(1.3, 1.3)
+sprite_frames = SubResource("SpriteFrames_e00ds")
+animation = &"attacking"
+
+[node name="SpriteShadow" parent="." index="6"]
+texture_filter = 1
+scale = Vector2(1.45, 1.45)
+offset = Vector2(0, 4)

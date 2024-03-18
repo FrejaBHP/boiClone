@@ -10,7 +10,8 @@ public static class EnemyCollection {
 
     public static void CompileEnemyList() {
         EnemyScenes = new() {
-            GD.Load<PackedScene>("Scenes/Enemies/basic_enemy.tscn")
+            GD.Load<PackedScene>("Scenes/Enemies/basic_enemy.tscn"),
+            GD.Load<PackedScene>("Scenes/Enemies/projectileEnemy.tscn")
         };
         GD.Print($"Loaded enemy types: {EnemyScenes.Count}");
     }

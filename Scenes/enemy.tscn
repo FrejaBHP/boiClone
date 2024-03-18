@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://dteioxjep7i5i"]
+[gd_scene load_steps=3 format=3 uid="uid://dteioxjep7i5i"]
 
+[ext_resource type="Texture2D" uid="uid://dijwh54f48b2k" path="res://Images/shadow.png" id="2_six4m"]
 [ext_resource type="Script" path="res://Scripts/Enemy.cs" id="2_x2rbt"]
 
 [node name="Enemy" type="CharacterBody2D"]
@@ -10,3 +11,10 @@ collision_mask = 31
 motion_mode = 1
 script = ExtResource("2_x2rbt")
 metadata/_edit_group_ = true
+
+[node name="EnemySprites" type="AnimatedSprite2D" parent="."]
+
+[node name="SpriteShadow" type="Sprite2D" parent="."]
+scale = Vector2(1.5, 1.25)
+texture = ExtResource("2_six4m")
+offset = Vector2(0, 3)

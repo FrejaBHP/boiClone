@@ -43,8 +43,8 @@ public partial class EnemyHealthComponent : Node2D {
 			}
 		
 			if (Health <= 0) {
+				Invulnerable = true;
 				Die();
-				//OnNoHealth();
 			}
 		}
 	}
@@ -66,7 +66,6 @@ public partial class EnemyHealthComponent : Node2D {
 	}
 
 	public void Die() {
-		//EmitSignal(SignalName.Died);
 		GetNode<World>("/root/Main/World").DecreaseEnemyCount();
 		GetParent().QueueFree();
 	}

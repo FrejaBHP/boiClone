@@ -8,12 +8,24 @@ public partial class EnemyProjectileComponent : Node2D {
 	[Export]
 	public float ShotSpeed { get; set; }
 	[Export]
-	public float ProjectileDelay { get; set; }
+	public float AttackTime { get; set; }
+	[Export]
+	public float AttackDelay { get; set; }
+	[Export]
+	public int ProjectilesPerAttack { get; set; }
 
-	private bool canShoot = true;
-	private Timer refireTimer;
+	public bool CanAttack { get; set; }
+	public Timer RefireTimer { get; private set; }
+	public Timer DelayTimer { get; private set; }
 
     public override void _Ready() {
-		refireTimer = GetNode<Timer>("RefireTimer");
+		RefireTimer = GetNode<Timer>("RefireTimer");
+		RefireTimer.WaitTime = AttackTime;
+		DelayTimer = GetNode<Timer>("DelayTimer");
+		DelayTimer.WaitTime = AttackDelay;
     }
+
+	public void GenericProjectileAttack(Enemy enemy, Vector2 direction) {
+		Attack.PrepareProjectileAttack(enemy, this, direction);
+	}
 }

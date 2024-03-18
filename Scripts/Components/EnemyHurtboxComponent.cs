@@ -7,7 +7,7 @@ public partial class EnemyHurtboxComponent : Area2D {
 	private EnemyHealthComponent HealthComponent;
 	
 	private void OnAreaEntered(Area2D area) {
-		if (area.IsInGroup("Projectile")) {
+		if (area.IsInGroup("Projectile") && area.GetCollisionMaskValue((int)ECollisionLayer.Enemy)) {
 			Projectile proj = area as Projectile;
 			HealthComponent.TakeDamage(proj.Damage);
 		}
