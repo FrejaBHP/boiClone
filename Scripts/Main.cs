@@ -35,14 +35,12 @@ public partial class Main : Node {
 
 	public static void ProcessPlayerDamage(int multiplier) {
 		if (!Player.Invulnerable) {
-			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
 			Player.TakeDamage(BasePlayerDamageTaken * multiplier, 0);
 		}
 	}
 
 	public static void ProcessPlayerDamage(Enemy source, int multiplier) {
 		if (!Player.Invulnerable) {
-			//GD.Print($"Health: {Player.Health}, Damage taken: {BasePlayerDamageTaken * 1}");
 			Player.TakeDamage(BasePlayerDamageTaken * multiplier, 0);
 		}
 	}

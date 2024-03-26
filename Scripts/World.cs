@@ -157,7 +157,13 @@ public partial class World : Node {
 		// Setting these values also sets the HUD, which is probably smart
 		// Maybe should be moved somewhere else, however
 		player.GiveHeartContainers(3, 6);
-		player.AttackType = AttackType.Projectile;
+
+		player.AttackType = AttackType.Beam;
+		//player.AttackFlags |= AttackFlags.Spectral;
+		//player.AttackFlags |= AttackFlags.Piercing;
+		//player.AttackFlags |= AttackFlags.Ring;
+		player.AmountPerAttack = 1;
+		player.AttackWidth = 24;
 
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;

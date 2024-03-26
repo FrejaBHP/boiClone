@@ -13,6 +13,8 @@ public partial class EnemyProjectileComponent : Node2D {
 	public float AttackDelay { get; set; }
 	[Export]
 	public int ProjectilesPerAttack { get; set; }
+	[Export]
+    public AttackFlags AttackFlags { get; private set; }
 
 	public bool CanAttack { get; set; }
 	public Timer RefireTimer { get; private set; }

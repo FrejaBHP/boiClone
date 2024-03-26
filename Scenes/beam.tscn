@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2urd838qgw3i"]
+
+[ext_resource type="Script" path="res://Scripts/Beam.cs" id="1_ep8bl"]
+[ext_resource type="Texture2D" uid="uid://didonq4t8vrqe" path="res://Images/beamLaserMiddlePH2.png" id="2_p2mor"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vdn3x"]
+size = Vector2(16, 16)
+
+[node name="BeamOrigin" type="Node2D"]
+script = ExtResource("1_ep8bl")
+
+[node name="BeamArea" type="Area2D" parent="."]
+z_index = 50
+z_as_relative = false
+texture_filter = 1
+texture_repeat = 2
+collision_layer = 256
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BeamArea"]
+shape = SubResource("RectangleShape2D_vdn3x")
+
+[node name="BeamMiddle" type="Sprite2D" parent="BeamArea"]
+texture = ExtResource("2_p2mor")
+
+[node name="BeamDamageTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.1
+
+[node name="WallRayCast" type="RayCast2D" parent="."]
+target_position = Vector2(0, 0)
+collision_mask = 33
+collide_with_areas = true
+
+[connection signal="timeout" from="BeamDamageTimer" to="." method="OnBeamDamageTimerTimeout"]

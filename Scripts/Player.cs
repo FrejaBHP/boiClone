@@ -16,7 +16,8 @@ public partial class Player : CharacterBody2D {
 
 	public float EffectiveDamage { get; private set; }
 	public float EffectiveFireRate { get; private set; }
-	public int ProjectilesPerAttack { get; set; }
+	public int AmountPerAttack { get; set; }
+	public float AttackWidth { get; set; }
 
 	public bool IsAlive { get; set; }
 	public float IFrameTime { get; set; }
@@ -208,7 +209,6 @@ public partial class Player : CharacterBody2D {
 		IFrameTime = 1f;
 		canShoot = true;
 		canPlaceBomb = true;
-		ProjectilesPerAttack = 1;
 	}
 
     public override void _Ready() {
@@ -249,22 +249,18 @@ public partial class Player : CharacterBody2D {
 		int shootingDir;
 		if (@event.IsActionPressed("shootup")) {
 			shootingDir = 0;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootright")) {
 			shootingDir = 1;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootdown")) {
 			shootingDir = 2;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (@event.IsActionPressed("shootleft")) {
 			shootingDir = 3;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 
@@ -285,10 +281,27 @@ public partial class Player : CharacterBody2D {
 					refireTimer.Start();
 					Attack.PrepareProjectileAttack(this, dir);
 					break;
+
+				case AttackType.Beam:
+					canShoot = false;
+					refireTimer.Start();
+					Attack.PrepareBeamAttack(this, dir);
+					break;
 			
 				default:
 					break;
 			}
+		}
+	}
+
+	public void InstantAttack(int dir, AttackType type, bool overrideType, AttackFlags flags, bool overrideFlags) { // WIP
+		switch (type) {
+			case AttackType.Projectile:
+				Attack.PrepareProjectileAttack(this, dir);
+				break;
+		
+			default:
+				break;
 		}
 	}
 
@@ -298,22 +311,18 @@ public partial class Player : CharacterBody2D {
 		int shootingDir;
 		if (Input.IsActionPressed("shootup")) {
 			shootingDir = 0;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootright")) {
 			shootingDir = 1;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootdown")) {
 			shootingDir = 2;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 		else if (Input.IsActionPressed("shootleft")) {
 			shootingDir = 3;
-			//ShootProjectile(shootingDir);
 			StartAttack(shootingDir);
 		}
 	}

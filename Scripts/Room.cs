@@ -132,7 +132,7 @@ public partial class Room : Node2D {
         Vector2I[] allCells = MapNode.GetUsedCells(2).ToArray();
 		foreach (Vector2I cell in allCells) {
             Vector2 tileLocalPos = MapNode.MapToLocal(cell);
-			if (explosionScaledLocalPos.DistanceTo(tileLocalPos) <= explosionScaledRadius + 8) { // scaled explosion + quarter of a tile
+			if (explosionScaledLocalPos.DistanceTo(tileLocalPos) <= explosionScaledRadius + 10) { // scaled explosion + extra
 				MapNode.EraseCell(2, cell);
 				//GD.Print($"Destroyed cell at {tileLocalPos} (Map: {cell})");
 			}

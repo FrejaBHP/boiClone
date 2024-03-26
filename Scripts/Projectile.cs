@@ -9,8 +9,7 @@ public partial class Projectile : Area2D {
 	public float Knockback { get; set; }
 	public float Radius { get; set; }
 
-	public bool Piercing { get; set; }
-	public bool Spectral { get; set; }
+	public bool Piercing { get; private set; }
 
 	public float Lifetime { get; set; }
 
@@ -23,6 +22,22 @@ public partial class Projectile : Area2D {
 		else {
 			QueueFree();
 		}
+	}
+
+	public void SetPiercing(bool piercing) {
+		Piercing = piercing;
+	}
+
+	public void SetSpectral(bool spectral) {
+		SetCollisionMaskValue((int)ECollisionLayer.Obstacle, spectral);
+	}
+
+	public void HurtsPlayer(bool value) {
+		SetCollisionMaskValue((int)ECollisionLayer.Player, value);
+	}
+
+	public void HurtsEnemies(bool value) {
+		SetCollisionMaskValue((int)ECollisionLayer.Enemy, value);
 	}
 
 	public void OnBodyEntered(Node2D body) {
