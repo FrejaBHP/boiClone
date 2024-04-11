@@ -21,15 +21,10 @@ collision_mask = 33
 shape = SubResource("RectangleShape2D_vdn3x")
 
 [node name="BeamMiddle" type="Sprite2D" parent="BeamArea"]
+visible = false
 texture = ExtResource("2_p2mor")
-
-[node name="BeamDamageTimer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 0.1
 
 [node name="WallRayCast" type="RayCast2D" parent="."]
 target_position = Vector2(0, 0)
 collision_mask = 33
 collide_with_areas = true
-
-[connection signal="timeout" from="BeamDamageTimer" to="." method="OnBeamDamageTimerTimeout"]

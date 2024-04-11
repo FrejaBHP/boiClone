@@ -3,7 +3,6 @@ using System;
 
 [Tool]
 public partial class EnemyMovementComponent : Node2D {
-	private float baseSpeed = 208f;
 	private float speedMult;
 	[Export]
 	public float SpeedMult { 
@@ -11,16 +10,24 @@ public partial class EnemyMovementComponent : Node2D {
 		set => speedMult = value; 
 	}
 
-	public void Move(Enemy enemy, Vector2 dir) {
+	private float baseSpeed = 208f;
+
+	public Enemy CompOwner { get; private set; }
+
+    public override void _Ready() {
+        CompOwner = (Enemy)GetParent();
+    }
+
+    public void Move(Vector2 dir) {
 		if (dir != Vector2.Zero) {
-			enemy.Velocity = dir * (baseSpeed * SpeedMult);
-			enemy.MoveAndSlide();
+			CompOwner.Velocity = dir * (baseSpeed * SpeedMult);
+			CompOwner.MoveAndSlide();
 		}
 	}
 
-	public void MoveTowardsPlayer(Enemy enemy) {
+	public void MoveTowardsPlayer() {
 		if (Main.Player.IsAlive) {
-			Move(enemy, enemy.GetPlayerVectorNormalised());
+			Move(CompOwner.GetPlayerVectorNormalised());
 		}
 	}
 }

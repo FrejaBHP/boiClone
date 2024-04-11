@@ -20,14 +20,18 @@ public partial class EnemyProjectileComponent : Node2D {
 	public Timer RefireTimer { get; private set; }
 	public Timer DelayTimer { get; private set; }
 
+	public Enemy CompOwner { get; private set; }
+
     public override void _Ready() {
+		CompOwner = (Enemy)GetParent();
+
 		RefireTimer = GetNode<Timer>("RefireTimer");
 		RefireTimer.WaitTime = AttackTime;
 		DelayTimer = GetNode<Timer>("DelayTimer");
 		DelayTimer.WaitTime = AttackDelay;
     }
 
-	public void GenericProjectileAttack(Enemy enemy, Vector2 direction) {
-		Attack.PrepareProjectileAttack(enemy, this, direction);
+	public void GenericProjectileAttack(Vector2 direction) {
+		Attack.PrepareProjectileAttack(CompOwner, this, direction);
 	}
 }

@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="2_5f7ui"]
 [ext_resource type="PackedScene" uid="uid://d34dlv4hdv7gq" path="res://Scenes/Components/roomDoorVertComponent.tscn" id="3_6nkb1"]
 
-[node name="Room" instance=ExtResource("1_67qgd")]
+[node name="Room2" instance=ExtResource("1_67qgd")]
 RoomName = "Test Starting Room"
 Exits = 15
 Type = 2

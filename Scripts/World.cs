@@ -109,12 +109,17 @@ public partial class World : Node {
 	}
 
 	private static void RoomPass() {
+		WorldRoom wrNorth;
+		WorldRoom wrEast;
+		WorldRoom wrSouth;
+		WorldRoom wrWest;
+
 		foreach (WorldRoom wr in worldRooms) {
 			if (wr != null) {
-				WorldRoom wrNorth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1];
-				WorldRoom wrEast = worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)];
-				WorldRoom wrSouth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1];
-				WorldRoom wrWest = worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)];
+				wrNorth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) - 1];
+				wrEast = worldRooms[wr.Coords.X + (gridSize / 2) + 1, wr.Coords.Y + (gridSize / 2)];
+				wrSouth = worldRooms[wr.Coords.X + (gridSize / 2), wr.Coords.Y + (gridSize / 2) + 1];
+				wrWest = worldRooms[wr.Coords.X + (gridSize / 2) - 1, wr.Coords.Y + (gridSize / 2)];
 
 				// Removes superfluous doors from Flex rooms
 				if ((int)wr.Room.Exits == 15) {
@@ -158,12 +163,13 @@ public partial class World : Node {
 		// Maybe should be moved somewhere else, however
 		player.GiveHeartContainers(3, 6);
 
-		player.AttackType = AttackType.Beam;
+		player.TryOverrideAttackType(AttackType.Projectile);
 		//player.AttackFlags |= AttackFlags.Spectral;
 		//player.AttackFlags |= AttackFlags.Piercing;
 		//player.AttackFlags |= AttackFlags.Ring;
+		//player.AttackFlags |= AttackFlags.BeamFixed;
 		player.AmountPerAttack = 1;
-		player.AttackWidth = 24;
+		player.AttackWidth = 24f;
 
 		player.Speed = 1f;
 		player.ShotSpeed = 1f;
@@ -171,6 +177,9 @@ public partial class World : Node {
 		player.Damage = 3.5f;
 		player.AttackDelay = 0f;
 		player.Luck = 0f;
+
+		//player.DamageMultiplier *= 1.2f;
+		//player.AttackRateMultiplier /= 3f;
 
 		player.Coins = 0;
 		player.Bombs = 5;

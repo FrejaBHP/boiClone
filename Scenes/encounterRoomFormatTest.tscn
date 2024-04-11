@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cw1dqva8l3bw1" path="res://Scenes/Components/roomMarkerComponent.tscn" id="3_skkji"]
 [ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="3_uo6sq"]
 
-[node name="Room" instance=ExtResource("1_brq14")]
+[node name="Room2" instance=ExtResource("1_brq14")]
 Exits = 3
 Type = 1
 

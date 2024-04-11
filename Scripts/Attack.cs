@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using Godot;
 using Vector2 = Godot.Vector2;
 
@@ -13,7 +12,9 @@ public enum AttackFlags {
     NONE = 0,
     Piercing = 1 << 0,
     Spectral = 1 << 1,
-    Ring = 1 << 2
+    Ring = 1 << 2,
+    BeamFixed = 1 << 3,
+    BeamStatic = 1 << 4
 }
 
 public static class Attack {
@@ -44,37 +45,8 @@ public static class Attack {
     }
 
     private static void ProjectileAttack(CharacterBody2D attacker, float speed, float damage, float range, int amount, float hurts, float rotation, AttackFlags flags) {
-        float[] rotationOffsets = new float[amount];
+        float[] rotationOffsets = CalculateOffsets(amount, flags.HasFlag(AttackFlags.Ring));
         float newRotation;
-
-        if (flags.HasFlag(AttackFlags.Ring)) {
-            float offsetPerStep = ((float)Math.PI * 2) / amount;
-            for (int i = 0; i < amount; i++) {
-                rotationOffsets[i] = offsetPerStep * i;
-            }
-        }
-        else {
-            if (amount % 2 != 0) {
-                int numberOfOffsets = (amount - 1) / 2;
-                float offset = -projectileAngleCoefficient * numberOfOffsets;
-                for (int i = 0; i < amount; i++) {
-                    rotationOffsets[i] = (float)Math.PI * offset;
-                    offset += projectileAngleCoefficient;
-                }
-            }
-            else if (amount != 1) {
-                int numberOfOffsets = amount / 2;
-                float offset = -projectileAngleCoefficient * numberOfOffsets;
-                offset += projectileAngleCoefficient / 2;
-                for (int i = 0; i < amount; i++) {
-                    rotationOffsets[i] = (float)Math.PI * offset;
-                    offset += projectileAngleCoefficient;
-                }
-            }
-            else {
-                rotationOffsets[0] = 0;
-            }
-        }
 
         for (int i = 0; i < amount; i++) {
             Projectile proj = projBase.Instantiate() as Projectile;
@@ -112,30 +84,37 @@ public static class Attack {
     }
 
     public static void PrepareBeamAttack(Player player, int dir) {
-        float duration = 1;
+        float ticks = 9;
         float damage = player.EffectiveDamage;
-        float range = 0;
-        int amount = 1;
+        float range = player.Range + player.RangeBonus;
+        int amount = player.AmountPerAttack;
         float hurts = 1;
         float rotation = (float)Math.PI * 0.5f * dir;
         float width = player.AttackWidth;
 
-        BeamAttack(player, duration, damage, range, amount, hurts, rotation, width, player.AttackFlags);
+        BeamAttack(player, ticks, damage, range, amount, hurts, rotation, width, player.AttackFlags);
     }
 
-    public static async void BeamAttack(CharacterBody2D attacker, float duration, float damage, float range, int amount, float hurts, float rotation, float width, AttackFlags flags) {
+    public static async void BeamAttack(CharacterBody2D attacker, float ticks, float damage, float range, int amount, float hurts, float rotation, float width, AttackFlags flags) {
+        float[] rotationOffsets = CalculateOffsets(amount, flags.HasFlag(AttackFlags.Ring));
         float newRotation;
 
         for (int i = 0; i < amount; i++) {
             Beam beam = beamBase.Instantiate() as Beam;
             beam.Damage = damage;
-            beam.Duration = duration;
-            beam.Range = range;
+            beam.Ticks = ticks;
+            beam.Range = range * 12; // Range stat only 37,5% effective
+
+            beam.Fixed = flags.HasFlag(AttackFlags.BeamFixed);
+            beam.Static = flags.HasFlag(AttackFlags.BeamStatic);
 
             if (!beam.IsNodeReady()) {
                 await beam.SetReferences();
             }
+
             beam.SetWidth(width);
+            newRotation = rotation + rotationOffsets[i];
+            beam.SetAngle(Vector2.FromAngle(newRotation));
 
             if (hurts == 0) {
 			    beam.HurtsPlayer(true);
@@ -144,10 +123,40 @@ public static class Attack {
 			    beam.HurtsEnemies(true);
 		    }
 
-			newRotation = rotation; //+ rotationOffsets[i];
-            beam.SetAngle(Vector2.FromAngle(newRotation));
-
             World.CurrentRoom.ProjectilesNode.AddChild(beam);
         }
+    }
+
+    private static float[] CalculateOffsets(int amount, bool ring) {
+        float[] offsets = new float[amount];
+        if (ring) {
+            float offsetPerStep = ((float)Math.PI * 2) / amount;
+            for (int i = 0; i < amount; i++) {
+                offsets[i] = offsetPerStep * i;
+            }
+        }
+        else {
+            if (amount % 2 != 0) {
+                int numberOfOffsets = (amount - 1) / 2;
+                float offset = -projectileAngleCoefficient * numberOfOffsets;
+                for (int i = 0; i < amount; i++) {
+                    offsets[i] = (float)Math.PI * offset;
+                    offset += projectileAngleCoefficient;
+                }
+            }
+            else if (amount != 1) {
+                int numberOfOffsets = amount / 2;
+                float offset = -projectileAngleCoefficient * numberOfOffsets;
+                offset += projectileAngleCoefficient / 2;
+                for (int i = 0; i < amount; i++) {
+                    offsets[i] = (float)Math.PI * offset;
+                    offset += projectileAngleCoefficient;
+                }
+            }
+            else {
+                offsets[0] = 0;
+            }
+        }
+        return offsets;
     }
 }

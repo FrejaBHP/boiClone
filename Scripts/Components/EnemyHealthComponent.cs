@@ -24,7 +24,6 @@ public partial class EnemyHealthComponent : Node2D {
 			else {
 				health = value; 
 			}
-			//GD.Print(health);
 		}
 	}
 
@@ -32,6 +31,12 @@ public partial class EnemyHealthComponent : Node2D {
 	public bool Retaliates;
 	[Export]
 	public bool Invulnerable;
+
+	public Enemy CompOwner { get; private set; }
+
+	public override void _Ready() {
+        CompOwner = (Enemy)GetParent();
+    }
 	
 	public void TakeDamage(float damage) {
 		if (!Invulnerable) {
@@ -67,6 +72,6 @@ public partial class EnemyHealthComponent : Node2D {
 
 	public void Die() {
 		GetNode<World>("/root/Main/World").DecreaseEnemyCount();
-		GetParent().QueueFree();
+		CompOwner.QueueFree();
 	}
 }

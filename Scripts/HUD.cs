@@ -174,7 +174,6 @@ public partial class HUD : CanvasLayer {
 		activeItemChargeBar.MaxValue = maxCharge;
 	}
 
-
 	// Pickups
 	public static void UpdateCoins(int coins) {
 		if (coins < 10) {

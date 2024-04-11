@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Room.cs" id="1_84pw2"]
 [ext_resource type="PackedScene" uid="uid://buxkm7dmj0qw8" path="res://Scenes/Components/roomTilemapTemplate2.tscn" id="2_bovoa"]
 
-[node name="Room" type="Node2D"]
+[node name="Room2" type="Node2D"]
 scale = Vector2(2, 2)
 script = ExtResource("1_84pw2")
 metadata/_edit_lock_ = true

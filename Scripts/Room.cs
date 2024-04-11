@@ -85,12 +85,27 @@ public partial class Room : Node2D {
 	}
 
 	private void ReplaceDoorTileWithWall(Vector2I coords, Vector2I tile) { // Only uses default doors and wall textures. TODO: act-dependent switch?
+		int atlasYCoord = 0;
+
+		switch (Type) {
+			case RoomType.Default or RoomType.Starting:
+				atlasYCoord = 6;
+				break;
+		
+			case RoomType.Secret:
+				atlasYCoord = 9;
+				break;
+
+			default:
+				break;
+		}
+
 		if (tile[0] == 0) {		// If horizontal door -
-			Vector2I newTile = new(1, 6);
+			Vector2I newTile = new(1, atlasYCoord);
 			MapNode.SetCell(1, coords, 4, newTile);
 		}
 		else {					// If vertical door |
-			Vector2I newTile = new(0, 7);
+			Vector2I newTile = new(0, atlasYCoord + 1);
 			MapNode.SetCell(1, coords, 4, newTile);
 		}
 	}

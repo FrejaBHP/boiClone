@@ -29,10 +29,7 @@ public partial class ProjectileEnemy : Enemy {
 		}
 
 		public void Execute() {
-			owner.MovementComponent.MoveTowardsPlayer(owner);
-			owner.CollisionComponent.CheckBodyCollision(owner);
-
-			owner.enemySprites.FlipH = owner.GetIfFlipSpriteH(owner.GetPlayerVectorNormalised());
+			owner.MovementComponent.MoveTowardsPlayer();
 
             if (owner.ProjectileComponent.CanAttack) {
                 owner.RollToAttack();
@@ -60,9 +57,8 @@ public partial class ProjectileEnemy : Enemy {
 		}
 
 		public void Execute() {
-			owner.CollisionComponent.CheckBodyCollision(owner);
-            owner.enemySprites.FlipH = owner.GetIfFlipSpriteH(owner.GetPlayerVectorNormalised());
-		}
+
+        }
 
 		public void Exit() {
 			owner.enemySprites.Stop();
@@ -87,6 +83,8 @@ public partial class ProjectileEnemy : Enemy {
 
     public override void _Process(double delta) {
 		stateMachine.Process();
+        CollisionComponent.CheckBodyCollision();
+        enemySprites.FlipH = GetIfFlipSpriteH(GetPlayerVectorNormalised());
     }
 
     private void SetAttackReady() {
@@ -98,7 +96,7 @@ public partial class ProjectileEnemy : Enemy {
     }
 
     private void Attack() {
-        ProjectileComponent.GenericProjectileAttack(this, GetPlayerVectorNormalised());
+        ProjectileComponent.GenericProjectileAttack(GetPlayerVectorNormalised());
         stateMachine.ChangeToState(movementState);
     }
 

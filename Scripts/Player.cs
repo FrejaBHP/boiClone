@@ -5,13 +5,12 @@ using System.Linq;
 
 public partial class Player : CharacterBody2D {
 	protected PackedScene Bomb = GD.Load<PackedScene>("Scenes/entityBomb.tscn");
-	protected PackedScene Projectile = GD.Load<PackedScene>("Scenes/projectile.tscn");
 
 	#region Properties
 	public List<Item> Inventory { get; set; }
 	public Item ActiveItem { get; set; }
 
-	public AttackType AttackType { get; set; }
+	public AttackType AttackType { get; private set; }
 	public AttackFlags AttackFlags { get; set; }
 
 	public float EffectiveDamage { get; private set; }
@@ -26,12 +25,30 @@ public partial class Player : CharacterBody2D {
 	private Timer refireTimer;
 	private Timer iFrameTimer;
 	private Timer bombPlacementTimer;
+	private TextureProgressBar attackChargeBar;
 
 	private float baseSpeed = 208f;
 	private float refireDelay;
+	private float chargedTime = 0;
+
+	private float chargePercent = 0;
+	public float ChargePercent {
+		get => chargePercent;
+		set {
+			chargePercent = value;
+			attackChargeBar.Value = chargePercent;
+		}
+	}
 
 	private bool canShoot;
 	private bool canPlaceBomb;
+	private bool attackRequiresCharge;
+	private bool attackIsCharging = false;
+	private bool attackFullyCharged = false;
+
+	private int attackDirection;
+	private Vector2 attackChargeBarOffset = new(-24, -24);
+
 
 	#region Health
 	public List<HeartContainer> HeartContainers { get; set; } = new();
@@ -77,7 +94,7 @@ public partial class Player : CharacterBody2D {
 		}
 	}
 
-	private float speedBonus = 0;
+	private float speedBonus = 0f;
 	public float SpeedBonus {
 		get => speedBonus;
 		set {
@@ -96,7 +113,7 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-	private float attackDelayBonus = 0;
+	private float attackDelayBonus = 0f;
 	public float AttackDelayBonus {
 		get => attackDelayBonus;
 		set {
@@ -106,11 +123,21 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-	private float flatAttackRateBonus = 0;
+	private float flatAttackRateBonus = 0f;
 	public float FlatAttackRateBonus {
 		get => flatAttackRateBonus;
 		set {
 			flatAttackRateBonus = value;
+			CalculateAttackRate();
+			HUD.UpdateRate(EffectiveFireRate);
+		} 
+	}
+
+	private float attackRateMultiplier = 1f;
+	public float AttackRateMultiplier {
+		get => attackRateMultiplier;
+		set {
+			attackRateMultiplier = value;
 			CalculateAttackRate();
 			HUD.UpdateRate(EffectiveFireRate);
 		} 
@@ -126,7 +153,7 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-	private float damageBonus = 0;
+	private float damageBonus = 0f;
 	public float DamageBonus {
 		get => damageBonus;
 		set {
@@ -136,7 +163,7 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-	private float flatDamageBonus = 0;
+	private float flatDamageBonus = 0f;
 	public float FlatDamageBonus {
 		get => flatDamageBonus;
 		set {
@@ -144,6 +171,16 @@ public partial class Player : CharacterBody2D {
 			CalculateAttackDamage();
 			HUD.UpdateDamage(EffectiveDamage);
 		}
+	}
+
+	private float damageMultiplier = 1f;
+	public float DamageMultiplier {
+		get => damageMultiplier;
+		set {
+			damageMultiplier = value;
+			CalculateAttackDamage();
+			HUD.UpdateDamage(EffectiveDamage);
+		} 
 	}
 	
 	private float range;
@@ -155,7 +192,7 @@ public partial class Player : CharacterBody2D {
 		}
 	}
 
-	private float rangeBonus = 0;
+	private float rangeBonus = 0f;
 	public float RangeBonus {
 		get => rangeBonus;
 		set {
@@ -173,7 +210,7 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-    private float shotSpeedBonus = 0;
+    private float shotSpeedBonus = 0f;
 	public float ShotSpeedBonus { 
 		get => shotSpeedBonus; 
 		set { 
@@ -191,7 +228,7 @@ public partial class Player : CharacterBody2D {
 		} 
 	}
 
-    private float luckBonus = 0;
+    private float luckBonus = 0f;
 	public float LuckBonus { 
 		get => luckBonus; 
 		set { 
@@ -215,6 +252,7 @@ public partial class Player : CharacterBody2D {
 		refireTimer = GetNode<Timer>("RefireTimer");
 		iFrameTimer = GetNode<Timer>("IFrameTimer");
 		bombPlacementTimer = GetNode<Timer>("BombPlacementTimer");
+		attackChargeBar = GetNode<TextureProgressBar>("AttackChargeBar");
 		
 		iFrameTimer.WaitTime = IFrameTime;
 
@@ -225,6 +263,34 @@ public partial class Player : CharacterBody2D {
 		Vector2 dir = Input.GetVector("left", "right", "up", "down");
 		Move(dir);
 		Main.PlayerPosition = GlobalPosition;
+
+		attackChargeBar.GlobalPosition = GlobalPosition + attackChargeBarOffset;
+
+		if (attackIsCharging) {
+			if (Input.IsActionPressed("shootup") || Input.IsActionPressed("shootright") || 
+			Input.IsActionPressed("shootdown") || Input.IsActionPressed("shootleft")) {
+				if (!attackFullyCharged) {
+					chargedTime += (float)delta;
+					CalculateChargePercent();
+				}
+			}
+			else if (Input.IsActionJustReleased("shootup") || Input.IsActionJustReleased("shootright")|| 
+			Input.IsActionJustReleased("shootdown") || Input.IsActionJustReleased("shootleft")) {
+				if (!attackFullyCharged) {
+					ResetAndHideAttackChargeBar();
+					attackIsCharging = false;
+					refireTimer.Stop();
+					CalculateChargePercent();
+				}
+				else if (attackFullyCharged) {
+					ResetAndHideAttackChargeBar();
+					CalculateChargePercent();
+					attackIsCharging = false;
+					attackFullyCharged = false;
+					ReleaseAttack();
+				}
+			}
+		}
 	}
 
 	public void Move(Vector2 dir) {
@@ -246,22 +312,17 @@ public partial class Player : CharacterBody2D {
     }
 
 	public override void _Input(InputEvent @event) {
-		int shootingDir;
 		if (@event.IsActionPressed("shootup")) {
-			shootingDir = 0;
-			StartAttack(shootingDir);
+			StartAttack(0);
 		}
-		else if (@event.IsActionPressed("shootright")) {
-			shootingDir = 1;
-			StartAttack(shootingDir);
+		if (@event.IsActionPressed("shootright")) {
+			StartAttack(1);
 		}
-		else if (@event.IsActionPressed("shootdown")) {
-			shootingDir = 2;
-			StartAttack(shootingDir);
+		if (@event.IsActionPressed("shootdown")) {
+			StartAttack(2);
 		}
-		else if (@event.IsActionPressed("shootleft")) {
-			shootingDir = 3;
-			StartAttack(shootingDir);
+		if (@event.IsActionPressed("shootleft")) {
+			StartAttack(3);
 		}
 
 		if (@event.IsActionPressed("placebomb")) {
@@ -273,25 +334,52 @@ public partial class Player : CharacterBody2D {
 		}
     }
 
-	private void StartAttack(int dir) {
-		if (canShoot) {
-			switch (AttackType) {
-				case AttackType.Projectile:
-					canShoot = false;
-					refireTimer.Start();
-					Attack.PrepareProjectileAttack(this, dir);
-					break;
+	public void TryOverrideAttackType(AttackType type) {
+		if (AttackType == AttackType.Projectile && type == AttackType.Beam) {
+			AttackType = type;
+			attackRequiresCharge = true;
+		}
+		else {
+			AttackType = type;
 
-				case AttackType.Beam:
-					canShoot = false;
-					refireTimer.Start();
-					Attack.PrepareBeamAttack(this, dir);
-					break;
-			
-				default:
-					break;
+			if (type == AttackType.Beam) {
+				attackRequiresCharge = true;
+			}
+			else {
+				attackRequiresCharge = false;
 			}
 		}
+	}
+
+	private void StartAttack(int dir) {
+		attackDirection = dir;
+		if (canShoot) {
+			if (attackRequiresCharge && !attackIsCharging) {
+				ShowAttackChargeBar();
+				attackIsCharging = true;
+				chargedTime = 0;
+				refireTimer.Start();
+			}
+			else {
+				switch (AttackType) {
+					case AttackType.Projectile:
+						canShoot = false;
+						refireTimer.Start();
+						Attack.PrepareProjectileAttack(this, dir);
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+	}
+
+	private void ReleaseAttack() {
+		if (AttackType == AttackType.Beam) {
+			Attack.PrepareBeamAttack(this, attackDirection);
+		}
+		ResetAndHideAttackChargeBar();
 	}
 
 	public void InstantAttack(int dir, AttackType type, bool overrideType, AttackFlags flags, bool overrideFlags) { // WIP
@@ -306,24 +394,31 @@ public partial class Player : CharacterBody2D {
 	}
 
 	public void OnRefireTimerTimeout() {
-		canShoot = true;
-		
-		int shootingDir;
-		if (Input.IsActionPressed("shootup")) {
-			shootingDir = 0;
-			StartAttack(shootingDir);
+		if (!attackRequiresCharge) {
+			canShoot = true;
+
+			/*
+			if (Input.IsActionPressed("shootup") || Input.IsActionPressed("shootright") ||
+			Input.IsActionPressed("shootdown") || Input.IsActionPressed("shootleft")) {
+				StartAttack(attackDirection);
+			}
+			*/
+
+			if (Input.IsActionPressed("shootup")) {
+				StartAttack(0);
+			}
+			if (Input.IsActionPressed("shootright")) {
+				StartAttack(1);
+			}
+			if (Input.IsActionPressed("shootdown")) {
+				StartAttack(2);
+			}
+			if (Input.IsActionPressed("shootleft")) {
+				StartAttack(3);
+			}
 		}
-		else if (Input.IsActionPressed("shootright")) {
-			shootingDir = 1;
-			StartAttack(shootingDir);
-		}
-		else if (Input.IsActionPressed("shootdown")) {
-			shootingDir = 2;
-			StartAttack(shootingDir);
-		}
-		else if (Input.IsActionPressed("shootleft")) {
-			shootingDir = 3;
-			StartAttack(shootingDir);
+		else {
+			attackFullyCharged = true;
 		}
 	}
 
@@ -533,12 +628,24 @@ public partial class Player : CharacterBody2D {
 
 	public void CalculateAttackDamage() {
 		// Sets damage variable for other methods to use
-		EffectiveDamage = (float)(Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus);
+		EffectiveDamage = (float)((Damage * Math.Sqrt(DamageBonus * 1.2 + 1) + FlatDamageBonus) * DamageMultiplier);
 	}
 
 	public void CalculateAttackRate() {
-		float effectiveAttackDelay = 16 - 6 * (float)Math.Sqrt(((AttackDelay + AttackDelayBonus) * 1.3) + 1);
+		float combinedAttackDelay = AttackDelay + AttackDelayBonus;
+		float effectiveAttackDelay = 0;
 		float effectiveAttackRate;
+
+		if (combinedAttackDelay >= 0) {
+			effectiveAttackDelay = 16 - 6 * (float)Math.Sqrt((combinedAttackDelay * 1.3) + 1);
+		}
+		else if (combinedAttackDelay < 0 && combinedAttackDelay > -0.77f) {
+			effectiveAttackDelay = 16 - 6 * (float)Math.Sqrt((combinedAttackDelay * 1.3) + 1) - 6 * combinedAttackDelay;
+		}
+		else if (combinedAttackDelay < -0.77f) {
+			effectiveAttackDelay = 16 - 6 * combinedAttackDelay;
+		}
+		
 
 		if (5 > effectiveAttackDelay) {
 			effectiveAttackRate = 5 + FlatAttackRateBonus;
@@ -548,8 +655,27 @@ public partial class Player : CharacterBody2D {
 		}
 
 		// Sets attack rate-related variables for other methods to use
-		EffectiveFireRate = effectiveAttackRate;
+		EffectiveFireRate = effectiveAttackRate * AttackRateMultiplier;
 		refireDelay = 1f / EffectiveFireRate;
 		refireTimer.WaitTime = refireDelay;
+	}
+
+	public void CalculateChargePercent() {
+		if ((chargedTime / refireDelay) > 1) {
+			ChargePercent = 1f;
+		}
+		else {
+			ChargePercent = chargedTime / refireDelay;
+		}
+	}
+
+	public void ResetAndHideAttackChargeBar() {
+		chargedTime = 0;
+		attackChargeBar.Visible = false;
+		attackChargeBar.Value = 0;
+	}
+
+	public void ShowAttackChargeBar() {
+		attackChargeBar.Visible = true;
 	}
 }

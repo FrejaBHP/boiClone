@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcvj0hhof10bg"]
+
+[ext_resource type="Texture2D" uid="uid://bx6igrrvu5uon" path="res://Images/HUD/attackChargebarOutline.png" id="1_s074q"]
+[ext_resource type="Texture2D" uid="uid://8cl35sf2mtx" path="res://Images/HUD/attackChargebarInner.png" id="2_qevbn"]
+
+[node name="AttackChargeBar" type="TextureProgressBar"]
+top_level = true
+texture_filter = 1
+offset_right = 16.0
+offset_bottom = 16.0
+auto_translate = false
+localize_numeral_system = false
+max_value = 1.0
+step = 0.0
+fill_mode = 4
+texture_under = ExtResource("1_s074q")
+texture_progress = ExtResource("2_qevbn")

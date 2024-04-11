@@ -7,69 +7,80 @@ public partial class Beam : Node2D {
 	public float Range { get; set; }
 	public float Damage { get; set; }
 	public float Knockback { get; set; }
-	public float Duration { get; set; }
+	public float Ticks { get; set; }
+	public bool Fixed { get; set; }
 	public bool Static { get; set; }
 
-	private float remainingDuration;
+	private float remainingTicks;
 
-	private Timer beamDamageTimer;
 	private Area2D beamArea;
 	private RayCast2D wallRayCast;
 	private Vector2 rayCastPoint;
-	private Vector2 rayMidPoint;
+	private Vector2 rayDiffMid;
 	private Sprite2D beamMiddleSprite;
 	private RectangleShape2D beamHurtbox;
 	private Vector2 beamAngle;
 	private float beamLength;
+	private int beamDamageCounter = 0;
 
-	private EnemyHealthComponent enemyHealth;
+	private bool isDrawn = false;
+
+	//private int test = 0;
+
+	private EnemyHealthComponent enemyHealthComp;
 
     public override void _Ready() {
-		remainingDuration = Duration;
 		SetReferences();
-		
-		beamDamageTimer.Start();
+		remainingTicks = Ticks; // Beam will last as long as it has damage left to deal
     }
 
 	public Task SetReferences() {
         beamArea = GetNode<Area2D>("BeamArea");
 		beamHurtbox = beamArea.GetChild<CollisionShape2D>(0).Shape as RectangleShape2D;
-		beamDamageTimer = GetNode<Timer>("BeamDamageTimer");
         wallRayCast = GetNode<RayCast2D>("WallRayCast");
 		beamMiddleSprite = beamArea.GetNode<Sprite2D>("BeamMiddle");
         return Task.CompletedTask;
     }
 
     public override void _PhysicsProcess(double delta) {
-		if (remainingDuration > 0) {
-			remainingDuration -= (float)delta;
+		if (remainingTicks > 0) {
 			GlobalPosition = Main.Player.GlobalPosition;
+
+			if (!Fixed) {
+				SetDynamicRangeBeamProperties();
+			}
+			else {
+				SetFixedRangeBeamProperties();
+			}
+
+			if (!Static) {
+				AdjustAndMoveBeam();
+			}
+
+			beamDamageCounter++;
+			if (beamDamageCounter == 3) {
+				beamDamageCounter = 0;
+				GetOverlapsAndDealDamage();
+			}
 		}
 		else {
 			QueueFree();
 		}
-
-		if (Range == 0) {
-			SetDynamicRangeBeamProperties();
-		}
-		else {
-			SetFixedRangeBeamProperties();
-		}
-
-		if (!Static) {
-			AdjustAndMoveBeam();
-		}
 	}
 
-	public void OnBeamDamageTimerTimeout() {
+	public void GetOverlapsAndDealDamage() {
 		Godot.Collections.Array<Area2D> areas = beamArea.GetOverlappingAreas();
+		//test++;
+		//GD.Print(test);
 		
 		foreach (Area2D area in areas) {
 			if (area.GetParent() != null && area.GetParent().GetNodeOrNull("EnemyHealthComponent") != null) {
-				enemyHealth = area.GetParent().GetNode<EnemyHealthComponent>("EnemyHealthComponent");
-				enemyHealth.TakeDamage(Damage);
+				enemyHealthComp = area.GetParent().GetNode<EnemyHealthComponent>("EnemyHealthComponent");
+				enemyHealthComp.TakeDamage(Damage);
 			}
 		}
+
+		remainingTicks--;
 	}
 
 	private void SetStaticBeamProperties() {
@@ -78,18 +89,17 @@ public partial class Beam : Node2D {
 
 	private void SetFixedRangeBeamProperties() {
 		wallRayCast.TargetPosition = beamAngle * Range;
-
 		wallRayCast.ForceRaycastUpdate();
-		rayCastPoint = wallRayCast.GetCollisionPoint();
 
-		if (rayCastPoint != Vector2.Zero) {
+		if (wallRayCast.IsColliding()) {
+			rayCastPoint = wallRayCast.GetCollisionPoint();
 			beamLength = GlobalPosition.DistanceTo(rayCastPoint);
+			rayDiffMid = (rayCastPoint - GlobalPosition) / 2;
 		}
 		else {
 			beamLength = Range;
+			rayDiffMid = wallRayCast.TargetPosition / 2;
 		}
-		
-		rayMidPoint = (rayCastPoint - GlobalPosition) / 2;
 	}
 
 	private void SetDynamicRangeBeamProperties() {
@@ -97,13 +107,18 @@ public partial class Beam : Node2D {
 		wallRayCast.ForceRaycastUpdate();
 		rayCastPoint = wallRayCast.GetCollisionPoint();
 		beamLength = GlobalPosition.DistanceTo(rayCastPoint);
-		rayMidPoint = (rayCastPoint - GlobalPosition) / 2;
+		rayDiffMid = (rayCastPoint - GlobalPosition) / 2;
 	}
 
 	private void AdjustAndMoveBeam() {
 		beamHurtbox.Size = beamHurtbox.Size with { Y = beamLength };
-		beamArea.Position = rayMidPoint;
 		beamMiddleSprite.Scale = beamMiddleSprite.Scale with { Y = beamLength / 16 };
+		beamArea.Position = rayDiffMid;
+
+		if (!isDrawn) {
+			beamMiddleSprite.Visible = true;
+			isDrawn = true;
+		}
 	}
 
 	public void SetAngle(Vector2 direction) {

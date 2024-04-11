@@ -21,10 +21,7 @@ public partial class BasicEnemy : Enemy {
 		}
 
 		public void Execute() {
-			owner.MovementComponent.MoveTowardsPlayer(owner);
-			owner.CollisionComponent.CheckBodyCollision(owner);
-
-			owner.enemySprites.FlipH = owner.GetIfFlipSpriteH(owner.GetPlayerVectorNormalised());
+			owner.MovementComponent.MoveTowardsPlayer();
 		}
 
 		public void Exit() {
@@ -42,5 +39,7 @@ public partial class BasicEnemy : Enemy {
 
     public override void _Process(double delta) {
 		stateMachine.Process();
+		CollisionComponent.CheckBodyCollision();
+		enemySprites.FlipH = GetIfFlipSpriteH(GetPlayerVectorNormalised());
     }
 }

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b56lk0i1ggaib"
-path="res://.godot/imported/orange.png-53f0d909e2fefd294861a21a9accd4a4.ctex"
+uid="uid://dn3bxa62t3qko"
+path="res://.godot/imported/chargebar.png-f7c6c6c9126335aa7e63de1d9ffbafbc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/orange.png"
-dest_files=["res://.godot/imported/orange.png-53f0d909e2fefd294861a21a9accd4a4.ctex"]
+source_file="res://Images/HUD/chargebar.png"
+dest_files=["res://.godot/imported/chargebar.png-f7c6c6c9126335aa7e63de1d9ffbafbc.ctex"]
 
 [params]
 

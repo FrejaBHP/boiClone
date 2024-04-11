@@ -47,8 +47,8 @@ MovementComponent = NodePath("EnemyMovementComponent")
 metadata/_edit_group_ = true
 
 [node name="EnemyHealthComponent" parent="." instance=ExtResource("3_8uw1x")]
-MaxHealth = 20.0
-Health = 20.0
+MaxHealth = 10.0
+Health = 10.0
 
 [node name="EnemyHurtboxComponent" parent="." node_paths=PackedStringArray("HealthComponent") instance=ExtResource("5_ytnea")]
 HealthComponent = NodePath("../EnemyHealthComponent")

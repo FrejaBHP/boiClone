@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cw1dqva8l3bw1" path="res://Scenes/Components/roomMarkerComponent.tscn" id="2_hsnnl"]
 [ext_resource type="PackedScene" uid="uid://rpwh4tg7pvmh" path="res://Scenes/Components/roomDoorHoriComponent.tscn" id="2_koqbi"]
 
-[node name="Room" instance=ExtResource("1_4xnea")]
+[node name="Room2" instance=ExtResource("1_4xnea")]
 Exits = 1
 Type = 3
 
@@ -43,3 +43,8 @@ metadata/entityID = 3
 position = Vector2(400, 48)
 metadata/markerType = 1
 metadata/entityID = 4
+
+[node name="RoomMarker7" parent="Markers" index="6" instance=ExtResource("2_hsnnl")]
+position = Vector2(432, 48)
+metadata/markerType = 1
+metadata/entityID = 5

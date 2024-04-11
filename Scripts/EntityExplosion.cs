@@ -24,7 +24,7 @@ public partial class EntityExplosion : Node2D {
 	private async void Explode() {
 		await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
 		await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame); // why
-
+		
         Godot.Collections.Array<Node2D> bodies = explosionArea.GetOverlappingBodies();
 		foreach (Node2D node in bodies) {
 			if (node.IsInGroup("Enemy") && node.HasNode("EnemyHealthComponent")) {
