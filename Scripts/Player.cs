@@ -26,6 +26,15 @@ public partial class Player : CharacterBody2D {
 	private Timer iFrameTimer;
 	private Timer bombPlacementTimer;
 	private TextureProgressBar attackChargeBar;
+	
+	private AnimatedSprite2D animatedBodySprite;
+	private Sprite2D headSprite;
+	private AtlasTexture headAtlas;
+
+	private Rect2 headRegionUp = new(32, 0, 16, 16);
+	private Rect2 headRegionDown = new(0, 0, 16, 16);
+	private Rect2 headRegionLeft = new(48, 0, 16, 16);
+	private Rect2 headRegionRight = new(16, 0, 16, 16);
 
 	private float baseSpeed = 208f;
 	private float refireDelay;
@@ -253,6 +262,9 @@ public partial class Player : CharacterBody2D {
 		iFrameTimer = GetNode<Timer>("IFrameTimer");
 		bombPlacementTimer = GetNode<Timer>("BombPlacementTimer");
 		attackChargeBar = GetNode<TextureProgressBar>("AttackChargeBar");
+		animatedBodySprite = GetNode<AnimatedSprite2D>("PlayerBodyAnimSprite");
+		headSprite = GetNode<Sprite2D>("PlayerHeadSprite");
+		headAtlas = headSprite.Texture as AtlasTexture;
 		
 		iFrameTimer.WaitTime = IFrameTime;
 
@@ -264,6 +276,7 @@ public partial class Player : CharacterBody2D {
 		Move(dir);
 		Main.PlayerPosition = GlobalPosition;
 
+		AnimateBody(dir);
 		attackChargeBar.GlobalPosition = GlobalPosition + attackChargeBarOffset;
 
 		if (attackIsCharging) {
@@ -290,6 +303,49 @@ public partial class Player : CharacterBody2D {
 					ReleaseAttack();
 				}
 			}
+		}
+	}
+
+	private void AnimateBody(Vector2 movement) {
+		if (movement != Vector2.Zero) {
+			if (movement.Y >= 0.5f) {
+				animatedBodySprite.Play("move_down");
+			}
+			else if (movement.Y <= -0.5f) {
+				animatedBodySprite.Play("move_up");
+			}
+			else if (movement.X > 0f) {
+				animatedBodySprite.Play("move_right");
+			}
+			else {
+				animatedBodySprite.Play("move_left");
+			}
+		}
+		else {
+			animatedBodySprite.Play("default");
+		}
+	}
+
+	private void TurnHead() {
+		switch (attackDirection) {
+			case 0:
+				headAtlas.Region = headRegionUp;
+				break;
+			
+			case 1:
+				headAtlas.Region = headRegionRight;
+				break;
+
+			case 2:
+				headAtlas.Region = headRegionDown;
+				break;
+
+			case 3:
+				headAtlas.Region = headRegionLeft;
+				break;
+			
+			default:
+				break;
 		}
 	}
 
@@ -352,9 +408,13 @@ public partial class Player : CharacterBody2D {
 	}
 
 	private void StartAttack(int dir) {
-		attackDirection = dir;
 		if (canShoot) {
+			attackDirection = dir;
+			TurnHead();
 			if (attackRequiresCharge && !attackIsCharging) {
+				if (AttackType == AttackType.Beam) {
+					World.RemoveAssociatedBeams(this);
+				}
 				ShowAttackChargeBar();
 				attackIsCharging = true;
 				chargedTime = 0;
@@ -407,13 +467,13 @@ public partial class Player : CharacterBody2D {
 			if (Input.IsActionPressed("shootup")) {
 				StartAttack(0);
 			}
-			if (Input.IsActionPressed("shootright")) {
+			else if (Input.IsActionPressed("shootright")) {
 				StartAttack(1);
 			}
-			if (Input.IsActionPressed("shootdown")) {
+			else if (Input.IsActionPressed("shootdown")) {
 				StartAttack(2);
 			}
-			if (Input.IsActionPressed("shootleft")) {
+			else if (Input.IsActionPressed("shootleft")) {
 				StartAttack(3);
 			}
 		}

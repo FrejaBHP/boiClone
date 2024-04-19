@@ -25,8 +25,6 @@ public partial class Beam : Node2D {
 
 	private bool isDrawn = false;
 
-	//private int test = 0;
-
 	private EnemyHealthComponent enemyHealthComp;
 
     public override void _Ready() {
@@ -70,8 +68,6 @@ public partial class Beam : Node2D {
 
 	public void GetOverlapsAndDealDamage() {
 		Godot.Collections.Array<Area2D> areas = beamArea.GetOverlappingAreas();
-		//test++;
-		//GD.Print(test);
 		
 		foreach (Area2D area in areas) {
 			if (area.GetParent() != null && area.GetParent().GetNodeOrNull("EnemyHealthComponent") != null) {

@@ -69,6 +69,7 @@ public static class Attack {
 			    proj.HurtsEnemies(true);
 		    }
 
+            proj.AddToGroup(attacker.Name + "Proj");
             World.CurrentRoom.ProjectilesNode.AddChild(proj);
 
             Transform2D trans = Transform2D.Identity;
@@ -123,7 +124,14 @@ public static class Attack {
 			    beam.HurtsEnemies(true);
 		    }
 
+            if (flags.HasFlag(AttackFlags.BeamStatic)) {
+                beam.AddToGroup(attacker.Name + "BeamStatic");
+            }
+            else {
+                beam.AddToGroup(attacker.Name + "Beam");
+            }
             World.CurrentRoom.ProjectilesNode.AddChild(beam);
+            //GD.Print(beam.GetGroups()[0]);
         }
     }
 

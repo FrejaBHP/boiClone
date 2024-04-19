@@ -487,4 +487,22 @@ public partial class World : Node {
 			RoomCleared();
 		}
 	}
+
+	public static void RemoveAssociatedProjectiles(CharacterBody2D owner) {
+		Node[] projectileNodes = CurrentRoom.ProjectilesNode.GetChildren().ToArray();
+		for (int i = 0; i < projectileNodes.Length; i++) {
+			if (projectileNodes[i].IsInGroup($"{owner.Name}Proj")) {
+				projectileNodes[i].Free();
+			}
+		}
+	}
+
+	public static void RemoveAssociatedBeams(CharacterBody2D owner) {
+		Node[] projectileNodes = CurrentRoom.ProjectilesNode.GetChildren().ToArray();
+		for (int i = 0; i < projectileNodes.Length; i++) {
+			if (projectileNodes[i].IsInGroup($"{owner.Name}Beam")) {
+				projectileNodes[i].Free();
+			}
+		}
+	}
 }
